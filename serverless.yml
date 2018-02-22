@@ -1,4 +1,4 @@
-service: dvsa-rsp-internll-portal
+service: dvsa-rsp-internal-portal
 
 provider:
   name: aws
