@@ -1,0 +1,24 @@
+{% extends "./partials/cpms-template.njk" %}
+
+{% block head %}
+  {% include "./partials/head.njk" %}
+{% endblock %}
+
+{% block content %}
+
+<div class="cpms-container">
+
+	<h1 class="heading-medium">Pay a DVSA Penalty</h1>
+	<div class="cpms-green-divider"></div>
+
+	<section class="column-one-third atf-m-t-60">
+			{% block heading %}
+				<h1 class="heading-large">Enter card details</h1>
+			{% endblock %}
+			<div>
+				{% block page_content %}{% endblock %}
+			</div>
+	</section>
+</div>
+
+{% endblock %}

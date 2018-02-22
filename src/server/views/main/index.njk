@@ -1,0 +1,60 @@
+{% extends 'layouts/default.layout.njk' %}
+
+{% set pageTitle = 'DVSA Road Side Payment Portal' %}
+
+{% block content %}
+  
+  {% call components.gridRow() %}
+
+    {% call components.columnTwoThirds() %}
+
+      {{ components.heading(text='Pay a DVSA Penalty', tag='h1', size='xlarge') }}
+      {{ components.paragraph(text='Use this service to pay:') }}
+      {{ components.list(items=[
+        { text: 'a fixed penalty' },
+        { text: 'an immobilisation penalty' },
+        { text: 'a court deposit' }
+      ], type='bullet') }}
+
+      {{ components.paragraph(text='Your DVSA penalty notice will tell you how much you have to pay and when you must pay it by.') }}
+      
+      <p>
+        {{ components.notice(text="If you don't pay your fine on time your vehicle may remain immobilised, or your details passed to a debt collection agency.") }}
+      </p>
+      
+      <p>
+        {{ components.button(text='Start now', start='true', url='/payment-code') }}
+      </p>
+
+      {{ components.heading(text='Before you start:', tag='h3', size='medium') }}
+
+      <p>
+        This service is also available in: &nbsp; 
+          {{ components.link(text='Portuguese,', url='#') }}
+          {{ components.link(text='Cymraeg,', url='#') }}
+          {{ components.link(text='Polski,', url='#') }}
+          {{ components.link(text='Magyar,', url='#') }}
+          {{ components.link(text='Français,', url='#') }}
+          {{ components.link(text='Latviešu', url='#') }}
+      </p>
+    {%- endcall %}
+
+    {% call components.columnOneThird() %}
+
+    <aside class="govuk-related-items" role="complementary">
+        <nav role="navigation" aria-labelledby="subsection-title">
+          <ul class="font-xsmall">
+            <li> {{ components.link(text='Portuguese', url='#') }} </li>
+            <li> {{ components.link(text='Cymraeg', url='#') }} </li>
+            <li> {{ components.link(text='Magyar', url='#') }} </li>
+            <li> {{ components.link(text='Polski', url='#') }} </li>
+            <li> {{ components.link(text='Français', url='#') }}</li>
+            <li> {{ components.link(text='Latviešu', url='#') }} </li>
+          </ul>
+        </nav>
+      </aside>
+    {%- endcall %}
+
+  {%- endcall %}
+  
+{% endblock %}

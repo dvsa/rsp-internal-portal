@@ -1,0 +1,135 @@
+{% extends 'layouts/default.layout.njk' %}
+
+{% set pageTitle = 'DVSA Road Side Payment Portal' %}
+{% set pageBreadcrumbItems = [
+    { text: 'Home', url: '/' },
+    { text: 'Payment Code', url: '/payment-code' },
+    { text: 'Penalty Details', url: '#' }
+  ] 
+%}
+{# This is going to be refactored once the Payment service is integrated and we have full knowledge of the payload
+   coming from it.
+#}
+{% set paid = true if status == 'Paid' else false %}
+{% set statusClass = 'confirmed' if paid else 'unconfirmed' %}
+
+{% block content %}
+  
+  {% call components.gridRow() %}
+    {% call components.columnTwoThirds() %}
+
+      {% call components.form(action='/payment-code', method='post') %}
+      {% if paid == false %}
+        {{ components.heading(text='Pay a DVSA Penalty', tag='h1', size='xlarge') }}
+        {{ components.paragraph(text='We found the following details in our records') }}
+      {% else %}
+        {{ components.heading(text='Penalty payment confirmation', tag='h1', size='xlarge') }}
+        <p>You paid a penalty for the payment code:&nbsp;<b>{{ code }}</b>
+        {{ components.paragraph(text='A confirmation has been sent to the DVSA location where the penalty has been issued.') }}
+      {% endif %}
+        <table class="grey-table">
+          <caption class="heading-medium">Penalty Details</caption>
+          <tbody>
+            <tr class="highlighted-row {{ statusClass }}">
+              <td>Status:</td>
+              <td>{{ status }} {% if paid %} &nbsp;&nbsp;<img src="{{ assets }}/images/icon-check.svg" /> {% endif %} </td>
+            </tr>
+            <tr>
+              <td>Payment Code:</td>
+              <td>{{ code }}</td>
+            </tr>
+            <tr>
+              <td>Penalty Type:</td>
+              <td>{{ type }}</td>
+            </tr>
+            <tr>
+              <td>Amount:</td>
+              <td>{{ amount }}</td>
+            </tr>
+            <tr>
+              <td>Reference:</td>
+              <td>{{ reference }}</td>
+            </tr>
+            <tr>
+              <td>Vehicle Registration:</td>
+              <td>{{ vehicle_reg }}</td>
+            </tr>
+            <tr>
+              <td>Penalty issued on:</td>
+              <td>{{ issue_date }}</td>
+            </tr>
+            <tr>
+              <td>Location:</td>
+              <td>{{ location }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+        {% if paid %}
+        <p>
+          <table class="grey-table">
+              <caption class="heading-medium">Payment Details</caption>
+            <tbody>
+              <tr class="highlighted-row {{ statusClass }}">
+                <td>Confirmation code:</td>
+                <td>{{ payment.confirmation_code }}</td>
+              </tr>
+              <tr>
+                <td>Receipt number:</td>
+                <td>{{ payment.receipt_number }}</td>
+              </tr>
+              <tr>
+                <td>Authorisation code:</td>
+                <td>{{ payment.authorisation_code }}</td> 
+              </tr>
+            </tbody>
+          </table>
+        </p>
+        {% endif %}
+          <details>
+            <summary><span class="summary">There is something wrong with these details</span></summary>
+            <div class="panel panel-border-narrow">
+              <p>
+                Please contact the <a href="https://www.gov.uk/contact-dvsa">customer support centre</a> to confirm the correct penalty details.
+              </p>
+            </div>
+          </details>    
+        </p>
+        {% if paid %}
+          <p>
+          You can: &nbsp; 
+            {{ components.list(items=[
+              { text: 'share payment confirmation via SMS', url: '#' },
+              { text: 'share payment confirmation via email', url: '#' },
+              { text: 'alternatively, make a note of the confirmation code for later reference.' }
+            ], type='bullet') }}
+          </p>
+          <p>
+            You can also return to this page by typing the token code in the <a target='_blank' href='{{ urlroot }}/payment-code'>DVSA penalty payment service</a>
+          </p>
+          {{ components.button(text='Pay another penalty', url='/payment-code') }}
+        {% else %}
+          <a class="button" href="{{ urlroot }}/cpms-step-1?amount={{ amount }}" role="button">Continue to payment &nbsp;&nbsp;<img src="{{ assets }}/images/icon-external-link.svg" /></a>
+        {% endif %}
+      {%- endcall %}
+    {%- endcall %}
+
+    {% call components.columnOneThird() %}
+
+    <aside class="govuk-related-items" role="complementary">
+        <nav role="navigation" aria-labelledby="subsection-title">
+          <ul class="font-xsmall">
+            <li> {{ components.link(text='Portuguese', url='#') }} </li>
+            <li> {{ components.link(text='Cymraeg', url='#') }} </li>
+            <li> {{ components.link(text='Magyar', url='#') }} </li>
+            <li> {{ components.link(text='Polski', url='#') }} </li>
+            <li> {{ components.link(text='Français', url='#') }}</li>
+            <li> {{ components.link(text='Latviešu', url='#') }} </li>
+          </ul>
+        </nav>
+      </aside>
+    {%- endcall %}
+
+  {%- endcall %}
+  
+{% endblock %}

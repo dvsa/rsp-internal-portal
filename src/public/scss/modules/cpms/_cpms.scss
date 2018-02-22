@@ -1,0 +1,46 @@
+.cpms-green-divider {
+	height: 10px;
+	background-color: $green;
+}
+
+.cpms-container {
+	padding: 0px 30px;
+}
+
+.cpms-form-group-separator {
+	width: 10px !important;
+	margin: 0px;
+	span {
+		font-size: 30px;
+	}
+}
+
+.cpms-icon {
+	display: none;
+    @include media(tablet) {
+		display: inline;
+		position: absolute;
+		padding: 5px 10px;
+	}
+}
+
+.cpms-full-width {
+	width: 100%;
+}
+
+.cpms-m-b-60 {
+	margin-bottom: 60px;
+}
+
+.cpms-table-header {
+	&:first-child {
+		padding-left: 10px;
+	}
+	&:last-child {
+		padding-right: 10px;
+	}
+	font-size: 16px;
+	font-weight: 700;
+	color: $white;
+	background-color: $govuk-blue;
+}

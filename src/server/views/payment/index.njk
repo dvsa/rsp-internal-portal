@@ -1,0 +1,63 @@
+{% extends 'layouts/default.layout.njk' %}
+
+{% set pageTitle = 'DVSA Road Side Payment Portal' %}
+{% set pageBreadcrumbItems = [
+    { text: 'Home', url: '/' },
+    { text: 'Payment Code', url: '#' }
+  ] 
+%}
+
+{% block content %}
+  
+  {% call components.gridRow() %}
+    {% call components.columnTwoThirds() %}
+
+      {% call components.form(action='/payment-code', method='post') %}
+        {{ components.heading(text='Pay a DVSA Penalty', tag='h1', size='xlarge') }}
+        
+        {% if invalidPaymentCode %}
+          <div class="error-summary" role="alert" aria-labelledby="error-summary-payment-code" tabindex="-1">
+            <h2 class="heading-medium error-summary-heading" id="error-summary-payment-code">
+              There was a problem
+            </h2>
+            The payment code you entered was not recognised by the system.
+          </div>
+        {% endif %}
+        {{ components.field(id='payment_code', label="Payment code", hint="This is a code issued together with the penalty notice.<br />For example, 'a1b2c3d4e5f6e7b8'", error='Enter a valid payment code' if invalidPaymentCode, maxlength=19) }}
+        <p>
+          <details>
+            <summary><span class="summary">I don't have a payment code</span></summary>
+            <div class="panel panel-border-narrow">
+              <p>
+              The DVSA examiner normally sends the payment code (or token) via SMS or email, at the time of processing the penalty. The code is usually sent to the driver of the vehicle or their company, as requested at the time of processing. 
+              </p>
+              <p>
+                If you are the intended recipient, you can recheck your email inbox or text messages, or request the DVSA examiner send the payment code again. Alternatively, you can contact the <a href="https://www.gov.uk/contact-dvsa">customer support centre</a>, to arrange payment by using the penalty reference number, if that is available to you
+              </p>
+            </div>
+          </details>    
+        </p>
+
+        {{ components.button(text='Continue', type='submit') }}
+      {%- endcall %}
+    {%- endcall %}
+
+    {% call components.columnOneThird() %}
+
+    <aside class="govuk-related-items" role="complementary">
+        <nav role="navigation" aria-labelledby="subsection-title">
+          <ul class="font-xsmall">
+            <li> {{ components.link(text='Portuguese', url='#') }} </li>
+            <li> {{ components.link(text='Cymraeg', url='#') }} </li>
+            <li> {{ components.link(text='Magyar', url='#') }} </li>
+            <li> {{ components.link(text='Polski', url='#') }} </li>
+            <li> {{ components.link(text='Français', url='#') }}</li>
+            <li> {{ components.link(text='Latviešu', url='#') }} </li>
+          </ul>
+        </nav>
+      </aside>
+    {%- endcall %}
+
+  {%- endcall %}
+  
+{% endblock %}

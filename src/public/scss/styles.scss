@@ -1,0 +1,70 @@
+// GOVUK
+@import 'gds/gds';
+
+// Mixins
+@import 'mixins/mixins';
+
+// Variables
+@import 'variables';
+
+// Custom Modules
+@import 'modules/modules';
+
+table.grey-table {
+  background-color: #DEE0E2 !important;
+
+  .heading-medium {
+    margin-top: 0;
+    margin-bottom: 10px;
+    padding-top:0;
+  }
+
+  .highlighted-row {
+    color: #fff;
+  }
+
+  .confirmed {
+    background-color: #005EA5;
+  }
+
+  .unconfirmed {
+    background-color: #454A4C;
+  }
+
+  tr {
+    td:first-child {
+      padding-left: 30px;
+      padding-right: 0; 
+    }
+
+    td:nth-child(2) {
+      font-weight: bold;
+    }
+  }
+
+  td {
+    border: none;
+  }
+}
+
+// Hide side-bar on mobile
+@media (max-width : 480px) {
+  .govuk-related-items {
+    display: none;
+  }
+}
+
+@media (min-width : 768px) {
+  .cpms-m-b-60 {
+    input {
+      width: 60%;
+    }
+  }
+
+  table.grey-table {
+    width: 75%;    
+  }
+}
+
+
+
