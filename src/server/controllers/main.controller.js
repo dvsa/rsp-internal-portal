@@ -6,11 +6,5 @@ export const robots = (req, res) => {
 
 // Index Route
 export const index = (req, res) => {
-  const viewData = {
-    pageBreadcrumbItems: [
-      { text: 'Home', url: '#' },
-    ],
-  };
-
-  res.render('main/index', viewData);
+  res.render('main/index');
 };
