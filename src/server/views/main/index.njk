@@ -11,48 +11,62 @@
 
     {% call components.columnTwoThirds() %}
 
-      {{ components.heading(text='Pay a DVSA Penalty', tag='h1', size='xlarge') }}
-      {{ components.paragraph(text='Use this service to pay:') }}
-      {{ components.list(items=[
-        { text: 'a fixed penalty' },
-        { text: 'an immobilisation penalty' },
-        { text: 'a court deposit' }
-      ], type='bullet') }}
+      {{ components.heading(text='Take payments for DVSA penalties', tag='h1', size='xlarge') }}
 
-      {{ components.paragraph(text='Your DVSA penalty notice will tell you how much you have to pay and when you must pay it by.') }}
-      
-      <p>
-        {{ components.notice(text="If you don't pay your fine on time your vehicle may remain immobilised, or your details passed to a debt collection agency.") }}
-      </p>
-      
-      <p>
-        {{ components.button(text='Start now', start='true', url='/payment-code') }}
-      </p>
+      {% if invalid %}
+        <div class="error-summary" role="alert" aria-labelledby="error-summary-payment-code" tabindex="-1">
+          <h2 class="heading-medium error-summary-heading" id="error-summary-payment-code">
+            There was a problem
+          </h2>
+          The {{ input }} you entered was not recognised by the system.
+        </div>
+      {% endif %}
 
-      {{ components.heading(text='Before you start:', tag='h3', size='medium') }}
-
-      <p>
-        This service is also available in: &nbsp; 
-          {{ components.link(text='Portuguese,', url='#') }}
-          {{ components.link(text='Cymraeg,', url='#') }}
-          {{ components.link(text='Polski,', url='#') }}
-          {{ components.link(text='Magyar,', url='#') }}
-          {{ components.link(text='Français,', url='#') }}
-          {{ components.link(text='Latviešu', url='#') }}
-      </p>
+      <form action="/" method="POST">
+      <div class="form-group">
+        <fieldset>
+          <div class="multiple-choice" data-target="search-payment-code">
+            <input id="search-by-payment-code" type="radio" name="search-by-payment-code" value='true' {% if invalidPaymentCode or invalid == false %} checked {% endif %}>
+            <label class="{{ 'error' if invalidPaymentCode }}" for="search-by-payment-code"><strong>Payment code</strong></label>
+          </div>
+          <div class="panel panel-border-narrow js-hidden {{ 'form-group-error' if invalidPaymentCode }}" id="search-payment-code">
+            <label class="form-label" for="payment_code">
+            {% if invalidPaymentCode %}
+              <span class="error-message">Enter a valid payment code</span>
+            {% else %}
+              Payment code
+            {% endif %}
+            </label>
+            <input class="form-control {{ 'form-control-error' if invalidPaymentCode }}" name="payment_code" type="text" id="payment_code">
+          </div>
+          <div class="multiple-choice" data-target="search-penalty-ref">
+            <input id="search-by-penalty-ref" type="radio" name="search-by-payment-code" value='false' {% if invalidPenaltyReference %} checked {% endif %}>
+            <label class="{{ 'error' if invalidPenaltyReference }}" for="search-by-penalty-ref"><strong>Penalty reference</strong></label>
+          </div>
+          <div class="panel panel-border-narrow js-hidden {{ 'form-group-error' if invalidPenaltyReference }}" id="search-penalty-ref">
+            <label class="form-label" for="penalty_ref">
+            {% if invalidPenaltyReference %}
+              <span class="error-message">Enter a valid penalty reference</span>
+            {% else %}
+              Penalty reference number
+            {% endif %}
+            </label>
+            <input class="form-control {{ 'form-control-error' if invalidPenaltyReference }}" name="penalty_ref" type="text" id="penalty_ref">
+          </div>
+        </fieldset>
+      </div>
+      {{ components.button(text='Continue') }}
+    </form>
     {%- endcall %}
 
     {% call components.columnOneThird() %}
 
     <aside class="govuk-related-items" role="complementary">
+        Other actions
         <nav role="navigation" aria-labelledby="subsection-title">
           <ul class="font-xsmall">
-            <li> {{ components.link(text='Portuguese', url='#') }} </li>
-            <li> {{ components.link(text='Cymraeg', url='#') }} </li>
-            <li> {{ components.link(text='Magyar', url='#') }} </li>
-            <li> {{ components.link(text='Polski', url='#') }} </li>
-            <li> {{ components.link(text='Français', url='#') }}</li>
-            <li> {{ components.link(text='Latviešu', url='#') }} </li>
+            <li> {{ components.link(text='Resend penalty details via SMS', url='#') }} </li>
+            <li> {{ components.link(text='Resend penalty details via email', url='#') }} </li>
           </ul>
         </nav>
       </aside>
