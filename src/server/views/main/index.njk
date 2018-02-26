@@ -37,7 +37,7 @@
               Payment code
             {% endif %}
             </label>
-            <input class="form-control {{ 'form-control-error' if invalidPaymentCode }}" name="payment_code" type="text" id="payment_code">
+            <input class="form-control {{ 'form-control-error' if invalidPaymentCode }}" name="payment_code" type="text" id="payment_code" maxlength="16">
           </div>
           <div class="multiple-choice" data-target="search-penalty-ref">
             <input id="search-by-penalty-ref" type="radio" name="search-by-payment-code" value='false' {% if invalidPenaltyReference %} checked {% endif %}>
@@ -51,7 +51,7 @@
               Penalty reference number
             {% endif %}
             </label>
-            <input class="form-control {{ 'form-control-error' if invalidPenaltyReference }}" name="penalty_ref" type="text" id="penalty_ref">
+            <input class="form-control {{ 'form-control-error' if invalidPenaltyReference }}" name="penalty_ref" type="text" id="penalty_ref" maxlength="18">
           </div>
         </fieldset>
       </div>
