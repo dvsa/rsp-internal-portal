@@ -25,22 +25,8 @@
       <form action="{{ urlroot }}/" method="POST">
       <div class="form-group">
         <fieldset>
-          <div class="multiple-choice" data-target="search-payment-code">
-            <input id="search-by-payment-code" type="radio" name="search-by-payment-code" value='true' {% if invalidPaymentCode or invalid == false %} checked {% endif %}>
-            <label class="{{ 'error' if invalidPaymentCode }}" for="search-by-payment-code"><strong>Payment code</strong></label>
-          </div>
-          <div class="panel panel-border-narrow js-hidden {{ 'form-group-error' if invalidPaymentCode }}" id="search-payment-code">
-            <label class="form-label" for="payment_code">
-            {% if invalidPaymentCode %}
-              <span class="error-message">Enter a valid payment code</span>
-            {% else %}
-              Payment code
-            {% endif %}
-            </label>
-            <input class="form-control {{ 'form-control-error' if invalidPaymentCode }}" name="payment_code" type="text" id="payment_code" maxlength="16">
-          </div>
           <div class="multiple-choice" data-target="search-penalty-ref">
-            <input id="search-by-penalty-ref" type="radio" name="search-by-payment-code" value='false' {% if invalidPenaltyReference %} checked {% endif %}>
+            <input id="search-by-penalty-ref" type="radio" name="search-by-payment-code" value='false' {% if invalidPenaltyReference or invalid == false %} checked {% endif %}>
             <label class="{{ 'error' if invalidPenaltyReference }}" for="search-by-penalty-ref"><strong>Penalty reference</strong></label>
           </div>
           <div class="panel panel-border-narrow js-hidden {{ 'form-group-error' if invalidPenaltyReference }}" id="search-penalty-ref">
@@ -52,6 +38,20 @@
             {% endif %}
             </label>
             <input class="form-control {{ 'form-control-error' if invalidPenaltyReference }}" name="penalty_ref" type="text" id="penalty_ref" maxlength="18">
+          </div>
+                    <div class="multiple-choice" data-target="search-payment-code">
+            <input id="search-by-payment-code" type="radio" name="search-by-payment-code" value='true' {% if invalidPaymentCode %} checked {% endif %}>
+            <label class="{{ 'error' if invalidPaymentCode }}" for="search-by-payment-code"><strong>Payment code</strong></label>
+          </div>
+          <div class="panel panel-border-narrow js-hidden {{ 'form-group-error' if invalidPaymentCode }}" id="search-payment-code">
+            <label class="form-label" for="payment_code">
+            {% if invalidPaymentCode %}
+              <span class="error-message">Enter a valid payment code</span>
+            {% else %}
+              Payment code
+            {% endif %}
+            </label>
+            <input class="form-control {{ 'form-control-error' if invalidPaymentCode }}" name="payment_code" type="text" id="payment_code" maxlength="16">
           </div>
         </fieldset>
       </div>
