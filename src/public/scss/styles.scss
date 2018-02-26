@@ -47,6 +47,10 @@ table.grey-table {
   }
 }
 
+.error {
+  color: $error-colour;
+}
+
 // Hide side-bar on mobile
 @media (max-width : 480px) {
   .govuk-related-items {

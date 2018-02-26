@@ -1,5 +1,4 @@
-
-export default class paymentService {
+export default class penaltyService {
   constructor() {
     this.mockedPenalties = [
       {
@@ -45,14 +44,28 @@ export default class paymentService {
     ];
   }
 
-  getPenaltyDetails(paymentCode) {
+  getByPaymentCode(paymentCode) {
     const promise = new Promise((resolve, reject) => {
       const result = this.mockedPenalties.find(penalty => penalty.code === paymentCode);
       setTimeout(() => {
         if (result) {
           resolve(result);
         }
-        reject(new Error('Invalid Payment code'));
+        reject(new Error('Invalid payment code'));
+      }, 2000);
+    });
+
+    return promise;
+  }
+
+  getByReference(referenceNumber) {
+    const promise = new Promise((resolve, reject) => {
+      const result = this.mockedPenalties.find(penalty => penalty.reference === referenceNumber);
+      setTimeout(() => {
+        if (result) {
+          resolve(result);
+        }
+        reject(new Error('Invalid penalty reference'));
       }, 2000);
     });
 
