@@ -42,6 +42,7 @@ env.addGlobal('_', _);
 const app = express();
 
 app.use(helmet());
+
 // Add express to the nunjucks enviroment instance
 env.express(app);
 
