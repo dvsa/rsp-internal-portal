@@ -45,3 +45,7 @@ function processScss() {
 }
 
 gulp.task('scss', processScss);
+
+gulp.task('watch-scss', function(){
+  gulp.watch(path.join(CONFIG.sourcePaths.scss, CONFIG.patterns.scss), processScss);
+});
