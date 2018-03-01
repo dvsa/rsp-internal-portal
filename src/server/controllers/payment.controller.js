@@ -1,8 +1,12 @@
 import { validationResult } from 'express-validator/check';
 import paymentCodeValidation from './../validation/paymentCode';
 import PenaltyService from './../services/penalty.service';
+import createHttpClient from './../utils/httpclient';
+import config from '../config';
 
-const penaltyService = new PenaltyService();
+const httpClient = createHttpClient(config.penaltyServiceUrl);
+
+const penaltyService = new PenaltyService(httpClient);
 
 // Robots
 export const robots = (req, res) => {
@@ -33,7 +37,8 @@ export const getPenaltyDetails = [
 
       penaltyService.getByPaymentCode(paymentCode).then((details) => {
         res.render('penalty/penaltyDetails', details);
-      }).catch(() => {
+      }).catch((error) => {
+        console.log(error);
         res.redirect('../?invalidPaymentCode');
       });
     }

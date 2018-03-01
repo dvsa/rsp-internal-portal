@@ -1,8 +1,10 @@
 import { validationResult } from 'express-validator/check';
 import penaltyReferenceValidation from './../validation/penaltyReference';
 import PenaltyService from './../services/penalty.service';
+import createHttpClient from './../utils/httpclient';
+import config from '../config';
 
-const penaltyService = new PenaltyService();
+const penaltyService = new PenaltyService(createHttpClient(config.penaltyServiceUrl));
 
 // Robots
 export const robots = (req, res) => {

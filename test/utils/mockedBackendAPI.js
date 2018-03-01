@@ -3,23 +3,25 @@ export default class MockedBackEndAPI {
     this.penalties = penalties;
   }
 
-  getPenaltyByPaymentCode(code) {
-    const result = this.penalties.find(p => p.code === code);
+  getPenaltyByPaymentCode(requestUrl) {
+    const code = requestUrl.split('/').pop();
+    const result = this.penalties.find(p => p.paymentToken === code);
 
     if (result) {
       return Promise.resolve(result);
     }
 
-    return Promise.reject();
+    return Promise.reject(new Error('Invalid Payment Code'));
   }
 
-  getPenaltyByReference(reference) {
-    const result = this.penalties.find(p => p.reference === reference);
+  getPenaltyByReference(requestUrl) {
+    const reference = requestUrl.split('/').pop();
+    const result = this.penalties.find(p => p.referenceNo === reference);
 
     if (result) {
       return Promise.resolve(result);
     }
 
-    return Promise.reject();
+    return Promise.reject(new Error('Invalid Penalty Reference'));
   }
 }

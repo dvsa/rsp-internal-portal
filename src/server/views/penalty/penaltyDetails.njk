@@ -9,7 +9,7 @@
 {# This is going to be refactored once the Payment service is integrated and we have full knowledge of the payload
    coming from it.
 #}
-{% set paid = true if status == 'Paid' else false %}
+{% set paid = true if status == 'PAID' else false %}
 {% set statusClass = 'confirmed' if paid else 'unconfirmed' %}
 
 {% block content %}
@@ -34,7 +34,7 @@
             </tr>
             <tr>
               <td>Payment Code:</td>
-              <td>{{ code }}</td>
+              <td>{{ paymentToken }}</td>
             </tr>
             <tr>
               <td>Penalty Type:</td>
