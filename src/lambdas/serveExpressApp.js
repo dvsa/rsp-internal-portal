@@ -4,7 +4,7 @@ import app from '../server/app';
 // NOTE: If you get ERR_CONTENT_DECODING_FAILED in your browser, this is likely
 // due to a compressed response (e.g. gzip) which has not been handled correctly
 // by aws-serverless-express and/or API Gateway. Add the necessary MIME types to
-// binaryMimeTypes below, then redeploy (`npm run package-deploy`)
+// binaryMimeTypes below, then redeploy.
 const binaryMimeTypes = [
   'application/javascript',
   'application/json',

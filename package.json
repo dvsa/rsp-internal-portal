@@ -23,7 +23,6 @@
   "author": "Fabio Simao",
   "license": "ISC",
   "devDependencies": {
-    "axios": "^0.17.1",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.2.1",
@@ -64,6 +63,7 @@
     "rimraf": "^2.6.2",
     "serverless": "^1.26.0",
     "serverless-offline": "^3.17.0",
+    "sinon": "^4.4.2",
     "smooth-scroll": "^12.1.5",
     "store": "^2.0.12",
     "undertaker-forward-reference": "^1.0.2",
@@ -75,6 +75,7 @@
   "dependencies": {
     "archiver": "^2.1.1",
     "aws-serverless-express": "^3.0.2",
+    "axios": "^0.18.0",
     "body-parser": "^1.18.2",
     "compression": "^1.7.1",
     "cors": "^2.8.4",
