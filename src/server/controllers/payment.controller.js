@@ -8,12 +8,6 @@ const httpClient = createHttpClient(config.penaltyServiceUrl);
 
 const penaltyService = new PenaltyService(httpClient);
 
-// Robots
-export const robots = (req, res) => {
-  res.type('text/plain');
-  res.send('User-agent: *\nDisallow: /');
-};
-
 // Removes all non-alphanumeric characters and converts to lowercase
 export const normalizePaymentcode = (req, res, next) => {
   req.body.payment_code = req.body.payment_code.replace(/\W|_/g, '').toLowerCase();
@@ -37,8 +31,7 @@ export const getPenaltyDetails = [
 
       penaltyService.getByPaymentCode(paymentCode).then((details) => {
         res.render('penalty/penaltyDetails', details);
-      }).catch((error) => {
-        console.log(error);
+      }).catch(() => {
         res.redirect('../?invalidPaymentCode');
       });
     }

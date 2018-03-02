@@ -26,7 +26,7 @@ export default [
     placeWhereIssued: 'Ashford HRTI',
   },
   {
-    paymentStatus: 'Paid',
+    paymentStatus: 'PAID',
     paymentToken: '2222222222222222',
     penaltyType: 'IM',
     penaltyAmount: 80,

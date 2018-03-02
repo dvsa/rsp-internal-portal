@@ -6,12 +6,6 @@ import config from '../config';
 
 const penaltyService = new PenaltyService(createHttpClient(config.penaltyServiceUrl));
 
-// Robots
-export const robots = (req, res) => {
-  res.type('text/plain');
-  res.send('User-agent: *\nDisallow: /');
-};
-
 export const validatePenaltyReference = [
   penaltyReferenceValidation,
 ];

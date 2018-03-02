@@ -8,7 +8,7 @@ export default class MockedBackEndAPI {
     const result = this.penalties.find(p => p.paymentToken === code);
 
     if (result) {
-      return Promise.resolve(result);
+      return Promise.resolve({ data: { Value: result } });
     }
 
     return Promise.reject(new Error('Invalid Payment Code'));
@@ -19,7 +19,7 @@ export default class MockedBackEndAPI {
     const result = this.penalties.find(p => p.referenceNo === reference);
 
     if (result) {
-      return Promise.resolve(result);
+      return Promise.resolve({ data: { Value: result } });
     }
 
     return Promise.reject(new Error('Invalid Penalty Reference'));
