@@ -8,8 +8,8 @@ export default class PenaltyService {
 
   static getPenaltyTypeDescription(penaltyType) {
     switch (penaltyType.toUpperCase()) {
-      case 'CD':
-        return 'Court Deposit';
+      case 'CDN':
+        return 'Court Deposit Notice';
       case 'FPN':
         return 'Fixed Penalty Notice';
       case 'IM':
