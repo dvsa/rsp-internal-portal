@@ -1,14 +1,12 @@
 import { validationResult } from 'express-validator/check';
 import paymentCodeValidation from './../validation/paymentCode';
 import PenaltyService from './../services/penalty.service';
+import createHttpClient from './../utils/httpclient';
+import config from '../config';
 
-const penaltyService = new PenaltyService();
+const httpClient = createHttpClient(config.penaltyServiceUrl);
 
-// Robots
-export const robots = (req, res) => {
-  res.type('text/plain');
-  res.send('User-agent: *\nDisallow: /');
-};
+const penaltyService = new PenaltyService(httpClient);
 
 // Removes all non-alphanumeric characters and converts to lowercase
 export const normalizePaymentcode = (req, res, next) => {

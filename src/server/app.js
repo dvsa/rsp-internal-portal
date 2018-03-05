@@ -10,6 +10,7 @@ import errorhandler from 'errorhandler';
 import walkSync from 'walk-sync';
 import resolvePath from 'resolve-path';
 import validator from 'express-validator';
+import helmet from 'helmet';
 import routes from './routes';
 import config from './config';
 
@@ -39,6 +40,8 @@ env.addGlobal('urlroot', config.urlRoot);
 env.addGlobal('_', _);
 
 const app = express();
+
+app.use(helmet());
 
 // Add express to the nunjucks enviroment instance
 env.express(app);

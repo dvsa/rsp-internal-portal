@@ -9,7 +9,7 @@
 {# This is going to be refactored once the Payment service is integrated and we have full knowledge of the payload
    coming from it.
 #}
-{% set paid = true if status == 'Paid' else false %}
+{% set paid = true if status == 'PAID' else false %}
 {% set statusClass = 'confirmed' if paid else 'unconfirmed' %}
 
 {% block content %}
@@ -17,13 +17,12 @@
   {% call components.gridRow() %}
     {% call components.columnTwoThirds() %}
 
-      {% call components.form(action='/payment-code', method='post') %}
+      {% call components.form(action="/cpms-step-1", method='get') %}
       {% if paid == false %}
-        {{ components.heading(text='Pay a DVSA Penalty', tag='h1', size='xlarge') }}
-        {{ components.paragraph(text='We found the following details in our records') }}
+        {{ components.heading(text='Take payments for DVSA penalties', tag='h1', size='xlarge') }}
       {% else %}
         {{ components.heading(text='Penalty payment confirmation', tag='h1', size='xlarge') }}
-        <p>You paid a penalty for the payment code:&nbsp;<b>{{ code }}</b>
+        <p>You paid a penalty for the payment code:&nbsp;<b>{{ paymentCode }}</b>
         {{ components.paragraph(text='A confirmation has been sent to the DVSA location where the penalty has been issued.') }}
       {% endif %}
         <table class="grey-table">
@@ -35,11 +34,11 @@
             </tr>
             <tr>
               <td>Payment Code:</td>
-              <td>{{ code }}</td>
+              <td>{{ paymentCode }}</td>
             </tr>
             <tr>
               <td>Penalty Type:</td>
-              <td>{{ type }}</td>
+              <td>{{ typeDescription }}</td>
             </tr>
             <tr>
               <td>Amount:</td>
@@ -51,64 +50,48 @@
             </tr>
             <tr>
               <td>Vehicle Registration:</td>
-              <td>{{ vehicle_reg }}</td>
+              <td>{{ vehicleReg if complete else 'Not available' }}</td>
             </tr>
             <tr>
               <td>Penalty issued on:</td>
-              <td>{{ issue_date }}</td>
+              <td>{{ issueDate if complete else 'Not available' }}</td>
             </tr>
             <tr>
               <td>Location:</td>
-              <td>{{ location }}</td>
+              <td>{{ location if complete else 'Not available' }}</td>
             </tr>
           </tbody>
         </table>
-        <p>
         {% if paid %}
         <p>
           <table class="grey-table">
               <caption class="heading-medium">Payment Details</caption>
             <tbody>
               <tr class="highlighted-row {{ statusClass }}">
-                <td>Confirmation code:</td>
-                <td>{{ payment.confirmation_code }}</td>
-              </tr>
-              <tr>
-                <td>Receipt number:</td>
-                <td>{{ payment.receipt_number }}</td>
-              </tr>
-              <tr>
                 <td>Authorisation code:</td>
-                <td>{{ payment.authorisation_code }}</td> 
+                <td>{{ paymentAuthCode }}</td>
+              </tr>
+              <tr>
+                <td>Paid on:</td>
+                <td>{{ paymentDate }}</td>
               </tr>
             </tbody>
           </table>
         </p>
-        {% endif %}
-          <details>
-            <summary><span class="summary">There is something wrong with these details</span></summary>
-            <div class="panel panel-border-narrow">
-              <p>
-                Please contact the <a href="https://www.gov.uk/contact-dvsa">customer support centre</a> to confirm the correct penalty details.
-              </p>
-            </div>
-          </details>    
-        </p>
-        {% if paid %}
-          <p>
-          You can: &nbsp; 
-            {{ components.list(items=[
-              { text: 'share payment confirmation via SMS', url: '#' },
-              { text: 'share payment confirmation via email', url: '#' },
-              { text: 'alternatively, make a note of the confirmation code for later reference.' }
-            ], type='bullet') }}
-          </p>
-          <p>
-            You can also return to this page by typing the token code in the <a target='_blank' href='{{ urlroot }}/payment-code'>DVSA penalty payment service</a>
-          </p>
-          {{ components.button(text='Pay another penalty', url='/payment-code') }}
         {% else %}
-          <a class="button" href="{{ urlroot }}/cpms-step-1?amount={{ amount }}" role="button">Continue to payment &nbsp;&nbsp;<img src="{{ assets }}/images/icon-external-link.svg" /></a>
+          {% call components.formGroup() %}
+            {{ components.heading(text='Payment by', tag='h3', size='medium') }}
+            {{ components.radio(text='Card (external website)', value='card', id='pay-by-card', name='payment_type', checked=true) }}
+            {{ components.radio(text='Cash', value='cash', id='pay-by-cash', name='payment_type') }}
+            {{ components.radio(text='Cheque', value='cheque', id='pay-by-cheque', name='payment_type') }}
+            {{ components.field(label='amount', labelVisuallyHidden=true, id='amount', name='amount', value=amount, type='hidden') }}
+            
+          {%- endcall %}
+        {% endif %}
+        {% if paid %}
+          
+        {% else %}
+          {{ components.button(text='Continue to payment', type='submit') }}
         {% endif %}
       {%- endcall %}
     {%- endcall %}
@@ -116,14 +99,11 @@
     {% call components.columnOneThird() %}
 
     <aside class="govuk-related-items" role="complementary">
+        Other actions
         <nav role="navigation" aria-labelledby="subsection-title">
           <ul class="font-xsmall">
-            <li> {{ components.link(text='Portuguese', url='#') }} </li>
-            <li> {{ components.link(text='Cymraeg', url='#') }} </li>
-            <li> {{ components.link(text='Magyar', url='#') }} </li>
-            <li> {{ components.link(text='Polski', url='#') }} </li>
-            <li> {{ components.link(text='Français', url='#') }}</li>
-            <li> {{ components.link(text='Latviešu', url='#') }} </li>
+            <li> {{ components.link(text='Resend penalty details via SMS', url='#') }} </li>
+            <li> {{ components.link(text='Resend penalty details via email', url='#') }} </li>
           </ul>
         </nav>
       </aside>

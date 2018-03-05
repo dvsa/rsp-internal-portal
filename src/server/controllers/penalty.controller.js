@@ -1,14 +1,10 @@
 import { validationResult } from 'express-validator/check';
 import penaltyReferenceValidation from './../validation/penaltyReference';
 import PenaltyService from './../services/penalty.service';
+import createHttpClient from './../utils/httpclient';
+import config from '../config';
 
-const penaltyService = new PenaltyService();
-
-// Robots
-export const robots = (req, res) => {
-  res.type('text/plain');
-  res.send('User-agent: *\nDisallow: /');
-};
+const penaltyService = new PenaltyService(createHttpClient(config.penaltyServiceUrl));
 
 export const validatePenaltyReference = [
   penaltyReferenceValidation,

@@ -1,74 +1,68 @@
-export default class penaltyService {
-  constructor() {
-    this.mockedPenalties = [
-      {
-        status: 'Paid',
-        code: 'a1b2c3d4e5f621ac',
-        type: 'Fixed penalty',
-        amount: '£80',
-        reference: '12345678910',
-        vehicle_reg: 'AB 123 CD',
-        issue_date: '25/01/2018',
-        location: 'Ashford',
-        payment: {
-          confirmation_code: 'a1b3c3d4e5f6',
-          receipt_number: 123456789101112,
-          authorisation_code: 123456,
-        },
-      },
-      {
-        status: 'Unpaid',
-        code: '1111111111111111',
-        type: 'Fixed penalty',
-        amount: '£80',
-        reference: '52345678910',
-        vehicle_reg: 'AB 973 CD',
-        issue_date: '25/01/2018',
-        location: 'Ashford',
-      },
-      {
-        status: 'Paid',
-        code: '2222222222222222',
-        type: 'Fixed penalty',
-        amount: '£80',
-        reference: '62345678910',
-        vehicle_reg: 'AB 157 CD',
-        issue_date: '25/01/2018',
-        location: 'Ashford',
-        payment: {
-          confirmation_code: 'a1b3c3d4e5f6',
-          receipt_number: 723456789101112,
-          authorisation_code: 523456,
-        },
-      },
-    ];
+import { isEmpty, has } from 'lodash';
+import moment from 'moment';
+
+export default class PenaltyService {
+  constructor(httpClient) {
+    this.httpClient = httpClient;
+  }
+
+  static getPenaltyTypeDescription(penaltyType) {
+    switch (penaltyType.toUpperCase()) {
+      case 'CDN':
+        return 'Court Deposit Notice';
+      case 'FPN':
+        return 'Fixed Penalty Notice';
+      case 'IM':
+        return 'immobilisation';
+      default:
+        return 'Unknown';
+    }
+  }
+
+  static parsePenalty(rawPenalty) {
+    const complete = has(rawPenalty, 'vehicleDetails') && !isEmpty(rawPenalty);
+    const penaltyDetails = {
+      complete,
+      paymentCode: rawPenalty.paymentToken,
+      issueDate: moment(rawPenalty.dateTime).format('DD/MM/YYYY'),
+      vehicleReg: rawPenalty.vehicleDetails.regNo,
+      reference: rawPenalty.referenceNo,
+      location: rawPenalty.placeWhereIssued,
+      amount: rawPenalty.penaltyAmount,
+      status: rawPenalty.paymentStatus,
+      type: rawPenalty.penaltyType,
+      typeDescription: PenaltyService.getPenaltyTypeDescription(rawPenalty.penaltyType),
+      paymentDate: moment(rawPenalty.paymentDate).format('DD/MM/YYYY'),
+      paymentAuthCode: rawPenalty.paymentAuthCode,
+    };
+    return penaltyDetails;
   }
 
   getByPaymentCode(paymentCode) {
     const promise = new Promise((resolve, reject) => {
-      const result = this.mockedPenalties.find(penalty => penalty.code === paymentCode);
-      setTimeout(() => {
-        if (result) {
-          resolve(result);
+      this.httpClient.get(`tokens/${paymentCode}`).then((response) => {
+        if (isEmpty(response.data)) {
+          reject(new Error('Payment code not found'));
         }
-        reject(new Error('Invalid payment code'));
-      }, 2000);
+        resolve(PenaltyService.parsePenalty(response.data.Value));
+      }).catch((error) => {
+        reject(new Error(error));
+      });
     });
-
     return promise;
   }
 
   getByReference(referenceNumber) {
     const promise = new Promise((resolve, reject) => {
-      const result = this.mockedPenalties.find(penalty => penalty.reference === referenceNumber);
-      setTimeout(() => {
-        if (result) {
-          resolve(result);
+      this.httpClient.get(`references/${referenceNumber}`).then((response) => {
+        if (isEmpty(response.data)) {
+          reject(new Error('Penalty reference not found'));
         }
-        reject(new Error('Invalid penalty reference'));
-      }, 2000);
+        resolve(PenaltyService.parsePenalty(response.data.Value));
+      }).catch((error) => {
+        reject(new Error(error));
+      });
     });
-
     return promise;
   }
 }
