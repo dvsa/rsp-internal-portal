@@ -23,5 +23,6 @@ router.get('/penalty/:penalty_ref', penaltyController.getPenaltyDetails);
 router.get('/cpms-step-1', cpmsController.step1);
 router.get('/cpms-step-2', cpmsController.step2);
 router.get('/cpms-step-3', cpmsController.step3);
+router.post('/cpms-step-3', cpmsController.makePayment);
 
 export default router;

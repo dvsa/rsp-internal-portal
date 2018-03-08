@@ -3,6 +3,7 @@
 {% set pageTitle = 'DVSA Road Side Payment Portal' %}
 {% set pageBreadcrumbItems = [
     { text: 'Home', url: '/' },
+    { text: 'Payment Code', url: '/payment-code' },
     { text: 'Penalty Details' }
   ] 
 %}
@@ -16,10 +17,9 @@
   
   {% call components.gridRow() %}
     {% call components.columnTwoThirds() %}
-
-      {% call components.form(action="/cpms-step-1", method='get') %}
       {% if paid == false %}
-        {{ components.heading(text='Take payments for DVSA penalties', tag='h1', size='xlarge') }}
+        {{ components.heading(text='Pay a DVSA Penalty', tag='h1', size='xlarge') }}
+        {{ components.paragraph(text='We found the following details in our records') }}
       {% else %}
         {{ components.heading(text='Penalty payment confirmation', tag='h1', size='xlarge') }}
         <p>You paid a penalty for the payment code:&nbsp;<b>{{ paymentCode }}</b>
@@ -34,7 +34,7 @@
             </tr>
             <tr>
               <td>Payment Code:</td>
-              <td>{{ paymentCode }}</td>
+              <td>{{ paymentCode }}</td> 
             </tr>
             <tr>
               <td>Penalty Type:</td>
@@ -42,15 +42,15 @@
             </tr>
             <tr>
               <td>Amount:</td>
-              <td>{{ amount }}</td>
+              <td>£{{ amount }}</td>
             </tr>
             <tr>
               <td>Reference:</td>
-              <td>{{ reference }}</td>
+              <td>{{ formattedReference }}</td>
             </tr>
             <tr>
               <td>Vehicle Registration:</td>
-              <td>{{ vehicleReg if complete else 'Not available' }}</td>
+              <td>{{ vehicleReg if complete else 'Not available' }}</td> 
             </tr>
             <tr>
               <td>Penalty issued on:</td>
@@ -58,21 +58,22 @@
             </tr>
             <tr>
               <td>Location:</td>
-              <td>{{ location if complete else 'Not available' }}</td>
+              <td>{{ location if complete else 'Not available' }}</td> 
             </tr>
           </tbody>
         </table>
+        <p>
         {% if paid %}
         <p>
           <table class="grey-table">
               <caption class="heading-medium">Payment Details</caption>
             <tbody>
               <tr class="highlighted-row {{ statusClass }}">
-                <td>Authorisation code:</td>
-                <td>{{ paymentAuthCode }}</td>
+                <td>Authorisation code:</td> 
+                <td>{{ paymentAuthCode }}</td> 
               </tr>
               <tr>
-                <td>Paid on:</td>
+                <td>Paid on:</td> 
                 <td>{{ paymentDate }}</td>
               </tr>
             </tbody>
@@ -91,9 +92,8 @@
         {% if paid %}
           
         {% else %}
-          {{ components.button(text='Continue to payment', type='submit') }}
+          <a class="button" href="{{ urlroot }}/cpms-step-1?amount={{ amount }}&paymentCode={{ paymentCode }}&reference={{ reference }}&type={{ type }}&typeDescription={{ typeDescription }}" role="button">Continue to payment &nbsp;&nbsp;<img src="{{ assets }}/images/icon-external-link.svg" /></a>
         {% endif %}
-      {%- endcall %}
     {%- endcall %}
 
     {% call components.columnOneThird() %}

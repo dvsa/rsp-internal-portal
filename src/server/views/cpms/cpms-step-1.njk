@@ -12,6 +12,10 @@
 			{{ components.heading(text='Enter card details', tag='h2', size='large') }}
 
 			<form action="{{ urlroot }}/cpms-step-2" method="get">
+				<input type="hidden" name="reference" value="{{ reference }}">
+				<input type="hidden" name="type" value="{{ type }}">
+				<input type="hidden" name="typeDescription" value="{{ typeDescription }}">
+				<input type="hidden" name="paymentCode" value="{{ paymentCode }}">
 				<div class="form-group">
 				<label class="form-label" for="cardNumber">Card number</label>
 				<input class="form-control" id="cardNumber" name="cardNumber" type="number">

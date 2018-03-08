@@ -24,6 +24,7 @@ const views = process.env.VIEWS || path.resolve(__dirname, 'views');
 const clientId = process.env.CLIENT_ID || 'client';
 const clientSecret = process.env.CLIENT_SECRET || 'secret';
 const penaltyServiceUrl = process.env.PENALTY_SERVICE_URL;
+const paymentServiceUrl = process.env.PAYMENT_SERVICE_URL;
 
 const config = {
   env,
@@ -35,6 +36,7 @@ const config = {
   clientSecret,
   urlRoot,
   penaltyServiceUrl,
+  paymentServiceUrl,
 };
 
 export default config;

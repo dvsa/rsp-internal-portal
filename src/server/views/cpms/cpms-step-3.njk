@@ -10,27 +10,23 @@
 
       {{ components.heading(text='Pay a DVSA Penalty', tag='h1', size='xlarge') }}
 			{{ components.heading(text="Make Payment", tag='h2', size='large') }}
-
+			
 			<div class="cpms-m-b-60">
-				<form action="#" method="GET">
-
-					<h2 class="heading-small">Purchase details</h2>
-					<p>Please check that the purchase details below are correct, before making payment.</p>
+					<h2 class="heading-small">Details</h2>
+					<p>Please check that the details below are correct, before making payment.</p>
 					<table>
 						<thead>
 							<tr>
 								<th class="cpms-table-header" scope="col">Description</th>
-								<th class="cpms-table-header" scope="col">Reference</th>
-								<th class="cpms-table-header" scope="col">Name</th>
-								<th class="cpms-table-header" scope="col">Price</th>
+								<th class="cpms-table-header" scope="col">Penalty Reference</th>
+								<th class="cpms-table-header" scope="col">Amount</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr>
-								<th scope="row" class="font-xsmall">Fixed Penalty</th>
-								<td class="font-xsmall">RSP-012345-7890-AE12343F</td>
-								<td class="font-xsmall"></td>
-								<td class="font-xsmall">{{ amount }}</td>
+								<th scope="row" class="font-xsmall">{{ typeDescription }}</th>
+								<td class="font-xsmall">{{ reference }}</td>
+								<td class="font-xsmall">£{{ amount }}</td>
 							</tr>
 						</tbody>
 					</table>
@@ -55,10 +51,15 @@
 							</tr>
 						</tbody>
 					</table>
+					{% call components.form(action='/cpms-step-3', method='post') %}
+						<input type="hidden" name="reference" value="{{ reference }}">
+						<input type="hidden" name="type" value="{{ type }}">
+						<input type="hidden" name="amount" value="{{ amount }}">
+						<input type="hidden" name="paymentCode" value="{{ paymentCode }}">
 					<div class="atf-m-t-20">
-						<a class="button" href="{{ urlroot }}/payment-code/2222222222222222">Make Payment</a>
+						{{ components.button(text='Make Payment', type='submit') }}
 					</div>
-				</form>
+				{%- endcall %}
 			</div>
     {%- endcall %}
 
