@@ -1,9 +1,10 @@
 import { isEmpty, has } from 'lodash';
 import moment from 'moment';
+import createHttpClient from './../utils/httpclient';
 
 export default class PenaltyService {
-  constructor(httpClient) {
-    this.httpClient = httpClient;
+  constructor(serviceUrl) {
+    this.httpClient = createHttpClient(serviceUrl);
   }
 
   static getPenaltyTypeDescription(penaltyType) {
@@ -19,20 +20,24 @@ export default class PenaltyService {
     }
   }
 
-  static parsePenalty(rawPenalty) {
+  static parsePenalty(data) {
+    const penaltyId = data.ID;
+    const reference = penaltyId.split('_').shift();
+    const rawPenalty = data.Value;
     const complete = has(rawPenalty, 'vehicleDetails') && !isEmpty(rawPenalty);
     const penaltyDetails = {
       complete,
+      reference,
       paymentCode: rawPenalty.paymentToken,
-      issueDate: moment(rawPenalty.dateTime).format('DD/MM/YYYY'),
-      vehicleReg: rawPenalty.vehicleDetails.regNo,
-      reference: rawPenalty.referenceNo,
-      location: rawPenalty.placeWhereIssued,
+      issueDate: complete && moment.unix(rawPenalty.dateTime).format('DD/MM/YYYY'),
+      vehicleReg: complete && rawPenalty.vehicleDetails.regNo,
+      formattedReference: rawPenalty.referenceNo,
+      location: complete && rawPenalty.placeWhereIssued,
       amount: rawPenalty.penaltyAmount,
       status: rawPenalty.paymentStatus,
       type: rawPenalty.penaltyType,
       typeDescription: PenaltyService.getPenaltyTypeDescription(rawPenalty.penaltyType),
-      paymentDate: moment(rawPenalty.paymentDate).format('DD/MM/YYYY'),
+      paymentDate: rawPenalty.paymentDate ? moment.unix(rawPenalty.paymentDate).format('DD/MM/YYYY') : undefined,
       paymentAuthCode: rawPenalty.paymentAuthCode,
     };
     return penaltyDetails;
@@ -44,7 +49,7 @@ export default class PenaltyService {
         if (isEmpty(response.data)) {
           reject(new Error('Payment code not found'));
         }
-        resolve(PenaltyService.parsePenalty(response.data.Value));
+        resolve(PenaltyService.parsePenalty(response.data));
       }).catch((error) => {
         reject(new Error(error));
       });
@@ -54,11 +59,11 @@ export default class PenaltyService {
 
   getByReference(referenceNumber) {
     const promise = new Promise((resolve, reject) => {
-      this.httpClient.get(`references/${referenceNumber}`).then((response) => {
+      this.httpClient.get(`${referenceNumber}`).then((response) => {
         if (isEmpty(response.data)) {
           reject(new Error('Penalty reference not found'));
         }
-        resolve(PenaltyService.parsePenalty(response.data.Value));
+        resolve(PenaltyService.parsePenalty(response.data));
       }).catch((error) => {
         reject(new Error(error));
       });

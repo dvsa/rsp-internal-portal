@@ -13,6 +13,10 @@
 
 			<div class="cpms-m-b-60">
 				<form action="{{ urlroot }}/cpms-step-3" method="GET">
+						<input type="hidden" name="reference" value="{{ reference }}">
+						<input type="hidden" name="type" value="{{ type }}">
+						<input type="hidden" name="typeDescription" value="{{ typeDescription }}">
+						<input type="hidden" name="paymentCode" value="{{ paymentCode }}">
 					<div class="form-group">
 						<input class="form-control" name="amount" value="{{ amount }}" type="text" hidden>
 						<input class="form-control" name="cardNumber" value="{{ cardNumber }}" type="text" hidden>

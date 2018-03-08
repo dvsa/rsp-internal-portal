@@ -28,7 +28,8 @@ describe('Penalty Service', () => {
       const validPaymentCode = '1111111111111111';
 
       mockedHttpClient = sinon.stub(httpClient, 'get').callsFake(code => mockedBackendAPI.getPenaltyByPaymentCode(code));
-      penaltyService = new PenaltyService(mockedHttpClient.rootObj);
+      penaltyService = new PenaltyService();
+      penaltyService.httpClient = mockedHttpClient.rootObj;
 
       // Act
       const result = await penaltyService.getByPaymentCode(validPaymentCode);
@@ -41,7 +42,8 @@ describe('Penalty Service', () => {
       const invalidPaymentCode = 'zzxzxzxasdqawsdaszxcwqesd$"£%$£$"%';
 
       mockedHttpClient = sinon.stub(httpClient, 'get').callsFake(code => mockedBackendAPI.getPenaltyByPaymentCode(code));
-      penaltyService = new PenaltyService(mockedHttpClient.rootObj);
+      penaltyService = new PenaltyService();
+      penaltyService.httpClient = mockedHttpClient.rootObj;
 
       // Act
       const result = penaltyService.getByPaymentCode(invalidPaymentCode);
@@ -57,7 +59,8 @@ describe('Penalty Service', () => {
       const validReferenceNo = '578888-1-990519-IM';
 
       mockedHttpClient = sinon.stub(httpClient, 'get').callsFake(reference => mockedBackendAPI.getPenaltyByReference(reference));
-      penaltyService = new PenaltyService(mockedHttpClient.rootObj);
+      penaltyService = new PenaltyService();
+      penaltyService.httpClient = mockedHttpClient.rootObj;
 
       // Act
       const result = await penaltyService.getByReference(validReferenceNo);
@@ -70,7 +73,8 @@ describe('Penalty Service', () => {
       const invalidPenaltyReference = 'zzxzxzxasdqawsdaszxcwqesd$"£%$£$"%';
 
       mockedHttpClient = sinon.stub(httpClient, 'get').callsFake(reference => mockedBackendAPI.getPenaltyByReference(reference));
-      penaltyService = new PenaltyService(mockedHttpClient.rootObj);
+      penaltyService = new PenaltyService();
+      penaltyService.httpClient = mockedHttpClient.rootObj;
 
       // Act
       const result = penaltyService.getByPaymentCode(invalidPenaltyReference);

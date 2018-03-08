@@ -1,10 +1,9 @@
 import { validationResult } from 'express-validator/check';
 import penaltyReferenceValidation from './../validation/penaltyReference';
 import PenaltyService from './../services/penalty.service';
-import createHttpClient from './../utils/httpclient';
 import config from '../config';
 
-const penaltyService = new PenaltyService(createHttpClient(config.penaltyServiceUrl));
+const penaltyService = new PenaltyService(config.penaltyServiceUrl);
 
 export const validatePenaltyReference = [
   penaltyReferenceValidation,
