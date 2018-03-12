@@ -1,6 +1,7 @@
 import { Router } from 'express';
 
 import * as mainController from './controllers/main.controller';
+import * as paymentCodeController from './controllers/paymentCode.controller';
 import * as paymentController from './controllers/payment.controller';
 import * as cpmsController from './controllers/cpms.controller';
 import * as penaltyController from './controllers/penalty.controller';
@@ -14,10 +15,12 @@ router.get('/', mainController.index);
 router.post('/', mainController.searchPenalty);
 
 // Get Penalty details given a payment code
-router.get('/payment-code/:payment_code', paymentController.getPenaltyDetails);
-
+router.get('/payment-code/:payment_code', paymentCodeController.getPenaltyDetails);
+router.get('/payment-code/:payment_code/payment', paymentCodeController.validatePaymentCode, paymentController.renderPaymentPage);
+router.post('/payment-code/:payment_code/payment', paymentController.makePayment);
 // Get Penalty details given a penalty reference
 router.get('/penalty/:penalty_ref', penaltyController.getPenaltyDetails);
+router.get('/penalty/:penalty_ref/payment', paymentController.renderPaymentPage);
 
 // Mocked CMPS screens
 router.get('/cpms-step-1', cpmsController.step1);

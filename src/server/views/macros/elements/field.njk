@@ -1,6 +1,6 @@
 {% from "macros/elements/label.njk" import formLabel %}
 
-{% macro field(label='', labelVisuallyHidden=false, labelBold=false, id='', type='text', name='', value='', hint=false, group=false, groupCompound=false, error=false, width=false, maxlength=false) %}
+{% macro field(label='', labelVisuallyHidden=false, labelBold=false, id='', type='text', name='', value='', hint=false, group=false, groupCompound=false, error=false, width=false, maxlength=false, required=false) %}
   
   {% if width == 12.5 %}
     {% set widthClass = 'form-control-1-8' %}
@@ -28,6 +28,7 @@
     name="{{ name if name else id }}"
     value="{{ value }}"
     maxlength={{ maxlength }}
+    {{ 'required' if required }}
     >
     {% if group or error %}</div>{% endif %}
   {% endif %}

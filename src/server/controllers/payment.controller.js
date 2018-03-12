@@ -1,36 +1,61 @@
-import { validationResult } from 'express-validator/check';
-import paymentCodeValidation from './../validation/paymentCode';
+import { format } from 'url';
+import PaymentService from './../services/payment.service';
 import PenaltyService from './../services/penalty.service';
-import config from '../config';
+import config from './../config';
 
+const paymentService = new PaymentService(config.paymentServiceUrl);
 const penaltyService = new PenaltyService(config.penaltyServiceUrl);
 
-// Removes all non-alphanumeric characters and converts to lowercase
-export const normalizePaymentcode = (req, res, next) => {
-  req.body.payment_code = req.body.payment_code.replace(/\W|_/g, '').toLowerCase();
-  next();
+const getPenaltyDetails = (req) => {
+  if (req.params.payment_code) {
+    return penaltyService.getByPaymentCode(req.params.payment_code);
+  }
+  return penaltyService.getByReference(req.params.penalty_ref);
 };
 
-export const validatePaymentCode = [
-  normalizePaymentcode,
-  paymentCodeValidation,
-];
+export const renderPaymentPage = async (req, res) => {
+  let penaltyDetails;
 
-export const getPenaltyDetails = [
-  paymentCodeValidation,
-  (req, res) => {
-    const errors = validationResult(req);
+  try {
+    penaltyDetails = await getPenaltyDetails(req);
 
-    if (!errors.isEmpty()) {
-      res.redirect('../?invalidPaymentCode');
-    } else {
-      const paymentCode = req.params.payment_code;
+    // Payment Type is expected to come from the query string, otherwise the default is used
+    const paymentType = req.query.paymentType ? req.query.paymentType : 'card';
 
-      penaltyService.getByPaymentCode(paymentCode).then((details) => {
-        res.render('penalty/penaltyDetails', details);
-      }).catch(() => {
-        res.redirect('../?invalidPaymentCode');
-      });
+    switch (paymentType) {
+      case 'cash':
+        res.render('payment/cash', penaltyDetails);
+        break;
+      case 'cheque':
+      case 'postal':
+        res.render('payment/cheque', { ...penaltyDetails, paymentType });
+        break;
+      default:
+        res.redirect(format({
+          pathname: `${config.urlRoot}/cpms-step-1`,
+          query: penaltyDetails,
+        }));
     }
-  },
-];
+  } catch (error) {
+    res.redirect('/?invalidPaymentCode');
+  }
+};
+
+export const makePayment = (req, res) => {
+  const details = {
+    PenaltyStatus: 'PAID',
+    PenaltyType: req.body.type,
+    PenaltyReference: req.body.reference,
+    PaymentDetail: {
+      PaymentRef: '12345678',
+      AuthCode: '1234TBD',
+      PaymentAmount: req.body.amount,
+      PaymentDate: Math.round((new Date()).getTime() / 1000),
+    },
+  };
+
+  paymentService.makePayment(details).then(() => {
+    res.redirect(`${config.urlRoot}/payment-code/${req.body.paymentCode}`);
+  }).catch(() => res.redirect('back')); // TODO: Add appropriate error page and/or logging
+};
+

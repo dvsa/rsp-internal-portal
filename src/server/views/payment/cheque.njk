@@ -1,0 +1,59 @@
+{% extends 'layouts/default.layout.njk' %}
+
+{% set pageTitle = 'DVSA Road Side Payment Portal' %}
+{% set pageBreadcrumbItems = [
+    { text: 'Home', url: '/' },
+    { text: 'Payment Code', url: '/' },
+    { text: 'Penalty Details', url: '/payment-code/'+paymentCode },
+    { text: 'Payment by Cheque' }
+  ]
+%}
+
+{% block content %}
+  
+  {% call components.gridRow() %}
+    {% call components.columnTwoThirds() %}
+      {{ components.heading(text="Payment by cheque for", tag="h1", size="large") }}
+      {{ components.paragraph(text=paymentCode, lead=true) }}
+        <table class="details">
+          <caption class="heading-medium">Penalty Details</caption>
+          <tbody>
+            <tr>
+              <td>Status:</td>
+              <td class="error">Unpaid</td>
+            </tr>
+            <tr>
+              <td>Payment Code:</td>
+              <td>{{ paymentCode }}</td> 
+            </tr>
+            <tr>
+              <td>Penalty Type:</td>
+              <td>{{ typeDescription }}</td>
+            </tr>
+            <tr>
+              <td>Amount:</td>
+              <td>£{{ amount }}</td>
+            </tr>
+            <tr>
+              <td>Reference:</td>
+              <td>{{ formattedReference }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+        {% call components.form(action="", method="POST") %}
+						<input type="hidden" name="reference" value="{{ reference }}">
+						<input type="hidden" name="type" value="{{ type }}">
+						<input type="hidden" name="amount" value="{{ amount }}">
+						<input type="hidden" name="paymentCode" value="{{ paymentCode }}">
+
+          {{ components.heading(text="Payment details ", tag="h3", size="medium") }}
+          <p>{{ components.field(id="chequeDate", type="date", label="Date on cheque" if paymentType=="cheque" else "Date on postal order", required=true) }}</p>
+          <p>{{ components.field(id="chequeNnumber", type="number", label= "Cheque number" if paymentType=="cheque" else "Postal order number", required=true) }}</p>
+          <p>{{ components.field(id="accountNumber", type="number", label="Account number", required=true) }}</p>
+          <p>{{ components.field(id="slipNumber", type="number", label="Paying in slip number", required=true) }}</p>
+          {{ components.button(text="Confirm payment", type="submit") }}
+        {%- endcall %}
+    {%- endcall %}
+  {%- endcall %}
+{% endblock %}
