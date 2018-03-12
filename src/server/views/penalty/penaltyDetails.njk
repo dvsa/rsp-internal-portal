@@ -3,7 +3,7 @@
 {% set pageTitle = 'DVSA Road Side Payment Portal' %}
 {% set pageBreadcrumbItems = [
     { text: 'Home', url: '/' },
-    { text: 'Payment Code', url: '/payment-code' },
+    { text: 'Payment Code', url: '/' },
     { text: 'Penalty Details' }
   ] 
 %}
@@ -25,12 +25,12 @@
         <p>You paid a penalty for the payment code:&nbsp;<b>{{ paymentCode }}</b>
         {{ components.paragraph(text='A confirmation has been sent to the DVSA location where the penalty has been issued.') }}
       {% endif %}
-        <table class="grey-table">
+        <table class="details">
           <caption class="heading-medium">Penalty Details</caption>
           <tbody>
-            <tr class="highlighted-row {{ statusClass }}">
+            <tr>
               <td>Status:</td>
-              <td>{{ status }} {% if paid %} &nbsp;&nbsp;<img src="{{ assets }}/images/icon-check.svg" /> {% endif %} </td>
+              <td class="{{ statusClass }}">{{ status }} {% if paid %} &nbsp;&nbsp;<img src="{{ assets }}/images/icon-check.png" /> {% endif %} </td>
             </tr>
             <tr>
               <td>Payment Code:</td>
@@ -65,10 +65,10 @@
         <p>
         {% if paid %}
         <p>
-          <table class="grey-table">
+          <table class="details">
               <caption class="heading-medium">Payment Details</caption>
             <tbody>
-              <tr class="highlighted-row {{ statusClass }}">
+              <tr>
                 <td>Authorisation code:</td> 
                 <td>{{ paymentAuthCode }}</td> 
               </tr>
@@ -80,19 +80,16 @@
           </table>
         </p>
         {% else %}
-          {% call components.formGroup() %}
-            {{ components.heading(text='Payment by', tag='h3', size='medium') }}
-            {{ components.radio(text='Card (external website)', value='card', id='pay-by-card', name='payment_type', checked=true) }}
-            {{ components.radio(text='Cash', value='cash', id='pay-by-cash', name='payment_type') }}
-            {{ components.radio(text='Cheque', value='cheque', id='pay-by-cheque', name='payment_type') }}
-            {{ components.field(label='amount', labelVisuallyHidden=true, id='amount', name='amount', value=amount, type='hidden') }}
-            
+          {% call components.form(action='/payment-code/'+paymentCode+'/payment', method='GET')  %}
+            {% call components.formGroup() %}
+              {{ components.heading(text='Payment by', tag='h3', size='medium') }}
+              {{ components.radio(text='Card (external website)', value='card', id='pay-by-card', name='paymentType', checked="true") }}
+              {{ components.radio(text='Cash', value='cash', id='pay-by-cash', name='paymentType') }}
+              {{ components.radio(text='Cheque', value='cheque', id='pay-by-cheque', name='paymentType') }}
+              {{ components.radio(text='Postal Order', value='postal', id='pay-by-postal', name='paymentType') }}
+            {%- endcall %}
+            {{ components.button(text='Continue to payment', type='submit') }}
           {%- endcall %}
-        {% endif %}
-        {% if paid %}
-          
-        {% else %}
-          <a class="button" href="{{ urlroot }}/cpms-step-1?amount={{ amount }}&paymentCode={{ paymentCode }}&reference={{ reference }}&type={{ type }}&typeDescription={{ typeDescription }}" role="button">Continue to payment &nbsp;&nbsp;<img src="{{ assets }}/images/icon-external-link.svg" /></a>
         {% endif %}
     {%- endcall %}
 

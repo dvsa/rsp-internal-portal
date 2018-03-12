@@ -23,14 +23,6 @@ table.grey-table {
     color: #fff;
   }
 
-  .confirmed {
-    background-color: #005EA5;
-  }
-
-  .unconfirmed {
-    background-color: #454A4C;
-  }
-
   tr {
     td:first-child {
       padding-left: 30px;
@@ -47,8 +39,19 @@ table.grey-table {
   }
 }
 
-.error {
+table.details {
+  td:nth-child(2) {
+    font-weight: bold;
+  }
+}
+
+.error, 
+.unconfirmed {
   color: $error-colour;
+}
+
+.confirmed {
+  color: #00823B;
 }
 
 // Hide side-bar on mobile
