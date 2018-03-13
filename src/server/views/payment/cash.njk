@@ -1,12 +1,11 @@
 {% extends 'layouts/default.layout.njk' %}
 
 {% set pageTitle = 'DVSA Road Side Payment Portal' %}
-{% set payType = "cheque" if paymentType == 'cheque' else 'postal order' %}
 {% set pageBreadcrumbItems = [
     { text: 'Home', url: '/' },
     { text: 'Payment Code', url: '/' },
     { text: 'Penalty Details', url: '/payment-code/'+paymentCode },
-    { text: 'Payment by '+payType }
+    { text: 'Payment by Cash' }
   ]
 %}
 
@@ -14,7 +13,7 @@
   
   {% call components.gridRow() %}
     {% call components.columnTwoThirds() %}
-      {{ components.heading(text="Payment by "+payType+" for", tag="h1", size="large") }}
+      {{ components.heading(text="Payment by cash for", tag="h1", size="large") }}
       {{ components.paragraph(text=paymentCode, lead=true) }}
         <table class="details">
           <caption class="heading-medium">Penalty Details</caption>
@@ -61,11 +60,8 @@
 						<input type="hidden" name="paymentCode" value="{{ paymentCode }}">
 
           {{ components.heading(text="Payment details ", tag="h3", size="medium") }}
-          <p>{{ components.field(id="chequeDate", type="date", label="Date on cheque" if paymentType=="cheque" else "Date on postal order", required=true) }}</p>
-          <p>{{ components.field(id="chequeNnumber", type="number", label= "Cheque number" if paymentType=="cheque" else "Postal order number", required=true) }}</p>
-          <p>{{ components.field(id="accountNumber", type="number", label="Account number", required=true) }}</p>
-          <p>{{ components.field(id="slipNumber", type="number", label="Paying in slip number", required=true) }}</p>
-          {{ components.button(text="Confirm payment", type="submit") }}
+         <p>{{ components.field(id="slipNumber", type="number", label="Paying in slip number", required=true) }}</p>
+          {{ components.button(text="Confirm cash payment", type="submit") }}
         {%- endcall %}
     {%- endcall %}
   {%- endcall %}

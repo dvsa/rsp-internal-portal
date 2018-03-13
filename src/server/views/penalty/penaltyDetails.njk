@@ -79,6 +79,7 @@
             </tbody>
           </table>
         </p>
+        {{ components.button(text='Pay another penalty', url='/') }}
         {% else %}
           {% call components.form(action='/payment-code/'+paymentCode+'/payment', method='GET')  %}
             {% call components.formGroup() %}

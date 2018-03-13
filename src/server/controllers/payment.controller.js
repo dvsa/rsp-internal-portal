@@ -19,25 +19,26 @@ export const renderPaymentPage = async (req, res) => {
   try {
     penaltyDetails = await getPenaltyDetails(req);
 
+    if (penaltyDetails.status === 'PAID') {
+      return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+    }
     // Payment Type is expected to come from the query string, otherwise the default is used
     const paymentType = req.query.paymentType ? req.query.paymentType : 'card';
 
     switch (paymentType) {
       case 'cash':
-        res.render('payment/cash', penaltyDetails);
-        break;
+        return res.render('payment/cash', penaltyDetails);
       case 'cheque':
       case 'postal':
-        res.render('payment/cheque', { ...penaltyDetails, paymentType });
-        break;
+        return res.render('payment/cheque', { ...penaltyDetails, paymentType });
       default:
-        res.redirect(format({
+        return res.redirect(format({
           pathname: `${config.urlRoot}/cpms-step-1`,
           query: penaltyDetails,
         }));
     }
   } catch (error) {
-    res.redirect('/?invalidPaymentCode');
+    return res.redirect('/?invalidPaymentCode');
   }
 };
 
