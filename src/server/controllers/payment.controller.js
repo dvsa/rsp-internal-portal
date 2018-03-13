@@ -38,7 +38,7 @@ export const renderPaymentPage = async (req, res) => {
         }));
     }
   } catch (error) {
-    return res.redirect('/?invalidPaymentCode');
+    return res.redirect(`${config.urlRoot}/?invalidPaymentCode`);
   }
 };
 
