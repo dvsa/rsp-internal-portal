@@ -21,7 +21,8 @@ export const index = (req, res) => {
 // Search by payment code or penalty reference
 export const searchPenalty = (req, res) => {
   if (req.body.payment_code) {
-    res.redirect(`payment-code/${req.body.payment_code}`);
+    const normalizedCode = req.body.payment_code.replace(/\W|_/g, '').toLowerCase();
+    res.redirect(`payment-code/${normalizedCode}`);
   } else if (req.body.penalty_ref) {
     res.redirect(`penalty/${req.body.penalty_ref}`);
   } else {
