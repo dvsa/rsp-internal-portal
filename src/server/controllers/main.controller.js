@@ -53,7 +53,11 @@ export const login = (req, res) => {
     authService.requestAccessToken(req.query.code).then((token) => {
       res.cookie('rsp_access', { accessToken: token.access_token, idToken: token.id_token }, { maxAge: token.expires_in * 1000, httpOnly: true });
       res.cookie('rsp_refresh', { refreshToken: token.refresh_token }, { maxAge: 2592000000, httpOnly: true });
+<<<<<<< HEAD
       res.redirect(`${config.urlRoot}/`);
+=======
+      res.redirect('/');
+>>>>>>> Adds user authentication functionality (using authorisation code grant)
     }).catch(() => {
       // Failed to get an access token - Get a new authorization code and try again
       authenticate(req, res);
