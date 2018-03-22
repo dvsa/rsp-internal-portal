@@ -1,4 +1,5 @@
 import CognitoExpress from 'cognito-express';
+import jwtDecode from 'jwt-decode';
 import config from '../config';
 import AuthService from '../services/auth.service';
 
@@ -44,8 +45,12 @@ export default (req, res, next) => {
           res.redirect('/login');
         }
       } else {
-        res.locals = response;
-        // Retrieve user information and store it somewhere...
+        // Get user information from the ID token
+        const userInfo = jwtDecode(req.cookies.rsp_access.idToken);
+
+        // Ensure that user information is available through the application (including views)
+        req.app.set('rsp_user', userInfo);
+
         next();
       }
     });

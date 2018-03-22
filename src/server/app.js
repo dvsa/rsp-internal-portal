@@ -71,7 +71,6 @@ app.use((req, res, next) => {
 });
 
 app.use(cookieParser());
-
 app.use(awsServerlessExpressMiddleware.eventContext());
 app.use('/', routes);
 

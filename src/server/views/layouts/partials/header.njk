@@ -8,6 +8,7 @@
         </a>
       </div>
     </div>
+  {{ components.heading(text='Logged in as '+settings.rsp_user.name, tag='h3', size='small', extraClass='userInfo') }}
 </header>
 
 {% if not hideLayoutPhaseBanner %}
