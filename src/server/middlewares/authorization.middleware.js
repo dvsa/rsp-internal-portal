@@ -18,31 +18,31 @@ export default (req, res, next) => {
     if (req.cookies.rsp_refresh) {
       authService.refreshAccessToken(req.cookies.rsp_refresh.refreshToken).then((token) => {
         res.cookie('rsp_access', { accessToken: token.access_token, idToken: token.id_token }, { maxAge: token.expires_in * 1000, httpOnly: true });
-        res.redirect('/');
+        res.redirect(`${config.urlRoot}/`);
       }).catch(() => {
         // Failed to retrieve new access token with refresh token
         // Clear up the cookies and enforce new login
         res.clearCookie('rsp_access');
         res.clearCookie('rsp_refresh');
-        res.redirect('/login');
+        res.redirect(`${config.urlRoot}/login`);
       });
     } else {
-      res.redirect('/login');
+      res.redirect(`${config.urlRoot}/login`);
     }
   } else {
-    cognitoExpress.validate(req.cookies.rsp_access.accessToken, (err, response) => {
+    cognitoExpress.validate(req.cookies.rsp_access.accessToken, (err) => {
       if (err) {
         if (req.cookies.rsp_refresh) {
           authService.refreshAccessToken(req.cookies.rsp_refresh.refreshToken).then((token) => {
             res.cookie('rsp_access', { accessToken: token.access_token, idToken: token.id_token }, { maxAge: token.expires_in * 1000, httpOnly: true });
-            res.redirect('/');
+            res.redirect(`${config.urlRoot}/`);
           }).catch(() => {
             // Invalid refresh token, enforce new login
-            res.redirect('/logout');
+            res.redirect(`${config.urlRoot}/logout`);
           });
         } else {
           res.clearCookie('rsp_access');
-          res.redirect('/login');
+          res.redirect(`${config.urlRoot}/login`);
         }
       } else {
         // Get user information from the ID token
