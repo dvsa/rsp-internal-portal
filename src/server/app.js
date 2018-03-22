@@ -71,10 +71,6 @@ app.use((req, res, next) => {
 });
 
 app.use(cookieParser());
-<<<<<<< HEAD
-=======
-
->>>>>>> Adds user authentication functionality (using authorisation code grant)
 app.use(awsServerlessExpressMiddleware.eventContext());
 app.use('/', routes);
 
