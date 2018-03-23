@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import AuthService from '../services/auth.service';
 import config from '../config';
 
@@ -12,26 +13,60 @@ export const robots = (req, res) => {
 // Index Route
 export const index = (req, res) => {
   const invalidPaymentCode = Object.keys(req.query).some(param => param === 'invalidPaymentCode');
-  const invalidPenaltyReference = Object.keys(req.query).some(param => param === 'invalidPenaltyReference');
+  const invalidCDN = Object.keys(req.query).some(param => param === 'invalidCDN');
+  const invalidFPN = Object.keys(req.query).some(param => param === 'invalidFPN');
+  const invalidIM = Object.keys(req.query).some(param => param === 'invalidIM');
+
   const viewData = {
     invalidPaymentCode,
-    invalidPenaltyReference,
-    invalid: invalidPaymentCode || invalidPenaltyReference,
+    invalidCDN,
+    invalidFPN,
+    invalidIM,
+    invalid: invalidPaymentCode || invalidCDN || invalidFPN
+      || invalidIM,
     input: invalidPaymentCode ? 'payment code' : 'penalty reference',
   };
 
   res.render('main/index', viewData);
 };
 
+const getSearchDetails = (form) => {
+  // Clean up empty properties
+  const search = _.omitBy(form, _.isEmpty);
+  const isSearchByCode = search['search-by-payment-code'] === 'true';
+  let value;
+  let penaltyType;
+
+  if (isSearchByCode) {
+    value = search.payment_code.replace(/\W|_/g, '').toLowerCase();
+  } else {
+    // Get the penalty type
+    const key = Object.keys(search).filter(prop => prop.match(/^penalty_ref.+/)).pop();
+    penaltyType = key.split('_').pop();
+
+    // Infer penalty ID from penalty reference and penalty Type
+    // penalty ID = penaltyReference_penaltyType
+    // Immobilisation references need to be parsed so that they don't
+    // contain separators and use padding (with zeros) instead
+    if (penaltyType === 'IM') {
+      const sections = search[key].split('-');
+      value = `${_.padStart(sections[0], 6, 0)}${sections[1]}${_.padStart(sections[2], 6, 0)}_${penaltyType}`;
+    } else {
+      value = `${search[key]}_${penaltyType}`;
+    }
+  }
+
+  return { isSearchByCode, value };
+};
+
 // Search by payment code or penalty reference
 export const searchPenalty = (req, res) => {
-  if (req.body.payment_code) {
-    const normalizedCode = req.body.payment_code.replace(/\W|_/g, '').toLowerCase();
-    res.redirect(`payment-code/${normalizedCode}`);
-  } else if (req.body.penalty_ref) {
-    res.redirect(`penalty/${req.body.penalty_ref}`);
+  const searchDetails = getSearchDetails(req.body);
+
+  if (searchDetails.isSearchByCode) {
+    res.redirect(`payment-code/${searchDetails.value}`);
   } else {
-    res.render('main/index', { invalidRequest: true });
+    res.redirect(`penalty/${searchDetails.value}`);
   }
 };
 

@@ -10,7 +10,7 @@ const getPenaltyDetails = (req) => {
   if (req.params.payment_code) {
     return penaltyService.getByPaymentCode(req.params.payment_code);
   }
-  return penaltyService.getByReference(req.params.penalty_ref);
+  return penaltyService.getById(req.params.penalty_id);
 };
 
 export const renderPaymentPage = async (req, res) => {

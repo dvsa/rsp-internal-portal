@@ -13,16 +13,17 @@ export const getPenaltyDetails = [
   validatePenaltyReference,
   (req, res) => {
     const errors = validationResult(req);
+    const penaltyType = req.params.penalty_id.split('_').pop();
 
     if (!errors.isEmpty()) {
-      res.redirect('../?invalidPenaltyReference');
+      res.redirect(`../?invalid${penaltyType}`);
     } else {
-      const penaltyReference = req.params.penalty_ref;
+      const penaltyId = req.params.penalty_id;
 
-      penaltyService.getByReference(penaltyReference).then((details) => {
+      penaltyService.getById(penaltyId).then((details) => {
         res.render('penalty/penaltyDetails', details);
       }).catch(() => {
-        res.redirect('../?invalidPenaltyReference');
+        res.redirect(`../?invalid${penaltyType}`);
       });
     }
   },

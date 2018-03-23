@@ -25,21 +25,53 @@
       <form action="{{ urlroot }}/" method="POST">
       <div class="form-group">
         <fieldset>
-          <div class="multiple-choice" data-target="search-penalty-ref">
-            <input id="search-by-penalty-ref" type="radio" name="search-by-payment-code" value='false' {% if invalidPenaltyReference or invalid == false %} checked {% endif %}>
-            <label class="{{ 'error' if invalidPenaltyReference }}" for="search-by-penalty-ref"><strong>Penalty reference</strong></label>
+        <!-- Fixed Penalty -->
+          <div class="multiple-choice" data-target="search-fixed-penalty">
+            <input id="search-by-penalty-ref" type="radio" name="search-by-payment-code" value='false' {% if invalidFPN or invalid == false %} checked {% endif %}>
+            <label class="{{ 'error' if invalidFPN }}" for="search-by-penalty-ref"><strong>Fixed penalty</strong></label>
           </div>
-          <div class="panel panel-border-narrow js-hidden {{ 'form-group-error' if invalidPenaltyReference }}" id="search-penalty-ref">
-            <label class="form-label" for="penalty_ref">
-            {% if invalidPenaltyReference %}
-              <span class="error-message">Enter a valid penalty reference</span>
+          <div class="panel panel-border-narrow js-hidden {{ 'form-group-error' if invalidFPN }}" id="search-fixed-penalty">
+            <label class="form-label" for="penalty_ref_FPN">
+            {% if invalidFPN %}
+              <span class="error-message">Enter a valid fixed penalty reference</span>
             {% else %}
-              Penalty reference number
+              For example, '7862788768788'
             {% endif %}
             </label>
-            <input class="form-control {{ 'form-control-error' if invalidPenaltyReference }}" name="penalty_ref" type="text" id="penalty_ref" maxlength="18">
+            <input class="form-control {{ 'form-control-error' if invalidFPN }}" name="penalty_ref_FPN" type="text" id="penalty_ref_FPN" maxlength="18">
           </div>
-                    <div class="multiple-choice" data-target="search-payment-code">
+        <!-- Immobilisation -->
+          <div class="multiple-choice" data-target="search-immobilisation">
+            <input id="search-by-penalty-ref-IM" type="radio" name="search-by-payment-code" value='false' {% if invalidIM %} checked {% endif %}>
+            <label class="{{ 'error' if invalidIM }}" for="search-by-penalty-ref-IM"><strong>Immobilisation</strong></label>
+          </div>
+          <div class="panel panel-border-narrow js-hidden {{ 'form-group-error' if invalidIM }}" id="search-immobilisation">
+            <label class="form-label" for="penalty_ref_IM">
+            {% if invalidIM %}
+              <span class="error-message">Enter a valid immobilisation reference</span>
+            {% else %}
+              For example, '2500-1-5109-IM'
+            {% endif %}
+            </label>
+            <input class="form-control {{ 'form-control-error' if invalidIM }}" name="penalty_ref_IM" type="text" id="penalty_ref_IM" maxlength="18">
+          </div>
+          <!-- Court Deposit -->
+          <div class="multiple-choice" data-target="search-court-deposit">
+            <input id="search-by-penalty-ref-CDN" type="radio" name="search-by-payment-code" value='false' {% if invalidCDN %} checked {% endif %}>
+            <label class="{{ 'error' if invalidCDN }}" for="search-by-penalty-ref-CDN"><strong>Court deposit</strong></label>
+          </div>
+          <div class="panel panel-border-narrow js-hidden {{ 'form-group-error' if invalidCDN }}" id="search-court-deposit">
+            <label class="form-label" for="penalty_ref_FPN">
+            {% if invalidCDN %}
+              <span class="error-message">Enter a valid court deposit reference</span>
+            {% else %}
+              For example, '546354976356'
+            {% endif %}
+            </label>
+            <input class="form-control {{ 'form-control-error' if invalidCDN }}" name="penalty_ref_CDN" type="text" id="penalty_ref_CDN" maxlength="18">
+          </div>
+          <!-- Payment Code -->
+          <div class="multiple-choice" data-target="search-payment-code">
             <input id="search-by-payment-code" type="radio" name="search-by-payment-code" value='true' {% if invalidPaymentCode %} checked {% endif %}>
             <label class="{{ 'error' if invalidPaymentCode }}" for="search-by-payment-code"><strong>Payment code</strong></label>
           </div>
