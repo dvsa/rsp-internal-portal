@@ -80,7 +80,7 @@
             {% if invalidPaymentCode %}
               <span class="error-message">Enter a valid payment code</span>
             {% else %}
-              Payment code
+              For example, '656b8c69cef1cdf4'
             {% endif %}
             </label>
             <input class="form-control {{ 'form-control-error' if invalidPaymentCode }}" name="payment_code" type="text" id="payment_code" maxlength="19">
