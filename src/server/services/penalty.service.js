@@ -57,9 +57,9 @@ export default class PenaltyService {
     return promise;
   }
 
-  getByReference(referenceNumber) {
+  getById(penaltyId) {
     const promise = new Promise((resolve, reject) => {
-      this.httpClient.get(`${referenceNumber}`).then((response) => {
+      this.httpClient.get(`${penaltyId}`).then((response) => {
         if (isEmpty(response.data)) {
           reject(new Error('Penalty reference not found'));
         }

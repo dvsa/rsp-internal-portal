@@ -23,8 +23,8 @@ router.get('/payment-code/:payment_code', paymentCodeController.getPenaltyDetail
 router.get('/payment-code/:payment_code/payment', paymentCodeController.validatePaymentCode, paymentController.renderPaymentPage);
 router.post('/payment-code/:payment_code/payment', paymentController.makePayment);
 // Get Penalty details given a penalty reference
-router.get('/penalty/:penalty_ref', penaltyController.getPenaltyDetails);
-router.get('/penalty/:penalty_ref/payment', paymentController.renderPaymentPage);
+router.get('/penalty/:penalty_id', penaltyController.getPenaltyDetails);
+router.get('/penalty/:penalty_id/payment', paymentController.renderPaymentPage);
 
 // Mocked CMPS screens
 router.get('/cpms-step-1', cpmsController.step1);
