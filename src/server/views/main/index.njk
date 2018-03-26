@@ -27,7 +27,7 @@
         <fieldset>
         <!-- Fixed Penalty -->
           <div class="multiple-choice" data-target="search-fixed-penalty">
-            <input id="search-by-penalty-ref" type="radio" name="search-by-payment-code" value='false' {% if invalidFPN or invalid == false %} checked {% endif %}>
+            <input id="search-by-penalty-ref" type="radio" name="search-by" value='FPN' {% if invalidFPN or invalid == false %} checked {% endif %}>
             <label class="{{ 'error' if invalidFPN }}" for="search-by-penalty-ref"><strong>Fixed penalty</strong></label>
           </div>
           <div class="panel panel-border-narrow js-hidden {{ 'form-group-error' if invalidFPN }}" id="search-fixed-penalty">
@@ -42,7 +42,7 @@
           </div>
         <!-- Immobilisation -->
           <div class="multiple-choice" data-target="search-immobilisation">
-            <input id="search-by-penalty-ref-IM" type="radio" name="search-by-payment-code" value='false' {% if invalidIM %} checked {% endif %}>
+            <input id="search-by-penalty-ref-IM" type="radio" name="search-by" value='IM' {% if invalidIM %} checked {% endif %}>
             <label class="{{ 'error' if invalidIM }}" for="search-by-penalty-ref-IM"><strong>Immobilisation</strong></label>
           </div>
           <div class="panel panel-border-narrow js-hidden {{ 'form-group-error' if invalidIM }}" id="search-immobilisation">
@@ -57,7 +57,7 @@
           </div>
           <!-- Court Deposit -->
           <div class="multiple-choice" data-target="search-court-deposit">
-            <input id="search-by-penalty-ref-CDN" type="radio" name="search-by-payment-code" value='false' {% if invalidCDN %} checked {% endif %}>
+            <input id="search-by-penalty-ref-CDN" type="radio" name="search-by" value='CDN' {% if invalidCDN %} checked {% endif %}>
             <label class="{{ 'error' if invalidCDN }}" for="search-by-penalty-ref-CDN"><strong>Court deposit</strong></label>
           </div>
           <div class="panel panel-border-narrow js-hidden {{ 'form-group-error' if invalidCDN }}" id="search-court-deposit">
@@ -72,7 +72,7 @@
           </div>
           <!-- Payment Code -->
           <div class="multiple-choice" data-target="search-payment-code">
-            <input id="search-by-payment-code" type="radio" name="search-by-payment-code" value='true' {% if invalidPaymentCode %} checked {% endif %}>
+            <input id="search-by-payment-code" type="radio" name="search-by" value='code' {% if invalidPaymentCode %} checked {% endif %}>
             <label class="{{ 'error' if invalidPaymentCode }}" for="search-by-payment-code"><strong>Payment code</strong></label>
           </div>
           <div class="panel panel-border-narrow js-hidden {{ 'form-group-error' if invalidPaymentCode }}" id="search-payment-code">

@@ -33,7 +33,8 @@ export const index = (req, res) => {
 const getSearchDetails = (form) => {
   // Clean up empty properties
   const search = _.omitBy(form, _.isEmpty);
-  const isSearchByCode = search['search-by-payment-code'] === 'true';
+
+  const isSearchByCode = search['search-by'] === 'code';
   let value;
   let penaltyType;
 
@@ -41,8 +42,8 @@ const getSearchDetails = (form) => {
     value = search.payment_code.replace(/\W|_/g, '').toLowerCase();
   } else {
     // Get the penalty type
-    const key = Object.keys(search).filter(prop => prop.match(/^penalty_ref.+/)).pop();
-    penaltyType = key.split('_').pop();
+    const key = `penalty_ref_${search['search-by']}`;
+    penaltyType = search['search-by'];
 
     // Infer penalty ID from penalty reference and penalty Type
     // penalty ID = penaltyReference_penaltyType
