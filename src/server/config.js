@@ -25,6 +25,11 @@ const clientId = process.env.CLIENT_ID || 'client';
 const clientSecret = process.env.CLIENT_SECRET || 'secret';
 const penaltyServiceUrl = process.env.PENALTY_SERVICE_URL;
 const paymentServiceUrl = process.env.PAYMENT_SERVICE_URL;
+const identityProvider = process.env.IDENTITY_PROVIDER;
+const redirectUri = process.env.REDIRECT_URI;
+const region = process.env.REGION;
+const userPoolId = process.env.COGNITO_USERPOOL_ID;
+const cognitoUrl = process.env.COGNITO_URL;
 
 const config = {
   env,
@@ -37,6 +42,11 @@ const config = {
   urlRoot,
   penaltyServiceUrl,
   paymentServiceUrl,
+  cognitoUrl,
+  identityProvider,
+  redirectUri,
+  region,
+  userPoolId,
 };
 
 export default config;

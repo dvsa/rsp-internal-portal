@@ -1,5 +1,5 @@
 import { Router } from 'express';
-
+import authorizationMiddleware from './middlewares/authorization.middleware';
 import * as mainController from './controllers/main.controller';
 import * as paymentCodeController from './controllers/paymentCode.controller';
 import * as paymentController from './controllers/payment.controller';
@@ -11,8 +11,12 @@ const router = Router();
 router.get('/robots.txt', mainController.robots);
 
 // Search Page
-router.get('/', mainController.index);
-router.post('/', mainController.searchPenalty);
+router.get('/', authorizationMiddleware, mainController.index);
+router.post('/', authorizationMiddleware, mainController.searchPenalty);
+
+router.get('/login', mainController.login);
+router.post('/login', mainController.authenticate);
+router.get('/logout', mainController.logout);
 
 // Get Penalty details given a payment code
 router.get('/payment-code/:payment_code', paymentCodeController.getPenaltyDetails);

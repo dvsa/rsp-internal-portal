@@ -1,10 +1,8 @@
 import axios from 'axios';
 
-const createInstance = baseURL => axios.create({
+const createInstance = (baseURL, headers = { Authorization: 'allow' }) => axios.create({
   baseURL,
-  headers: {
-    Authorization: 'allow',
-  },
+  headers,
 });
 
 export default createInstance;

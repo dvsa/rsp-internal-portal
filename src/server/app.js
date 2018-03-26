@@ -11,6 +11,7 @@ import walkSync from 'walk-sync';
 import resolvePath from 'resolve-path';
 import validator from 'express-validator';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import routes from './routes';
 import config from './config';
 
@@ -68,9 +69,10 @@ app.use((req, res, next) => {
   });
   next();
 });
+
+app.use(cookieParser());
 app.use(awsServerlessExpressMiddleware.eventContext());
 app.use('/', routes);
 
 app.use(errorhandler());
-
 export default app;

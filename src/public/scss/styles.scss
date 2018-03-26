@@ -54,6 +54,14 @@ table.details {
   color: #00823B;
 }
 
+.userInfo {
+  color: white;
+  float: right;
+  font-weight: normal;
+  margin-top: 0.625em;
+  margin-right: 15px;
+}
+
 // Hide side-bar on mobile
 @media (max-width : 480px) {
   .govuk-related-items {
