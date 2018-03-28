@@ -42,7 +42,7 @@ export default (req, res, next) => {
           });
         } else {
           res.clearCookie('rsp_access');
-          res.redirect(`${config.urlRoot}/login`);
+          return res.redirect(`${config.urlRoot}/login`);
         }
       } else {
         // Get user information from the ID token
@@ -57,9 +57,8 @@ export default (req, res, next) => {
           }
           return next();
         }
-        // User doesn't have any role, forbid access
-        return res.sendStatus(403);
       }
+      return res.sendStatus(403);
     });
   }
 };
