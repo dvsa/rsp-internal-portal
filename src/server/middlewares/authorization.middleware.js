@@ -4,7 +4,7 @@ import config from '../config';
 import AuthService from '../services/auth.service';
 
 const authService = new AuthService(config.cognitoUrl);
-
+const authorizedRoles = ['user', 'admin'];
 const cognitoExpress = new CognitoExpress({
   region: config.region,
   cognitoUserPoolId: config.userPoolId,
@@ -42,17 +42,23 @@ export default (req, res, next) => {
           });
         } else {
           res.clearCookie('rsp_access');
-          res.redirect(`${config.urlRoot}/login`);
+          return res.redirect(`${config.urlRoot}/login`);
         }
       } else {
         // Get user information from the ID token
         const userInfo = jwtDecode(req.cookies.rsp_access.idToken);
-
-        // Ensure that user information is available through the application (including views)
-        req.app.set('rsp_user', userInfo);
-
-        next();
+        if (userInfo['custom:Role']) {
+          if (authorizedRoles.some(item => item === userInfo['custom:Role'].toLowerCase())) {
+            // Ensure that user information is available through the application (including views)
+            req.app.set('rsp_user', userInfo);
+          } else {
+            // User doesn't have an authorized role, forbid access
+            return res.sendStatus(403);
+          }
+          return next();
+        }
       }
+      return res.sendStatus(403);
     });
   }
 };
