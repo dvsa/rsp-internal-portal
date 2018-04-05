@@ -1,16 +1,127 @@
-import { format } from 'url';
 import PaymentService from './../services/payment.service';
 import PenaltyService from './../services/penalty.service';
+import CpmsService from './../services/cpms.service';
 import config from './../config';
+import logger from './../utils/logger';
 
 const paymentService = new PaymentService(config.paymentServiceUrl);
 const penaltyService = new PenaltyService(config.penaltyServiceUrl);
+const cpmsService = new CpmsService(config.cpmsServiceUrl);
 
 const getPenaltyDetails = (req) => {
   if (req.params.payment_code) {
     return penaltyService.getByPaymentCode(req.params.payment_code);
   }
   return penaltyService.getById(req.params.penalty_id);
+};
+
+export const makePayment = async (req, res) => {
+  if (!req.body.paymentType) {
+    logger.warn('Missing payment type');
+    return res.redirect(`${config.urlRoot}/payment-code/${req.params.payment_code}`);
+  }
+  const details = { ...req.body };
+  logger.info(details);
+
+  try {
+    const penaltyDetails = await getPenaltyDetails(req);
+
+    switch (req.body.paymentType) {
+      case 'cash':
+        return cpmsService.createCashTransaction(
+          penaltyDetails.vehicleReg,
+          penaltyDetails.reference,
+          penaltyDetails.type,
+          penaltyDetails.amount,
+          details.slipNumber,
+        ).then((response) => {
+          const paymentDetails = {
+            PenaltyStatus: 'PAID',
+            PenaltyType: penaltyDetails.type,
+            PenaltyReference: penaltyDetails.reference,
+            PaymentDetail: {
+              PaymentRef: response.data.receipt_reference,
+              AuthCode: 'n/a',
+              PaymentAmount: penaltyDetails.amount,
+              PaymentDate: Math.round((new Date()).getTime() / 1000),
+            },
+          };
+          paymentService.makePayment(paymentDetails)
+            .then(() => res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`))
+            .catch((error) => {
+              logger.error(error);
+              return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+            });
+        }).catch((error) => {
+          logger.error(error);
+          res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+        });
+      case 'cheque':
+        return cpmsService.createChequeTransaction(
+          penaltyDetails.vehicleReg,
+          penaltyDetails.reference,
+          penaltyDetails.type,
+          penaltyDetails.amount,
+          details.slipNumber,
+          details.chequeDate,
+          details.chequeNumber,
+          details.nameOnCheque,
+        ).then((response) => {
+          const paymentDetails = {
+            PenaltyStatus: 'PAID',
+            PenaltyType: penaltyDetails.type,
+            PenaltyReference: penaltyDetails.reference,
+            PaymentDetail: {
+              PaymentRef: response.data.receipt_reference,
+              PaymentAmount: penaltyDetails.amount,
+              PaymentDate: Math.round((new Date()).getTime() / 1000),
+            },
+          };
+          paymentService.makePayment(paymentDetails)
+            .then(() => res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`))
+            .catch((error) => {
+              logger.error(error);
+              return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+            });
+        }).catch((error) => {
+          logger.error(error);
+          res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+        });
+      case 'postal':
+        return cpmsService.createPostalOrderTransaction(
+          penaltyDetails.vehicleReg,
+          penaltyDetails.reference,
+          penaltyDetails.type,
+          penaltyDetails.amount,
+          details.slipNumber,
+          details.postalOrderNumber,
+        ).then((response) => {
+          const paymentDetails = {
+            PenaltyStatus: 'PAID',
+            PenaltyType: penaltyDetails.type,
+            PenaltyReference: penaltyDetails.reference,
+            PaymentDetail: {
+              PaymentRef: response.data.receipt_reference,
+              PaymentAmount: penaltyDetails.amount,
+              PaymentDate: Math.round((new Date()).getTime() / 1000),
+            },
+          };
+          paymentService.makePayment(paymentDetails)
+            .then(() => res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`))
+            .catch((error) => {
+              logger.error(error);
+              return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+            });
+        }).catch((error) => {
+          logger.error(error);
+          res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+        });
+      default: return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+    }
+  } catch (error) {
+    logger.error(error);
+    return res.redirect(`${config.urlRoot}/?invalidPaymentCode`);
+  }
 };
 
 export const renderPaymentPage = async (req, res) => {
@@ -24,39 +135,60 @@ export const renderPaymentPage = async (req, res) => {
     }
     // Payment Type is expected to come from the query string, otherwise the default is used
     const paymentType = req.query.paymentType ? req.query.paymentType : 'card';
+    const redirectUrl = `https://${req.get('host')}${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}/confirmPayment`;
 
     switch (paymentType) {
       case 'cash':
         return res.render('payment/cash', penaltyDetails);
       case 'cheque':
+        return res.render('payment/cheque', penaltyDetails);
       case 'postal':
-        return res.render('payment/cheque', { ...penaltyDetails, paymentType });
+        return res.render('payment/postal', penaltyDetails);
       default:
-        return res.redirect(format({
-          pathname: `${config.urlRoot}/cpms-step-1`,
-          query: penaltyDetails,
-        }));
+        return cpmsService.createCardNotPresentTransaction(
+          penaltyDetails.vehicleReg,
+          penaltyDetails.reference,
+          penaltyDetails.type,
+          penaltyDetails.amount,
+          redirectUrl,
+        ).then(response => res.redirect(response.data.gateway_url))
+          .catch((error) => {
+            logger.error(error);
+            res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+          });
     }
   } catch (error) {
     return res.redirect(`${config.urlRoot}/?invalidPaymentCode`);
   }
 };
 
-export const makePayment = (req, res) => {
-  const details = {
-    PenaltyStatus: 'PAID',
-    PenaltyType: req.body.type,
-    PenaltyReference: req.body.reference,
-    PaymentDetail: {
-      PaymentRef: '12345678',
-      AuthCode: '1234TBD',
-      PaymentAmount: req.body.amount,
-      PaymentDate: Math.round((new Date()).getTime() / 1000),
-    },
-  };
+export const confirmPayment = async (req, res) => {
+  const receiptReference = req.query.receipt_reference;
+  let penaltyDetails;
 
-  paymentService.makePayment(details).then(() => {
-    res.redirect(`${config.urlRoot}/payment-code/${req.body.paymentCode}`);
-  }).catch(() => res.redirect('back')); // TODO: Add appropriate error page and/or logging
+  try {
+    penaltyDetails = await getPenaltyDetails(req);
+    cpmsService.confirmPayment(receiptReference, penaltyDetails.type).then((response) => {
+      if (response.data.code === 801) {
+        // Payment successful
+        const details = {
+          PenaltyStatus: 'PAID',
+          PenaltyType: penaltyDetails.type,
+          PenaltyReference: penaltyDetails.reference,
+          PaymentDetail: {
+            PaymentRef: response.data.receipt_reference,
+            AuthCode: response.data.auth_code,
+            PaymentAmount: penaltyDetails.amount,
+            PaymentDate: Math.round((new Date()).getTime() / 1000),
+          },
+        };
+        paymentService.makePayment(details).then(() => res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`))
+          .catch(() => res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`));
+      } else {
+        res.render('payment/failedPayment');
+      }
+    }).catch(() => res.render('payment/failedPayment'));
+  } catch (error) {
+    res.redirect(`${config.urlRoot}/?invalidPaymentCode`);
+  }
 };
-

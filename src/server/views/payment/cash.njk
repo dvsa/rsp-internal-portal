@@ -58,6 +58,7 @@
 						<input type="hidden" name="type" value="{{ type }}">
 						<input type="hidden" name="amount" value="{{ amount }}">
 						<input type="hidden" name="paymentCode" value="{{ paymentCode }}">
+						<input type="hidden" name="paymentType" value="cash">
 
           {{ components.heading(text="Payment details ", tag="h3", size="medium") }}
          <p>{{ components.field(id="slipNumber", type="number", label="Paying in slip number", required=true) }}</p>

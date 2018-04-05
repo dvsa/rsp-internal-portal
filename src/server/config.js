@@ -30,6 +30,7 @@ const redirectUri = process.env.REDIRECT_URI;
 const region = process.env.REGION;
 const userPoolId = process.env.COGNITO_USERPOOL_ID;
 const cognitoUrl = process.env.COGNITO_URL;
+const cpmsServiceUrl = process.env.CPMS_SERVICE_URL;
 
 const config = {
   env,
@@ -47,6 +48,7 @@ const config = {
   redirectUri,
   region,
   userPoolId,
+  cpmsServiceUrl,
 };
 
 export default config;
