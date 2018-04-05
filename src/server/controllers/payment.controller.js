@@ -185,6 +185,7 @@ export const confirmPayment = async (req, res) => {
         paymentService.makePayment(details).then(() => res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`))
           .catch(() => res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`));
       } else {
+        logger.warn(response.data);
         res.render('payment/failedPayment');
       }
     }).catch(() => res.render('payment/failedPayment'));
