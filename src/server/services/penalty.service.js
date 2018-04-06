@@ -39,6 +39,7 @@ export default class PenaltyService {
       typeDescription: PenaltyService.getPenaltyTypeDescription(rawPenalty.penaltyType),
       paymentDate: rawPenalty.paymentDate ? moment.unix(rawPenalty.paymentDate).format('DD/MM/YYYY') : undefined,
       paymentAuthCode: rawPenalty.paymentAuthCode,
+      paymentRef: rawPenalty.paymentRef,
     };
     return penaltyDetails;
   }

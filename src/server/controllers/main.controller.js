@@ -63,7 +63,6 @@ const getSearchDetails = (form) => {
 // Search by payment code or penalty reference
 export const searchPenalty = (req, res) => {
   const searchDetails = getSearchDetails(req.body);
-
   if (searchDetails.isSearchByCode) {
     res.redirect(`payment-code/${searchDetails.value}`);
   } else {
