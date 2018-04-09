@@ -67,4 +67,20 @@ export default class PaymentService {
       penalty_type: penaltyType,
     }));
   }
+
+  reverseCardPayment(receiptReference, penaltyType, penaltyId) {
+    return this.httpClient.post('reverseCard/', JSON.stringify({
+      receipt_reference: receiptReference,
+      penalty_type: penaltyType,
+      payment_ref: penaltyId,
+    }));
+  }
+
+  reverseChequePayment(receiptReference, penaltyType, penaltyId) {
+    return this.httpClient.post('reverseCheque/', JSON.stringify({
+      receipt_reference: receiptReference,
+      penalty_type: penaltyType,
+      payment_ref: penaltyId,
+    }));
+  }
 }

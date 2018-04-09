@@ -8,4 +8,8 @@ export default class PaymentService {
   makePayment(details) {
     return this.httpClient.post('payments/', details);
   }
+
+  reversePayment(details) {
+    return this.httpClient.put('payments/', details);
+  }
 }

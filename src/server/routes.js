@@ -22,6 +22,7 @@ router.get('/payment-code/:payment_code', paymentCodeController.getPenaltyDetail
 router.get('/payment-code/:payment_code/payment', paymentCodeController.validatePaymentCode, paymentController.renderPaymentPage);
 router.post('/payment-code/:payment_code/payment', paymentCodeController.validatePaymentCode, paymentController.makePayment);
 router.get('/payment-code/:payment_code/confirmPayment', paymentController.confirmPayment);
+router.post('/payment-code/:payment_code/reversePayment', paymentController.reversePayment);
 
 // Get Penalty details given a penalty reference
 router.get('/penalty/:penalty_id', penaltyController.getPenaltyDetails);
