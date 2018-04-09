@@ -53,12 +53,12 @@ export default (req, res, next) => {
             req.app.set('rsp_user', userInfo);
           } else {
             // User doesn't have an authorized role, forbid access
-            return res.sendStatus(403);
+            return res.render('main/forbidden');
           }
           return next();
         }
       }
-      return res.sendStatus(403);
+      return res.render('main/forbidden');
     });
   }
 };
