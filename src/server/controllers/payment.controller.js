@@ -216,7 +216,7 @@ export const reversePayment = async (req, res) => {
             paymentService.reversePayment(penaltyId).then((response) => {
               logger.info(response);
               return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
-            }).catch(error => {
+            }).catch((error) => {
               logger.error(error);
               return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
             });
@@ -231,7 +231,7 @@ export const reversePayment = async (req, res) => {
             paymentService.reversePayment(penaltyId).then((response) => {
               logger.info(response);
               return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
-            }).catch(error => {
+            }).catch((error) => {
               logger.error(error);
               return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
             });
@@ -239,14 +239,14 @@ export const reversePayment = async (req, res) => {
             logger.error(error);
             return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
           });
-      break;
+        break;
       // Postal orders and cash reversals are not handled by CPMS
-      case 'POSTAL':          
+      case 'POSTAL':
       case 'CASH':
         paymentService.reversePayment(penaltyId).then((response) => {
           logger.info(response);
           return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
-        }).catch(error => {
+        }).catch((error) => {
           logger.error(error);
           return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
         });
@@ -257,6 +257,7 @@ export const reversePayment = async (req, res) => {
     }
   } catch (error) {
     logger.warn(error);
-    return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+    return res.redirect(`${config.urlRoot}/?invalidPaymentCode`);
   }
+  return true;
 };
