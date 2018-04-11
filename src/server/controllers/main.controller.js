@@ -39,7 +39,7 @@ const getSearchDetails = (form) => {
   let penaltyType;
 
   if (isSearchByCode) {
-    value = search.payment_code.replace(/\W|_/g, '').toLowerCase();
+    value = search.payment_code ? search.payment_code.replace(/\W|_/g, '').toLowerCase() : null;
   } else {
     // Get the penalty type
     const key = `penalty_ref_${search['search-by']}`;
@@ -50,8 +50,8 @@ const getSearchDetails = (form) => {
     // Immobilisation references need to be parsed so that they don't
     // contain separators and use padding (with zeros) instead
     if (penaltyType === 'IM') {
-      const sections = search[key].split('-');
-      value = `${_.padStart(sections[0], 6, 0)}${sections[1]}${_.padStart(sections[2], 6, 0)}_${penaltyType}`;
+      const sections = search[key] ? search[key].split('-') : null;
+      value = sections ? `${_.padStart(sections[0], 6, 0)}${sections[1]}${_.padStart(sections[2], 6, 0)}_${penaltyType}` : '_IM';
     } else {
       value = `${search[key]}_${penaltyType}`;
     }
