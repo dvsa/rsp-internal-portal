@@ -86,7 +86,9 @@
           </table>
         </p>
         {{ components.button(text='Pay another penalty', url='/') }}
-        {{ components.button(text='Reverse payment', url='/') }}
+        {% call components.form(action='/payment-code/'+paymentCode+'/reversePayment', method='POST', class='right')  %}
+          {{ components.button(text='Reverse payment', type='submit', secondary='true') }}
+        {%- endcall %}
         {% else %}
           {% call components.form(action='/payment-code/'+paymentCode+'/payment', method='GET')  %}
             {% call components.formGroup() %}

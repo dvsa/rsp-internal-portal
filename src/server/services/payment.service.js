@@ -9,7 +9,7 @@ export default class PaymentService {
     return this.httpClient.post('payments/', details);
   }
 
-  reversePayment(details) {
-    return this.httpClient.put('payments/', details);
+  reversePayment(paymentId) {
+    return this.httpClient.delete(`payments/${paymentId}`);
   }
 }
