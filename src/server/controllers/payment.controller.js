@@ -42,7 +42,6 @@ export const makePayment = async (req, res) => {
             PaymentDetail: {
               PaymentMethod: req.body.paymentType.toUpperCase(),
               PaymentRef: response.data.receipt_reference,
-              AuthCode: 'n/a',
               PaymentAmount: penaltyDetails.amount,
               PaymentDate: Math.round((new Date()).getTime() / 1000),
             },
@@ -99,11 +98,11 @@ export const makePayment = async (req, res) => {
           details.postalOrderNumber,
         ).then((response) => {
           const paymentDetails = {
-            PaymentMethod: req.body.paymentType.toUpperCase(),
             PenaltyStatus: 'PAID',
             PenaltyType: penaltyDetails.type,
             PenaltyReference: penaltyDetails.reference,
             PaymentDetail: {
+              PaymentMethod: req.body.paymentType.toUpperCase(),
               PaymentRef: response.data.receipt_reference,
               PaymentAmount: penaltyDetails.amount,
               PaymentDate: Math.round((new Date()).getTime() / 1000),
@@ -179,6 +178,7 @@ export const confirmPayment = async (req, res) => {
           PenaltyType: penaltyDetails.type,
           PenaltyReference: penaltyDetails.reference,
           PaymentDetail: {
+            PaymentMethod: 'CARD',
             PaymentRef: response.data.receipt_reference,
             AuthCode: response.data.auth_code,
             PaymentAmount: penaltyDetails.amount,
