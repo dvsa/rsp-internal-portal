@@ -54,6 +54,21 @@ table.details {
   color: #00823B;
 }
 
+.secondary-button {
+  background-color: #bfc1c3;
+  color: #0b0c0c;
+  -webkit-box-shadow: 0 2px 0 #6f777b;
+  box-shadow: 0 2px 0 #6f777b;
+}
+
+.secondary-button:hover {
+  background-color: #454A4C;
+}
+
+.right {
+  float: right; 
+}
+
 .userInfo {
   color: white;
   float: right;
@@ -76,6 +91,8 @@ table.details {
     }
   }
 }
+
+
 
 
 

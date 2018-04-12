@@ -40,8 +40,8 @@ export const makePayment = async (req, res) => {
             PenaltyType: penaltyDetails.type,
             PenaltyReference: penaltyDetails.reference,
             PaymentDetail: {
+              PaymentMethod: req.body.paymentType.toUpperCase(),
               PaymentRef: response.data.receipt_reference,
-              AuthCode: 'n/a',
               PaymentAmount: penaltyDetails.amount,
               PaymentDate: Math.round((new Date()).getTime() / 1000),
             },
@@ -72,6 +72,7 @@ export const makePayment = async (req, res) => {
             PenaltyType: penaltyDetails.type,
             PenaltyReference: penaltyDetails.reference,
             PaymentDetail: {
+              PaymentMethod: req.body.paymentType.toUpperCase(),
               PaymentRef: response.data.receipt_reference,
               PaymentAmount: penaltyDetails.amount,
               PaymentDate: Math.round((new Date()).getTime() / 1000),
@@ -101,6 +102,7 @@ export const makePayment = async (req, res) => {
             PenaltyType: penaltyDetails.type,
             PenaltyReference: penaltyDetails.reference,
             PaymentDetail: {
+              PaymentMethod: req.body.paymentType.toUpperCase(),
               PaymentRef: response.data.receipt_reference,
               PaymentAmount: penaltyDetails.amount,
               PaymentDate: Math.round((new Date()).getTime() / 1000),
@@ -176,6 +178,7 @@ export const confirmPayment = async (req, res) => {
           PenaltyType: penaltyDetails.type,
           PenaltyReference: penaltyDetails.reference,
           PaymentDetail: {
+            PaymentMethod: 'CARD',
             PaymentRef: response.data.receipt_reference,
             AuthCode: response.data.auth_code,
             PaymentAmount: penaltyDetails.amount,
@@ -192,4 +195,69 @@ export const confirmPayment = async (req, res) => {
   } catch (error) {
     res.redirect(`${config.urlRoot}/?invalidPaymentCode`);
   }
+};
+
+export const reversePayment = async (req, res) => {
+  // Get penalty details
+  try {
+    const penaltyDetails = await getPenaltyDetails(req);
+
+    if (penaltyDetails.status === 'UNPAID') {
+      return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+    }
+
+    const penaltyId = `${penaltyDetails.reference}_${penaltyDetails.type}`;
+
+    // Check payment method
+    switch (penaltyDetails.paymentMethod) {
+      case 'CARD':
+        cpmsService.reverseCardPayment(penaltyDetails.paymentRef, penaltyDetails.type, penaltyId)
+          .then(() => {
+            paymentService.reversePayment(penaltyId).then((response) => {
+              logger.info(response);
+              return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+            }).catch((error) => {
+              logger.error(error);
+              return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+            });
+          }).catch((error) => {
+            logger.error(error);
+            return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+          });
+        break;
+      case 'CHEQUE':
+        cpmsService.reverseChequePayment(penaltyDetails.paymentRef, penaltyDetails.type, penaltyId)
+          .then(() => {
+            paymentService.reversePayment(penaltyId).then((response) => {
+              logger.info(response);
+              return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+            }).catch((error) => {
+              logger.error(error);
+              return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+            });
+          }).catch((error) => {
+            logger.error(error);
+            return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+          });
+        break;
+      // Postal orders and cash reversals are not handled by CPMS
+      case 'POSTAL':
+      case 'CASH':
+        paymentService.reversePayment(penaltyId).then((response) => {
+          logger.info(response);
+          return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+        }).catch((error) => {
+          logger.error(error);
+          return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+        });
+        break;
+      default:
+        // If we don't know the payment method we can't reverse it
+        return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+    }
+  } catch (error) {
+    logger.warn(error);
+    return res.redirect(`${config.urlRoot}/?invalidPaymentCode`);
+  }
+  return true;
 };
