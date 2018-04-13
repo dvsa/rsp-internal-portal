@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash';
 import createHttpClient from './../utils/httpclient';
 
 export default class PaymentService {
@@ -82,5 +83,19 @@ export default class PaymentService {
       penalty_type: penaltyType,
       payment_ref: penaltyId,
     }));
+  }
+
+  getReportTypes(penaltyType = 'FPN') {
+    const promise = new Promise((resolve, reject) => {
+      this.httpClient.post('listReports/', { penalty_type: penaltyType }).then((response) => {
+        if (isEmpty(response.data) || response.data.items === undefined) {
+          resolve([]);
+        }
+        resolve(response.data.items);
+      }).catch((error) => {
+        reject(new Error(error));
+      });
+    });
+    return promise;
   }
 }

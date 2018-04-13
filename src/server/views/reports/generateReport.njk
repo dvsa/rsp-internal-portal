@@ -1,0 +1,65 @@
+{% extends 'layouts/default.layout.njk' %}
+
+{% set pageTitle = 'DVSA Road Side Payment Portal' %}
+{% set pageBreadcrumbItems = [
+    { text: 'Home', url: '/' },
+    { text: 'Generate Reports' }
+  ] 
+%}
+
+{% block content %}
+  
+  {% call components.gridRow() %}
+    {% call components.columnTwoThirds() %}
+      {% if types|length %}
+        {{ components.heading(text='Generate reports', tag='h1', size='xlarge') }}
+        {% call components.form(action='', method='POST')  %}
+        <div class="form-group">
+          <fieldset>
+            {{ components.heading(text='Select report type', tag='h3', size='medium') }}
+              {% for item in types  %}
+              <div class="multiple-choice" data-target="report-code">
+                <input id="report-{{ item.code }}" type="radio" name="report-code" value='{{ item.code }}'>
+                <label for="report-{{ item.code }}"><strong>{{ item.name }}</strong></label>
+              </div>            
+              {% endfor %}       
+          </fieldset>
+        </div>
+        <div class="form-group">
+          {{ components.heading(text='Select penalty type', tag='h3', size='medium') }}
+          <fieldset>
+              <div class="multiple-choice" data-target="report-code">
+                <input id="penalty-type" type="radio" name="penaltyType" value='FPN'>
+                <label for="penalty-type"><strong>Fixed penalty</strong></label>
+              </div>
+              <div class="multiple-choice" data-target="report-code">
+                <input id="penalty-type" type="radio" name="penaltyType" value='CDN'>
+                <label for="penalty-type"><strong>Court deposit</strong></label>
+              </div> 
+              <div class="multiple-choice" data-target="report-code">
+                <input id="penalty-type" type="radio" name="penaltyType" value='IM'>
+                <label for="penalty-type"><strong>Immobilisation</strong></label>
+              </div>             
+          </fieldset>
+        </div>
+        <div class="form-group">
+          {{ components.heading(text='Select date range', tag='h3', size='medium') }}
+          <fieldset class="inline">
+            <div class="inline-block">
+            {{ components.field(id="date-from", type="date", label="From date", required=true) }}
+            </div>
+            <div class="inline-block">
+            {{ components.field(id="date-to", type="date", label="To date", required=true) }}
+            </div>
+          </fieldset>
+        </div>
+          {{ components.button(text='Generate report', type='submit') }}
+      {%- endcall%}
+    {% else %}
+      {{ components.heading(text='Reports service unavailable', tag='h1', size='xlarge') }}
+        <p>Refresh this page or try again later. If the error persists contact your system administrator.</p>
+        {{ components.button(text='Back', url='/') }}
+    {% endif %}
+    {%- endcall %}
+  {%- endcall %}
+{% endblock %}

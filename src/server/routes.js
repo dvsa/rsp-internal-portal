@@ -4,6 +4,7 @@ import * as mainController from './controllers/main.controller';
 import * as paymentCodeController from './controllers/paymentCode.controller';
 import * as paymentController from './controllers/payment.controller';
 import * as penaltyController from './controllers/penalty.controller';
+import * as reportController from './controllers/report.controller';
 
 const router = Router();
 
@@ -27,5 +28,9 @@ router.post('/payment-code/:payment_code/reversePayment', paymentController.reve
 // Get Penalty details given a penalty reference
 router.get('/penalty/:penalty_id', penaltyController.getPenaltyDetails);
 router.get('/penalty/:penalty_id/payment', paymentController.renderPaymentPage);
+
+// Reports
+router.get('/reports', reportController.renderReportFilters);
+router.post('/reports', reportController.generateReport);
 
 export default router;
