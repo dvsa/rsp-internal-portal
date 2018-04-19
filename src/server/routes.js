@@ -32,5 +32,8 @@ router.get('/penalty/:penalty_id/payment', paymentController.renderPaymentPage);
 // Reports
 router.get('/reports', reportController.renderReportFilters);
 router.post('/reports', reportController.generateReport);
+router.get('/reports/:report_ref/', reportController.showDetails);
+router.get('/reports/:report_ref/status', reportController.checkReportStatus);
+router.get('/reports/:report_ref/download', reportController.downloadReport);
 
 export default router;

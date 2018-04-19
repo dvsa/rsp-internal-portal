@@ -98,4 +98,48 @@ export default class PaymentService {
     });
     return promise;
   }
+
+  requestReport(penaltyType, reportCode, fromDate, toDate) {
+    const promise = new Promise((resolve, reject) => {
+      this.httpClient.post('generateReport/', {
+        penalty_type: penaltyType,
+        report_code: reportCode,
+        from_date: fromDate,
+        to_date: toDate,
+      }).then((response) => {
+        resolve(response.data);
+      }).catch((error) => {
+        reject(new Error(error));
+      });
+    });
+    return promise;
+  }
+
+  checkReportStatus(penaltyType, reportReference) {
+    const promise = new Promise((resolve, reject) => {
+      this.httpClient.post('checkReportStatus/', {
+        penalty_type: penaltyType,
+        report_ref: reportReference,
+      }).then((response) => {
+        resolve(response.data);
+      }).catch((error) => {
+        reject(new Error(error));
+      });
+    });
+    return promise;
+  }
+
+  downloadReport(penaltyType, reportReference) {
+    const promise = new Promise((resolve, reject) => {
+      this.httpClient.post('downloadReport/', {
+        penalty_type: penaltyType,
+        report_ref: reportReference,
+      }).then((response) => {
+        resolve(response.data);
+      }).catch((error) => {
+        reject(new Error(error));
+      });
+    });
+    return promise;
+  }
 }

@@ -18,8 +18,8 @@
           <fieldset>
             {{ components.heading(text='Select report type', tag='h3', size='medium') }}
               {% for item in types  %}
-              <div class="multiple-choice" data-target="report-code">
-                <input id="report-{{ item.code }}" type="radio" name="report-code" value='{{ item.code }}'>
+              <div class="multiple-choice">
+                <input id="report-{{ item.code }}" type="radio" name="reportCode" value='{{ item.code }}'>
                 <label for="report-{{ item.code }}"><strong>{{ item.name }}</strong></label>
               </div>            
               {% endfor %}       
@@ -28,15 +28,15 @@
         <div class="form-group">
           {{ components.heading(text='Select penalty type', tag='h3', size='medium') }}
           <fieldset>
-              <div class="multiple-choice" data-target="report-code">
+              <div class="multiple-choice">
                 <input id="penalty-type" type="radio" name="penaltyType" value='FPN'>
                 <label for="penalty-type"><strong>Fixed penalty</strong></label>
               </div>
-              <div class="multiple-choice" data-target="report-code">
+              <div class="multiple-choice">
                 <input id="penalty-type" type="radio" name="penaltyType" value='CDN'>
                 <label for="penalty-type"><strong>Court deposit</strong></label>
               </div> 
-              <div class="multiple-choice" data-target="report-code">
+              <div class="multiple-choice">
                 <input id="penalty-type" type="radio" name="penaltyType" value='IM'>
                 <label for="penalty-type"><strong>Immobilisation</strong></label>
               </div>             
@@ -46,10 +46,10 @@
           {{ components.heading(text='Select date range', tag='h3', size='medium') }}
           <fieldset class="inline">
             <div class="inline-block">
-            {{ components.field(id="date-from", type="date", label="From date", required=true) }}
+            {{ components.field(id="dateFrom", type="date", label="From date", required=true) }}
             </div>
             <div class="inline-block">
-            {{ components.field(id="date-to", type="date", label="To date", required=true) }}
+            {{ components.field(id="dateTo", type="date", label="To date", required=true) }}
             </div>
           </fieldset>
         </div>

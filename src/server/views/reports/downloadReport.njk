@@ -1,0 +1,31 @@
+{% extends 'layouts/default.layout.njk' %}
+
+{% set pageTitle = 'DVSA Road Side Payment Portal' %}
+{% set pageBreadcrumbItems = [
+    { text: 'Home', url: '/' },
+    { text: 'Download report' }
+  ] 
+%}
+
+{% block content %}
+  
+  {% call components.gridRow() %}
+    {% call components.columnTwoThirds() %}
+        {{ components.heading(text='Download report', tag='h1', size='xlarge') }}
+        <p>You can download the report by clicking the link below.</p>
+        <p><h2><a id="download-link" href="{{ downloadUrl }}" target="_blank">{{ filename }}</a><h2></p>
+    {%- endcall %}
+        {% call components.columnOneThird() %}
+    <aside class="govuk-related-items" role="complementary">
+        Other actions
+        <nav role="navigation" aria-labelledby="subsection-title">
+          <ul class="font-xsmall">
+            <li> {{ components.link(text='Generate report', url='/reports') }} </li>
+          </ul>
+        </nav>
+      </aside>
+    {%- endcall %}
+  {%- endcall %}
+
+{% endblock %}
+
