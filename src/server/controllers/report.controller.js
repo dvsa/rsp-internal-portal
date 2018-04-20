@@ -1,3 +1,4 @@
+/* eslint-disable */
 import CpmsService from '../services/cpms.service';
 import config from '../config';
 import logger from './../utils/logger';
@@ -47,8 +48,8 @@ export const downloadReport = async (req, res) => {
   try {
     const file = await cpmsService.downloadReport(req.query.penalty_type, req.params.report_ref);
     res.setHeader('Content-disposition', `attachment; filename=${req.query.filename}`);
-    res.set('Content-Type', 'text/csv');
-    res.send(file);
+    res.set('Content-Type', 'application/force-download');
+    res.end(file);
   } catch (error) {
     logger.error(error);
   }
@@ -76,4 +77,3 @@ export const showDetails = async (req, res) => {
     res.status(500).send();
   }
 };
-

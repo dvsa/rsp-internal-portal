@@ -27,9 +27,9 @@
       </aside>
     {%- endcall %}
   {%- endcall %}
-  <input id='penalty-type' type="hidden" value={{ penaltyType }} />
-  <input id='report-reference' type="hidden" value={{ reportReference }} />
-  <input id='url-root' type="hidden" value={{ urlroot }} />
+  <input id='penalty-type' type="hidden" value="{{ penaltyType }}" />
+  <input id='report-reference' type="hidden" value="{{ reportReference }}" />
+  <input id='url-root' type="hidden" value="{{ urlroot }}" />
 
 <script type="text/javascript">
 jQuery(document).ready(function($) {
@@ -37,10 +37,14 @@ jQuery(document).ready(function($) {
   var penaltyType = $('#penalty-type')[0].value;
   var reportReference = $('#report-reference')[0].value
   var baseUrl = $('#url-root')[0].value
+
+  if(baseUrl) {
+    baseUrl += '/';
+  } 
   var complete = false;
 
   var checkStatus = function() {
-    $.get(baseUrl + '/reports/'+reportReference+'/status?penalty_type='+penaltyType, function(response) {
+    $.get(baseUrl + 'reports/'+reportReference+'/status?penalty_type='+penaltyType, function(response) {
       if(response.completed) {
         complete = true;
         window.location = baseUrl+'/reports/'+reportReference+'?penalty_type='+penaltyType;
