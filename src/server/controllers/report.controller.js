@@ -1,4 +1,3 @@
-/* eslint-disable */
 import CpmsService from '../services/cpms.service';
 import config from '../config';
 import logger from './../utils/logger';
