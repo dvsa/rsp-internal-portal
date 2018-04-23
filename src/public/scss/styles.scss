@@ -69,6 +69,15 @@ table.details {
   float: right; 
 }
 
+.inline-block {
+  display: inline-block;
+  margin-right:34px;
+  margin-top:10px;
+  .form-control {
+    width: 100%;
+  }
+}
+
 .userInfo {
   color: white;
   float: right;
@@ -89,6 +98,10 @@ table.details {
     input {
       width: 60%;
     }
+  }
+
+  .inline-block {
+    margin-top:10px;
   }
 }
 

@@ -1,0 +1,61 @@
+{% extends 'layouts/default.layout.njk' %}
+
+{% set pageTitle = 'DVSA Road Side Payment Portal' %}
+{% set pageBreadcrumbItems = [
+    { text: 'Home', url: '/' },
+    { text: 'Generating Report' }
+  ] 
+%}
+
+{% block content %}
+  
+  {% call components.gridRow() %}
+    {% call components.columnTwoThirds() %}
+        {{ components.heading(text='Generating report...', tag='h1', size='xlarge') }}
+        <p>The report you requested is being generated. This can take longer for large reports.</p>
+        <p>You will be redirected automatically to the download page.</p>
+        <a href='{{ urlroot }}/reports'>Back to generate report</a>
+    {%- endcall %}
+    {% call components.columnOneThird() %}
+    <aside class="govuk-related-items" role="complementary">
+        Other actions
+        <nav role="navigation" aria-labelledby="subsection-title">
+          <ul class="font-xsmall">
+            <li> {{ components.link(text='Generate report', url='/reports') }} </li>
+          </ul>
+        </nav>
+      </aside>
+    {%- endcall %}
+  {%- endcall %}
+  <input id='penalty-type' type="hidden" value="{{ penaltyType }}" />
+  <input id='report-reference' type="hidden" value="{{ reportReference }}" />
+  <input id='url-root' type="hidden" value="{{ urlroot }}" />
+
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+  var download = $('#download-link').hide();
+  var penaltyType = $('#penalty-type')[0].value;
+  var reportReference = $('#report-reference')[0].value
+  var baseUrl = $('#url-root')[0].value
+
+  if(baseUrl) {
+    baseUrl += '/';
+  } 
+  var complete = false;
+
+  var checkStatus = function() {
+    $.get(baseUrl + 'reports/'+reportReference+'/status?penalty_type='+penaltyType, function(response) {
+      if(response.completed) {
+        complete = true;
+        window.location = baseUrl+'/reports/'+reportReference+'?penalty_type='+penaltyType;
+      }
+    });
+    if(!complete) {
+      window.setTimeout(checkStatus, 5000);
+    }
+  };
+  checkStatus();
+});
+</script>
+{% endblock %}
+
