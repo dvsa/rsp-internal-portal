@@ -30,7 +30,7 @@ router.get('/penalty/:penalty_id', penaltyController.getPenaltyDetails);
 router.get('/penalty/:penalty_id/payment', paymentController.renderPaymentPage);
 
 // Reports
-router.get('/reports', reportController.renderReportFilters);
+router.get('/reports', authorizationMiddleware, reportController.renderReportFilters);
 router.post('/reports', reportController.generateReport);
 router.get('/reports/:report_ref/', reportController.showDetails);
 router.get('/reports/:report_ref/status', reportController.checkReportStatus);
