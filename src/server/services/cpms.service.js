@@ -1,9 +1,9 @@
 import { isEmpty } from 'lodash';
-import createHttpClient from './../utils/httpclient';
+import SignedHttpClient from './../utils/httpclient';
 
 export default class PaymentService {
   constructor(serviceUrl) {
-    this.httpClient = createHttpClient(serviceUrl);
+    this.httpClient = new SignedHttpClient(serviceUrl);
   }
 
   createCardNotPresentTransaction(vehicleReg, penaltyReference, penaltyType, amount, redirectUrl) {

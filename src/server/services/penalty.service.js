@@ -1,10 +1,10 @@
 import { isEmpty, has } from 'lodash';
 import moment from 'moment';
-import createHttpClient from './../utils/httpclient';
+import SignedHttpClient from './../utils/httpclient';
 
 export default class PenaltyService {
   constructor(serviceUrl) {
-    this.httpClient = createHttpClient(serviceUrl);
+    this.httpClient = new SignedHttpClient(serviceUrl);
   }
 
   static getPenaltyTypeDescription(penaltyType) {
@@ -47,7 +47,7 @@ export default class PenaltyService {
 
   getByPaymentCode(paymentCode) {
     const promise = new Promise((resolve, reject) => {
-      this.httpClient.get(`tokens/${paymentCode}`).then((response) => {
+      this.httpClient.get(`documents/tokens/${paymentCode}`).then((response) => {
         if (isEmpty(response.data) || response.data.Enabled === false) {
           reject(new Error('Payment code not found'));
         }
