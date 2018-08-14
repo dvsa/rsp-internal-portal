@@ -4,6 +4,11 @@ import URL from 'url-parse';
 
 import config from '../config';
 
+export const createUnsignedHttpClient = (baseURL, headers = { Authorization: 'allow' }) => axios.create({
+  baseURL,
+  headers,
+});
+
 export default class SignedHttpClient {
   constructor(baseURL, headers) {
     this.baseUrlOb = new URL(baseURL);

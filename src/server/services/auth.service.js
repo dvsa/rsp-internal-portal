@@ -1,6 +1,6 @@
 import { encode } from 'base-64';
 import queryString from 'querystring';
-import SignedHttpClient from '../utils/httpclient';
+import { createUnsignedHttpClient } from '../utils/httpclient';
 import config from '../config';
 
 export default class AuthService {
@@ -13,7 +13,7 @@ export default class AuthService {
       },
     };
 
-    this.httpClient = new SignedHttpClient(serviceUrl, defaults);
+    this.httpClient = createUnsignedHttpClient(serviceUrl, defaults);
   }
 
   requestAccessToken(code) {
