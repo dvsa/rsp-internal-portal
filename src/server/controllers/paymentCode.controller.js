@@ -43,7 +43,7 @@ export const getPenaltyDetails = [
         res.render('penalty/penaltyDetails', penaltyOrGroup);
       } else {
         penaltyOrGroup = await penaltyGroupService.getByPaymentCode(paymentCode);
-        res.render('penalty/penaltyGroupDetails', penaltyOrGroup);
+        res.render('penalty/penaltyGroupSummary', penaltyOrGroup);
       }
     } catch (error) {
       logger.error(error);

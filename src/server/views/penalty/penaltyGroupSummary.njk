@@ -1,0 +1,128 @@
+{% extends 'layouts/default.layout.njk' %}
+
+{% set pageTitle = t.site_title %}
+{% set pageBreadcrumbItems = [
+    { text: t.breadcrumbs.home, url: '/' },
+    { text: t.breadcrumbs.payment_code, url: '/payment-code' },
+    { text: t.breadcrumbs.penalty_details }
+  ] 
+%}
+
+{% set paid = true if paymentStatus == 'PAID' else false %}
+
+{% block content %}
+  
+  {% call components.gridRow() %}
+    {% call components.columnTwoThirds() %}
+      {% if paid == false %}
+        {{ components.heading(text='Pay a DVSA Penalty', tag='h1', size='xlarge') }}
+        <p>Payment code: <strong>{{ paymentCode }}</strong></p>
+        {{ components.paragraph(text='We found the following details in our records') }}
+      {% else %}
+        {{ components.heading(text='Penalty Payment Confirmation', tag='h1', size='xlarge') }}
+        <p>You paid a penalty for the payment code:&nbsp;<b>{{ paymentCode }}</b>
+        {{ components.paragraph(text='A confirmation has been sent to the DVSA location where the penalty has been issued.') }}
+      {% endif %}
+
+      <table class="details">
+        <tbody>
+          <tr>
+            <td>Vehicle Registration</td>
+            {% if isPenaltyGroup == false %}
+              <td>{{ penaltyDetails.vehicleReg if penaltyDetails.complete else 'Not available' }}</td>
+            {% else %}
+              <td>{{ penaltyGroupDetails.registrationNumber if penaltyGroupDetails.registrationNumber else 'N/A' }}</td>
+            {% endif %}
+          </tr>
+          <tr>
+            <td>Penalty issued on</td>
+            {% if isPenaltyGroup == false %}
+              <td>{{ penaltyDetails.issueDate if penaltyDetails.complete else 'Not available' }}</td>
+            {% else %}
+              <td>{{ penaltyGroupDetails.date }}</td>
+            {% endif %}
+          </tr>
+          <tr>
+            <td>Location</td>
+            {% if isPenaltyGroup == false %}
+              <td>{{ penaltyDetails.location if penaltyDetails.complete else 'Not available' }}</td> 
+            {% else %}
+              <td>{{ penaltyGroupDetails.location }}</td>
+            {% endif %}
+          </tr>
+          {% for amount in penaltyGroupDetails.splitAmounts|sort(attribute='type', reverse=true) %}
+            {% set amountPaid = true if amount.status == 'PAID' else false %}
+            {% set statusClass = 'confirmed' if amountPaid else 'unconfirmed' %}
+            <tr>
+              <td>
+                {% if amount.type == 'FPN' %}
+                  Fixed Penalties
+                {% elif amount.type == 'CDN' %}
+                  Court Deposits
+                {% elif amount.type == 'IM' %}
+                  Immobilisation Fee
+                {% endif %}
+              </td>
+              <td>
+                &pound;{{ amount.amount }}
+                <span class="{{statusClass}}">
+                  {% if amountPaid %}
+                    PAID &nbsp;&nbsp;
+                    <img src="{{ assets }}/images/icon-check.png" />
+                  {% else %}
+                    UNPAID
+                  {% endif %}
+                </span>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+        <p>
+          <div class="notice">
+            <i class="icon icon-important">
+              <span class="visually-hidden">Warning</span>
+            </i>
+            <strong class="bold-small">
+              If you have fixed penalties and an immobilisation fee you need to pay them individually
+            </strong>
+          </div>
+        </p>
+      {% if paid %}
+        <p>
+        You can: &nbsp; 
+          {{ components.list(items=[
+            { text: 'share payment confirmation via SMS', url: '#' },
+            { text: 'share payment confirmation via email', url: '#' },
+            { text: 'alternatively, make a note of the confirmation code for later reference.' }
+          ], type='bullet') }}
+        </p>
+        <p>
+          You can also return to this page by typing the token code into the <a target='_blank' href='{{ urlroot }}/payment-code'>DVSA penalty payment service</a>
+        </p>
+        {{ components.button(text='Pay another penalty', url='/payment-code') }}
+      {% else %}
+        {% set nextPaymentUrl = '/payment-code/' + paymentCode  + '/' + nextPayment.PaymentCategory + '/details' %}
+        {{ components.button(text='Continue to payment', url=nextPaymentUrl) }}
+      {% endif %}
+    {# ends components.columnTwoThirds #}
+    {%- endcall %}
+
+    {% call components.columnOneThird() %}
+
+    <aside class="govuk-related-items" role="complementary">
+        <nav role="navigation" aria-labelledby="subsection-title">
+          <ul class="font-xsmall">
+            <li> {{ components.link(text='French', url='?clang=fr') if clang != 'fr' else components.link(text='English', url='?clang=en') }}</li>
+            <li>{{ components.link(text='German', url='?clang=de') if clang != 'de' else components.link(text='English', url='?clang=en') }}</li>
+            <li>{{ components.link(text='Polish', url='?clang=pl') if clang != 'pl' else components.link(text='English', url='?clang=en') }}</li>
+            <li>{{ components.link(text='Spanish', url='?clang=es') if clang != 'es' else components.link(text='English', url='?clang=en') }}</li>
+            <li>{{ components.link(text='Welsh', url='?clang=cy') if clang != 'cy' else components.link(text='English', url='?clang=en') }}</li>
+          </ul>
+        </nav>
+      </aside>
+    {%- endcall %}
+  {# ends components.gridRow #}
+  {%- endcall %}
+  
+{% endblock %}

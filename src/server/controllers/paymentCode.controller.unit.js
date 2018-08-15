@@ -42,7 +42,7 @@ describe('Payment Code Controller', () => {
     describe('when called with payment code less than 16 characters', () => {
       it('should return the penalty group from penalty group service', async () => {
         await PaymentCodeController.getPenaltyDetails[1]({ params: { payment_code: 'notlength16' } }, response);
-        sinon.assert.calledWith(renderSpy, 'penalty/penaltyGroupDetails', fakePenaltyGroup);
+        sinon.assert.calledWith(renderSpy, 'penalty/penaltyGroupSummary', fakePenaltyGroup);
       });
     });
   });
