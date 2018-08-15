@@ -74,4 +74,21 @@ export default class PenaltyGroupService {
     const nextPayment = PenaltyGroupService.getNextPayment(unpaidPayments);
     return { splitAmounts, parsedPenalties, nextPayment };
   }
+
+  getPaymentsByCodeAndType(paymentCode, type) {
+    return this.httpClient.get(`penaltyGroup/${paymentCode}`).then((response) => {
+      if (isEmpty(response.data) || !response.data.ID) {
+        throw new Error('Payment code not found');
+      }
+      const { Payments } = response.data;
+      const pensOfType = Payments.filter(p => p.PaymentCategory === type)[0].Penalties;
+      return {
+        penaltyDetails: pensOfType.map(p => PenaltyService.parsePenalty(p)),
+        penaltyType: type,
+        totalAmount: pensOfType.reduce((total, pen) => total + pen.Value.penaltyAmount, 0),
+      };
+    }).catch((error) => {
+      throw new Error(error);
+    });
+  }
 }

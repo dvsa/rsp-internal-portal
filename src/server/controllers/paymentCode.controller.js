@@ -51,3 +51,16 @@ export const getPenaltyDetails = [
     }
   },
 ];
+
+export const getPenaltyGroupBreakdownForType = [
+  (req, res) => {
+    const paymentCode = req.params.payment_code;
+    const { type } = req.params;
+    penaltyGroupService.getPaymentsByCodeAndType(paymentCode, type).then((penaltiesForType) => {
+      res.render('payment/penaltyGroupTypeBreakdown', { paymentCode, ...penaltiesForType });
+    }).catch((error) => {
+      logger.error(error);
+      res.redirect('../payment-code?invalidPaymentCode');
+    });
+  },
+];
