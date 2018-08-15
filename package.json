@@ -65,7 +65,7 @@
     "rimraf": "^2.6.2",
     "serverless": "^1.26.0",
     "serverless-offline": "^3.17.0",
-    "sinon": "^4.4.2",
+    "sinon": "^4.5.0",
     "smooth-scroll": "^12.1.5",
     "store": "^2.0.12",
     "undertaker-forward-reference": "^1.0.2",
