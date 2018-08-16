@@ -16,6 +16,22 @@ export default class PaymentService {
     }));
   }
 
+  createCardNotPresentGroupTransaction(penGrpId, penGrpDetails, type, penalties, redirectUrl) {
+    const total = penGrpDetails.splitAmounts.find(a => a.type === type).amount;
+    return this.httpClient.post('groupCardNotPresentPayment/', JSON.stringify({
+      TotalAmount: total,
+      VehicleRegistration: penGrpDetails.registrationNumber,
+      PenaltyGroupId: penGrpId,
+      PenaltyType: type,
+      RedirectUrl: redirectUrl,
+      Penalties: penalties.map(p => ({
+        PenaltyReference: p.reference,
+        PenaltyAmount: p.amount,
+        VehicleRegistration: p.vehicleReg,
+      })),
+    }));
+  }
+
   createCashTransaction(vehicleReg, penaltyReference, penaltyType, amount, slipNumber) {
     return this.httpClient.post('cashPayment/', JSON.stringify({
       penalty_reference: penaltyReference,

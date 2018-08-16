@@ -1,0 +1,150 @@
+[
+  {
+    "paymentCode": "4724r2wujeg",
+    "isPenaltyGroup": true,
+    "paymentStatus": "PAID",
+    "penaltyGroupDetails": {
+      "registrationNumber": "11DDD",
+      "location": "Bury St Edmunds Sector Office(Bury St Edmunds - E. Anglia)",
+      "date": "13/08/2018",
+      "amount": 200,
+      "splitAmounts": [
+        {
+          "type": "FPN",
+          "amount": 120,
+          "status": "PAID"
+        },
+        {
+          "type": "IM",
+          "amount": 80,
+          "status": "PAID"
+        }
+      ]
+    },
+    "penaltyDetails": [
+      {
+        "type": "FPN",
+        "penalties": [
+          {
+            "complete": true,
+            "reference": "564548184556",
+            "paymentCode": "325b25e237e0a6d8",
+            "issueDate": "13/08/2018",
+            "vehicleReg": "11DDD",
+            "formattedReference": "564548184556",
+            "location": "Bury St Edmunds Sector Office(Bury St Edmunds - E. Anglia)",
+            "amount": 100,
+            "status": "PAID",
+            "type": "FPN",
+            "typeDescription": "Fixed Penalty Notice"
+          },
+          {
+            "complete": true,
+            "reference": "5281756140484",
+            "paymentCode": "cf23059395275541",
+            "issueDate": "13/08/2018",
+            "vehicleReg": "11DDD",
+            "formattedReference": "5281756140484",
+            "location": "Bury St Edmunds Sector Office(Bury St Edmunds - E. Anglia)",
+            "amount": 20,
+            "status": "PAID",
+            "type": "FPN",
+            "typeDescription": "Fixed Penalty Notice"
+          }
+        ]
+      },
+      {
+        "type": "IM",
+        "penalties": [
+          {
+            "complete": true,
+            "reference": "0546630000441",
+            "paymentCode": "b259119e09a4cfa3",
+            "issueDate": "13/08/2018",
+            "vehicleReg": "11DDD",
+            "formattedReference": "54663-0-441-IM",
+            "location": "Bury St Edmunds Sector Office(Bury St Edmunds - E. Anglia)",
+            "amount": 80,
+            "status": "PAID",
+            "type": "IM",
+            "typeDescription": "immobilisation"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "paymentCode": "5624r2wupfs",
+    "isPenaltyGroup": true,
+    "paymentStatus": "UNPAID",
+    "penaltyGroupDetails": {
+      "registrationNumber": "11DDD",
+      "location": "Bury St Edmunds Sector Office(Bury St Edmunds - E. Anglia)",
+      "date": "13/08/2018",
+      "amount": 200,
+      "splitAmounts": [
+        {
+          "type": "FPN",
+          "amount": 120,
+          "status": "UNPAID"
+        },
+        {
+          "type": "IM",
+          "amount": 80,
+          "status": "PAID"
+        }
+      ]
+    },
+    "penaltyDetails": [
+      {
+        "type": "FPN",
+        "penalties": [
+          {
+            "complete": true,
+            "reference": "564548184556",
+            "paymentCode": "325b25e237e0a6d8",
+            "issueDate": "13/08/2018",
+            "vehicleReg": "11DDD",
+            "formattedReference": "564548184556",
+            "location": "Bury St Edmunds Sector Office(Bury St Edmunds - E. Anglia)",
+            "amount": 100,
+            "status": "UNPAID",
+            "type": "FPN",
+            "typeDescription": "Fixed Penalty Notice"
+          },
+          {
+            "complete": true,
+            "reference": "5281756140484",
+            "paymentCode": "cf23059395275541",
+            "issueDate": "13/08/2018",
+            "vehicleReg": "11DDD",
+            "formattedReference": "5281756140484",
+            "location": "Bury St Edmunds Sector Office(Bury St Edmunds - E. Anglia)",
+            "amount": 20,
+            "status": "UNPAID",
+            "type": "FPN",
+            "typeDescription": "Fixed Penalty Notice"
+          }
+        ]
+      },
+      {
+        "type": "IM",
+        "penalties": [
+          {
+            "complete": true,
+            "reference": "0546630000441",
+            "paymentCode": "b259119e09a4cfa3",
+            "issueDate": "13/08/2018",
+            "vehicleReg": "11DDD",
+            "formattedReference": "54663-0-441-IM",
+            "location": "Bury St Edmunds Sector Office(Bury St Edmunds - E. Anglia)",
+            "amount": 80,
+            "status": "PAID",
+            "type": "IM",
+            "typeDescription": "immobilisation"
+          }
+        ]
+      }
+    ]
+  }
+]
