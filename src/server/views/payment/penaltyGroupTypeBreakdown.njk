@@ -11,7 +11,6 @@
 {% block content %}
   {% call components.gridRow() %}
     {% call components.columnTwoThirds() %}
-      {% call components.form(action='/payment-code/'+ paymentCode + '/' + penaltyType + '/payment', method='POST')  %}
       {{ components.heading(text='Pay fixed penalties and immobilisation fees', tag='h1', size='xlarge') }}
       <h3 class="heading-medium">
         {% if penaltyType == 'FPN' %}
@@ -50,13 +49,15 @@
         </tbody>
       </table>
       <br />
-      {% if penaltyType == 'FPN' %}
-        {{ components.button(text='Pay fixed penalties', type="submit") }}
-      {% elif penaltyType == 'CDN' %}
-        {{ components.button(text='Pay court deposits', type="submit") }}
-      {% elif penaltyType == 'IM' %}
-        {{ components.button(text='Pay immobilisation fee', type="submit") }}
-      {% endif %}
+      {% call components.form(action='/payment-code/' + paymentCode + '/' + penaltyType + '/payment', method='GET')  %}
+        {% call components.formGroup() %}
+          {{ components.heading(text='Payment by', tag='h3', size='medium') }}
+          {{ components.radio(text='Card (external website)', value='card', id='pay-by-card', name='paymentType', checked="true") }}
+          {{ components.radio(text='Cash', value='cash', id='pay-by-cash', name='paymentType') }}
+          {{ components.radio(text='Cheque', value='cheque', id='pay-by-cheque', name='paymentType') }}
+          {{ components.radio(text='Postal Order', value='postal', id='pay-by-postal', name='paymentType') }}
+        {%- endcall %}
+        {{ components.button(text='Continue to payment', type='submit') }}
       {%- endcall %}
     {%- endcall %}
 

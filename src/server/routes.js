@@ -21,6 +21,7 @@ router.get('/logout', mainController.logout);
 // Get Penalty details given a payment code
 router.get('/payment-code/:payment_code', paymentCodeController.getPenaltyDetails);
 router.get('/payment-code/:payment_code/payment', paymentCodeController.validatePaymentCode, paymentController.renderPaymentPage);
+router.get('/payment-code/:payment_code/:type/payment', paymentCodeController.validatePaymentCode, paymentController.renderGroupPaymentPage);
 router.post('/payment-code/:payment_code/payment', paymentCodeController.validatePaymentCode, paymentController.makePayment);
 router.get('/payment-code/:payment_code/confirmPayment', paymentController.confirmPayment);
 router.post('/payment-code/:payment_code/reversePayment', paymentController.reversePayment);

@@ -164,6 +164,11 @@ export const renderPaymentPage = async (req, res) => {
   }
 };
 
+export const renderGroupPaymentPage = async (req, res) => {
+  const paymentCode = req.params.payment_code;
+  res.redirect(`${config.urlRoot}/payment-code/${paymentCode}`);
+};
+
 export const confirmPayment = async (req, res) => {
   const receiptReference = req.query.receipt_reference;
   let penaltyDetails;
