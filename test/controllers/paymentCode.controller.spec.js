@@ -1,8 +1,8 @@
 import sinon from 'sinon';
 
-import * as PaymentCodeController from './paymentCode.controller';
-import PenaltyService from '../services/penalty.service';
-import PenaltyGroupService from '../services/penaltyGroup.service';
+import * as PaymentCodeController from '../../src/server/controllers/paymentCode.controller';
+import PenaltyService from '../../src/server/services/penalty.service';
+import PenaltyGroupService from '../../src/server/services/penaltyGroup.service';
 
 describe('Payment Code Controller', () => {
   describe('getPenaltyDetails', () => {

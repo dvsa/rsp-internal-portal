@@ -3,9 +3,11 @@ import PenaltyService from './../services/penalty.service';
 import CpmsService from './../services/cpms.service';
 import config from './../config';
 import logger from './../utils/logger';
+import PenaltyGroupService from '../services/penaltyGroup.service';
 
 const paymentService = new PaymentService(config.paymentServiceUrl);
 const penaltyService = new PenaltyService(config.penaltyServiceUrl);
+const penaltyGroupService = new PenaltyGroupService(config.penaltyServiceUrl);
 const cpmsService = new CpmsService(config.cpmsServiceUrl);
 
 const getPenaltyDetails = (req) => {
@@ -166,7 +168,25 @@ export const renderPaymentPage = async (req, res) => {
 
 export const renderGroupPaymentPage = async (req, res) => {
   const paymentCode = req.params.payment_code;
-  res.redirect(`${config.urlRoot}/payment-code/${paymentCode}`);
+  const penaltyType = req.params.type;
+  const penaltyGroup = await penaltyGroupService.getByPaymentCode(paymentCode);
+
+  if (penaltyGroup.paymentStatus === 'PAID') {
+    return res.redirect(`${config.urlRoot}/payment-code/${paymentCode}`);
+  }
+
+  const penaltyDetails = penaltyGroup.penaltyDetails
+    .find(typeGrp => typeGrp.type === penaltyType).penalties;
+  const redirectUrl = `https://${req.get('host')}${config.urlRoot}/payment-code/${paymentCode}`;
+
+  const cpmsResp = await cpmsService.createCardNotPresentGroupTransaction(
+    penaltyGroup.paymentCode,
+    penaltyGroup.penaltyGroupDetails,
+    penaltyType,
+    penaltyDetails,
+    redirectUrl,
+  );
+  return res.redirect(cpmsResp.data.gateway_url);
 };
 
 export const confirmPayment = async (req, res) => {
