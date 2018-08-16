@@ -5,6 +5,7 @@ import CpmsService from '../../src/server/services/cpms.service';
 import PenaltyGroupService from '../../src/server/services/penaltyGroup.service';
 import getPenaltyGroupFake from '../data/penaltyGroup/enchrichedPenaltyGroupFake';
 import fakeEnrichedPenaltyGroups from '../data/penaltyGroup/fake-penalty-groups-enriched.json';
+import PaymentService from '../../src/server/services/payment.service';
 
 describe('PaymentController', () => {
   describe('renderGroupPaymentPage', () => {
@@ -60,6 +61,61 @@ describe('PaymentController', () => {
       it('should create a group card not present transaction and redirect to CPMS', async () => {
         await PaymentController.renderGroupPaymentPage(request, response);
         sinon.assert.calledWith(redirectSpy, 'https://cpms.url');
+      });
+    });
+  });
+
+  describe('confirmGroupPayment', () => {
+    let penaltyGrpServiceStub;   
+    let cpmsServiceStub;
+    let paymentServiceStub;
+    const redirectSpy = sinon.spy();
+    const renderSpy = sinon.spy();
+    const response = { render: renderSpy, redirect: redirectSpy };
+    let request;
+
+    beforeEach(() => {
+      penaltyGrpServiceStub = sinon.stub(PenaltyGroupService.prototype, 'getByPaymentCode');
+      cpmsServiceStub = sinon.stub(CpmsService.prototype, 'confirmPayment');
+      paymentServiceStub = sinon.stub(PaymentService.prototype, 'recordGroupPayment');
+
+      request = {
+        params: { payment_code: '5624r2wupfs', type: 'FPN' },
+        query: { receipt_reference: 'FB02-18-20180816-154021-D8245D1F' },
+      };
+
+      penaltyGrpServiceStub.callsFake(paymentCode => getPenaltyGroupFake(paymentCode));
+      cpmsServiceStub
+        .withArgs('FB02-18-20180816-154021-D8245D1F', 'FPN')
+        .resolves({ data: { code: 801, auth_code: '1234' } });
+    });
+    afterEach(() => {
+      PenaltyGroupService.prototype.getByPaymentCode.restore();
+      CpmsService.prototype.confirmPayment.restore();
+      PaymentService.prototype.recordGroupPayment.restore();
+    });
+
+    context('given CPMS Service confirmation response has code 801', () => {
+      it('should call payment service to create a group payment record and redirect to the receipt page', async () => {
+        await PaymentController.confirmGroupPayment(request, response);
+        sinon.assert.calledWith(penaltyGrpServiceStub, '5624r2wupfs');
+        sinon.assert.calledWith(cpmsServiceStub, 'FB02-18-20180816-154021-D8245D1F', 'FPN');
+        sinon.assert.calledWith(paymentServiceStub, {
+          PaymentCode: '5624r2wupfs',
+          PenaltyType: 'FPN',
+          PaymentDetail: {
+            PaymentMethod: 'CNP',
+            PaymentRef: 'FB02-18-20180816-154021-D8245D1F',
+            AuthCode: '1234',
+            PaymentAmount: 120,
+            PaymentDate: sinon.match.number,
+          },
+          PenaltyIds: [
+            '564548184556_FPN',
+            '5281756140484_FPN',
+          ],
+        });
+        sinon.assert.calledWith(redirectSpy, '/payment-code/5624r2wupfs/FPN/receipt');
       });
     });
   });
