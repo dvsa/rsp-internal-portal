@@ -18,8 +18,9 @@ export default class PaymentService {
 
   createCardNotPresentGroupTransaction(penGrpId, penGrpDetails, type, penalties, redirectUrl) {
     const total = penGrpDetails.splitAmounts.find(a => a.type === type).amount;
-    return this.httpClient.post('groupCardNotPresentPayment/', JSON.stringify({
+    return this.httpClient.post('groupCardPayment/', {
       TotalAmount: total,
+      PaymentMethod: 'CNP',
       VehicleRegistration: penGrpDetails.registrationNumber,
       PenaltyGroupId: penGrpId,
       PenaltyType: type,
@@ -29,7 +30,7 @@ export default class PaymentService {
         PenaltyAmount: p.amount,
         VehicleRegistration: p.vehicleReg,
       })),
-    }));
+    });
   }
 
   createCashTransaction(vehicleReg, penaltyReference, penaltyType, amount, slipNumber) {

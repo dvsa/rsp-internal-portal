@@ -14,8 +14,9 @@ describe('CPMS Service', () => {
     beforeEach(() => {
       httpClientStub = sinon.stub(HttpClient.prototype, 'post');
       httpClientStub
-        .withArgs('groupCardNotPresentPayment/', JSON.stringify({
+        .withArgs('groupCardPayment/', {
           TotalAmount: 120,
+          PaymentMethod: 'CNP',
           VehicleRegistration: '11DDD',
           PenaltyGroupId: '5624r2wupfs',
           PenaltyType: 'FPN',
@@ -32,7 +33,7 @@ describe('CPMS Service', () => {
               VehicleRegistration: '11DDD',
             },
           ],
-        }))
+        })
         .resolves('resolved value');
     });
     it('should return POST promise from groupCardNotPresent endpoint', async () => {
