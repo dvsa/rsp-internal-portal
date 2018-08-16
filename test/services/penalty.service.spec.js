@@ -3,13 +3,13 @@ import sinon from 'sinon';
 import { expect, use } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import PenaltyService from '../../src/server/services/penalty.service';
-import createHttpClient from '../../src/server/utils/httpclient';
+import SignedHttpClient from '../../src/server/utils/httpclient';
 import MockedBackendAPI from '../utils/mockedBackendAPI';
 import penalties from '../data/penalties';
 
 use(chaiAsPromised);
 
-const httpClient = createHttpClient('');
+const httpClient = new SignedHttpClient('');
 
 describe('Penalty Service', () => {
   const mockedBackendAPI = new MockedBackendAPI(penalties);
@@ -63,7 +63,7 @@ describe('Penalty Service', () => {
       penaltyService.httpClient = mockedHttpClient.rootObj;
 
       // Act
-      const result = await penaltyService.getByReference(validReferenceNo);
+      const result = await penaltyService.getById(validReferenceNo);
 
       // Assert
       expect(result.reference).to.equal(validReferenceNo);

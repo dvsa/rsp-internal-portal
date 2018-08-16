@@ -31,6 +31,8 @@ const region = process.env.REGION;
 const userPoolId = process.env.COGNITO_USERPOOL_ID;
 const cognitoUrl = process.env.COGNITO_URL;
 const cpmsServiceUrl = process.env.CPMS_SERVICE_URL;
+const iamClientId = process.env.IAM_CLIENT_ID;
+const iamClientSecret = process.env.IAM_CLIENT_SECRET;
 
 const config = {
   env,
@@ -49,6 +51,8 @@ const config = {
   region,
   userPoolId,
   cpmsServiceUrl,
+  iamClientId,
+  iamClientSecret,
 };
 
 export default config;

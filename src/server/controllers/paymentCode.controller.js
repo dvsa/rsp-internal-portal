@@ -3,8 +3,10 @@ import paymentCodeValidation from './../validation/paymentCode';
 import PenaltyService from './../services/penalty.service';
 import config from './../config';
 import logger from './../utils/logger';
+import PenaltyGroupService from '../services/penaltyGroup.service';
 
 const penaltyService = new PenaltyService(config.penaltyServiceUrl);
+const penaltyGroupService = new PenaltyGroupService(config.penaltyServiceUrl);
 
 // Removes all non-alphanumeric characters and converts to lowercase
 export const normalizePaymentcode = (req, res, next) => {
@@ -31,13 +33,34 @@ export const validatePaymentCode = [
 
 export const getPenaltyDetails = [
   paymentCodeValidation,
-  (req, res) => {
-    const paymentCode = req.params.payment_code;
-    penaltyService.getByPaymentCode(paymentCode).then((details) => {
-      res.render('penalty/penaltyDetails', details);
-    }).catch((error) => {
+  async (req, res) => {
+    try {
+      const paymentCode = req.params.payment_code;
+      let penaltyOrGroup;
+
+      if (paymentCode.length === 16) {
+        penaltyOrGroup = await penaltyService.getByPaymentCode(paymentCode);
+        res.render('penalty/penaltyDetails', penaltyOrGroup);
+      } else {
+        penaltyOrGroup = await penaltyGroupService.getByPaymentCode(paymentCode);
+        res.render('penalty/penaltyGroupSummary', penaltyOrGroup);
+      }
+    } catch (error) {
       logger.error(error);
       res.redirect('../?invalidPaymentCode');
+    }
+  },
+];
+
+export const getPenaltyGroupBreakdownForType = [
+  (req, res) => {
+    const paymentCode = req.params.payment_code;
+    const { type } = req.params;
+    penaltyGroupService.getPaymentsByCodeAndType(paymentCode, type).then((penaltiesForType) => {
+      res.render('payment/penaltyGroupTypeBreakdown', { paymentCode, ...penaltiesForType });
+    }).catch((error) => {
+      logger.error(error);
+      res.redirect('../payment-code?invalidPaymentCode');
     });
   },
 ];
