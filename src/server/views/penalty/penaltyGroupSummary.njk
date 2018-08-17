@@ -31,23 +31,23 @@
             {% if isPenaltyGroup == false %}
               <td>{{ penaltyDetails.vehicleReg if penaltyDetails.complete else 'Not available' }}</td>
             {% else %}
-              <td>{{ penaltyGroupDetails.registrationNumber if penaltyGroupDetails.registrationNumber else 'N/A' }}</td>
+              <td colspan=2>{{ penaltyGroupDetails.registrationNumber if penaltyGroupDetails.registrationNumber else 'N/A' }}</td>
             {% endif %}
           </tr>
           <tr>
             <td>Penalty issued on</td>
             {% if isPenaltyGroup == false %}
-              <td>{{ penaltyDetails.issueDate if penaltyDetails.complete else 'Not available' }}</td>
+              <td colspan=2>{{ penaltyDetails.issueDate if penaltyDetails.complete else 'Not available' }}</td>
             {% else %}
-              <td>{{ penaltyGroupDetails.date }}</td>
+              <td colspan=2>{{ penaltyGroupDetails.date }}</td>
             {% endif %}
           </tr>
           <tr>
             <td>Location</td>
             {% if isPenaltyGroup == false %}
-              <td>{{ penaltyDetails.location if penaltyDetails.complete else 'Not available' }}</td> 
+              <td colspan=2>{{ penaltyDetails.location if penaltyDetails.complete else 'Not available' }}</td> 
             {% else %}
-              <td>{{ penaltyGroupDetails.location }}</td>
+              <td colspan=2>{{ penaltyGroupDetails.location }}</td>
             {% endif %}
           </tr>
           {% for amount in penaltyGroupDetails.splitAmounts|sort(attribute='type', reverse=true) %}
@@ -70,9 +70,14 @@
                     PAID &nbsp;&nbsp;
                     <img src="{{ assets }}/images/icon-check.png" />
                   {% else %}
-                    UNPAID
+                    UNPAID &nbsp;
                   {% endif %}
                 </span>
+              </td>
+              <td>
+                {% if amountPaid == false %}
+                  {{ components.button(text='Pay', url='/payment-code/' + paymentCode + '/' + amount.type + '/details') }}
+                {% endif %}
               </td>
             </tr>
           {% endfor %}
@@ -87,13 +92,7 @@
             { text: 'alternatively, make a note of the confirmation code for later reference.' }
           ], type='bullet') }}
         </p>
-        <p>
-          You can also return to this page by typing the token code into the <a target='_blank' href='{{ urlroot }}/payment-code'>DVSA penalty payment service</a>
-        </p>
         {{ components.button(text='Pay another penalty', url='/payment-code') }}
-      {% else %}
-        {% set nextPaymentUrl = '/payment-code/' + paymentCode  + '/' + nextPayment.PaymentCategory + '/details' %}
-        {{ components.button(text='Continue to payment', url=nextPaymentUrl) }}
       {% endif %}
     {# ends components.columnTwoThirds #}
     {%- endcall %}
