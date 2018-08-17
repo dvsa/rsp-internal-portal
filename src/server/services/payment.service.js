@@ -9,8 +9,8 @@ export default class PaymentService {
     return this.httpClient.post('payments/', details);
   }
 
-  recordGroupPayment() {
-    return this;
+  recordGroupPayment(details) {
+    return this.httpClient.post('groupPayments/', details);
   }
 
   reversePayment(paymentId) {
