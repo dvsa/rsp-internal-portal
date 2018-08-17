@@ -170,24 +170,36 @@ export const renderPaymentPage = async (req, res) => {
 export const renderGroupPaymentPage = async (req, res) => {
   const paymentCode = req.params.payment_code;
   const penaltyType = req.params.type;
+  const { paymentType } = req.query;
   const penaltyGroup = await penaltyGroupService.getByPaymentCode(paymentCode);
 
   if (penaltyGroup.paymentStatus === 'PAID') {
     return res.redirect(`${config.urlRoot}/payment-code/${paymentCode}`);
   }
 
-  const penaltyDetails = penaltyGroup.penaltyDetails
-    .find(typeGrp => typeGrp.type === penaltyType).penalties;
-  const redirectUrl = `https://${req.get('host')}${config.urlRoot}/payment-code/${paymentCode}/${penaltyType}/confirmGroupPayment`;
+  if (paymentType === 'card') {
+    const penaltyDetails = penaltyGroup.penaltyDetails
+      .find(typeGrp => typeGrp.type === penaltyType).penalties;
+    const redirectUrl = `https://${req.get('host')}${config.urlRoot}/payment-code/${paymentCode}/${penaltyType}/confirmGroupPayment`;
 
-  const cpmsResp = await cpmsService.createCardNotPresentGroupTransaction(
-    penaltyGroup.paymentCode,
-    penaltyGroup.penaltyGroupDetails,
-    penaltyType,
-    penaltyDetails,
-    redirectUrl,
-  );
-  return res.redirect(cpmsResp.data.gateway_url);
+    const cpmsResp = await cpmsService.createCardNotPresentGroupTransaction(
+      penaltyGroup.paymentCode,
+      penaltyGroup.penaltyGroupDetails,
+      penaltyType,
+      penaltyDetails,
+      redirectUrl,
+    );
+    return res.redirect(cpmsResp.data.gateway_url);
+  }
+
+  const penaltyGroupWithPaymentType = { ...penaltyGroup, paymentPenaltyType: penaltyType };
+  console.log(JSON.stringify(penaltyGroupWithPaymentType));
+  switch (paymentType) {
+    case 'cash':
+      return res.render('payment/groupCash', penaltyGroupWithPaymentType);
+    default:
+      return res.redirect(`${config.urlRoot}/?invalidPaymentCode`);
+  }
 };
 
 export const confirmPayment = async (req, res) => {
