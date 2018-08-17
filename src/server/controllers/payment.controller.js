@@ -178,7 +178,7 @@ export const renderGroupPaymentPage = async (req, res) => {
 
   const penaltyDetails = penaltyGroup.penaltyDetails
     .find(typeGrp => typeGrp.type === penaltyType).penalties;
-  const redirectUrl = `https://${req.get('host')}${config.urlRoot}/payment-code/${paymentCode}`;
+  const redirectUrl = `https://${req.get('host')}${config.urlRoot}/payment-code/${paymentCode}/${penaltyType}/confirmGroupPayment`;
 
   const cpmsResp = await cpmsService.createCardNotPresentGroupTransaction(
     penaltyGroup.paymentCode,

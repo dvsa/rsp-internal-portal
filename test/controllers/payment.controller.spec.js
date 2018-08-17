@@ -52,7 +52,7 @@ describe('PaymentController', () => {
             penaltyGroup.penaltyGroupDetails,
             'FPN',
             penaltyGroup.penaltyDetails[0].penalties,
-            'https://localhost/payment-code/5624r2wupfs',
+            'https://localhost/payment-code/5624r2wupfs/FPN/confirmGroupPayment',
           )
           .resolves({ data: { gateway_url: 'https://cpms.url' } });
       });
@@ -67,7 +67,7 @@ describe('PaymentController', () => {
   });
 
   describe('confirmGroupPayment', () => {
-    let penaltyGrpServiceStub;   
+    let penaltyGrpServiceStub;
     let cpmsServiceStub;
     let paymentServiceStub;
     const redirectSpy = sinon.spy();
