@@ -59,6 +59,11 @@ div#send-receipt-button-container {
   margin: 25px 0px;
 }
 
+td.penalty-type-payment-cell {
+  padding: 20px 0px;
+  text-align: right;
+}
+
 .error, 
 .unconfirmed {
   color: $error-colour;
