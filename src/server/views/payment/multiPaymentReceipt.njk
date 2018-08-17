@@ -1,0 +1,122 @@
+{% extends 'layouts/default.layout.njk' %}
+
+{% set pageTitle = 'DVSA Road Side Payment Portal' %}
+  
+{% block content %}
+  {% call components.gridRow() %}
+    {% call components.columnTwoThirds() %}
+      {% for type, payment in paymentDetails.Payments %}
+        {% if type == paymentType  %}
+          {% if payment.PaymentStatus == 'PAID' %}
+            <div class="govuk-box-highlight">
+              <h1 class="heading-large">
+                {% if paymentType == 'FPN' %}
+                    Fixed penalties
+                {% elif paymentType == 'CDN' %}
+                    Court deposits
+                {% elif paymentType == 'IM' %}
+                    Immobilisation fee
+                {% endif %}
+              </h1>
+              <p class="font-medium">Payment complete</p>
+            </div>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+
+      <h3 class="heading-medium">Transaction Receipt</h3>
+      <table class='receipt-details'>
+        <tbody>
+          <tr>
+            <td>Amount</td>
+              <td>
+                <strong>&pound;{{ paymentDetails.Payments[paymentType].PaymentAmount }}</strong>
+              </td>
+          </tr>
+          <tr>
+            <td>Date and time</td>
+            <td>
+              <strong>
+                {{ paymentDetails.Payments[paymentType].FormattedDate }}
+                &nbsp;&nbsp;
+                {{ paymentDetails.Payments[paymentType].FormattedTime }}
+              </strong>
+            </td>
+          </tr>
+          <tr>
+            <td>Authorisation code</td>
+            <td>
+              <strong>{{ paymentDetails.Payments[paymentType].AuthCode }}</strong>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 class="heading-medium">
+        {% if paymentType == 'FPN' %}
+            Fixed penalty details
+        {% elif paymentType == 'CDN' %}
+            Court deposit details
+        {% elif paymentType == 'IM' %}
+            Immobilisation fee details
+        {% endif %}
+      </h3>
+      <table class='receipt-details'>
+        <tbody>
+          <tr>
+            <td>Vehicle registration</td>
+            <td><strong>{{ penaltyGroupDetails.registrationNumber }}</strong></td>
+          </tr>
+          <tr>
+            <td>Date</td>
+            <td><strong>{{ penaltyGroupDetails.date }}</strong></td>
+          </tr>
+          <tr>
+            <td>Location</td>
+            <td><strong>{{ penaltyGroupDetails.location }}</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table id='receipt-breakdown'>
+        <thead>
+          <tr>
+            <th>Reference</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+
+          {% for payment in penaltyDetails %}
+            {% if payment.type == paymentType %}
+              {% for penalty in payment.penalties %}
+                {% set statusClass = 'confirmed' if penalty.status == 'PAID' else 'unconfirmed' %}
+                <tr>
+                  <td>{{ penalty.formattedReference }}</td>
+                  <td>&pound;{{ penalty.amount }}</td>
+                  <td>
+                    <strong><span class='{{ statusClass }}'>{{ penalty.status }}</span></strong>
+                    {% if penalty.status == 'PAID' %}
+                      &nbsp;&nbsp;
+                      <img src="{{ assets }}/images/icon-check.png" />
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            {% endif %}
+          {% endfor %}
+        </thead>
+      </table>
+
+      <h3 class="heading-medium">Send payment receipt by email</h3>
+      {{ components.field(id='email_address', label='Email address') }}
+      <div id="send-receipt-button-container">
+        {{ components.button(text='Send receipt', type="submit") }}
+      </div>
+
+      <p>
+        <a href='{{ urlroot }}/payment-code/{{ paymentCode }}'>Return to the payment code summary</a>
+      </p>
+    {%- endcall %}
+  {%- endcall %}
+  
+{% endblock %}
