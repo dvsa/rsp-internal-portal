@@ -224,20 +224,29 @@ export const confirmPayment = async (req, res) => {
 };
 
 export const confirmGroupPayment = async (req, res) => {
-  const paymentCode = req.params.payment_code;
-  const penaltyType = req.params.type;
-  const receiptReference = req.query.receipt_reference;
-  const penaltyGroup = await penaltyGroupService.getByPaymentCode(paymentCode);
-  const confirmResp = await cpmsService.confirmPayment(receiptReference, penaltyType);
-  const payload = buildGroupPaymentPayload(
-    paymentCode,
-    receiptReference,
-    penaltyType,
-    penaltyGroup,
-    confirmResp,
-  );
-  await paymentService.recordGroupPayment(payload);
-  res.redirect(`${config.urlRoot}/payment-code/${paymentCode}/${penaltyType}/receipt`);
+  try {
+    const paymentCode = req.params.payment_code;
+    const penaltyType = req.params.type;
+    const receiptReference = req.query.receipt_reference;
+    const penaltyGroup = await penaltyGroupService.getByPaymentCode(paymentCode);
+    const confirmResp = await cpmsService.confirmPayment(receiptReference, penaltyType);
+
+    if (confirmResp.data.code === 801) {
+      const payload = buildGroupPaymentPayload(
+        paymentCode,
+        receiptReference,
+        penaltyType,
+        penaltyGroup,
+        confirmResp,
+      );
+      await paymentService.recordGroupPayment(payload);
+      return res.redirect(`${config.urlRoot}/payment-code/${paymentCode}/${penaltyType}/receipt`);
+    }
+    return res.render('payment/failedPayment');
+  } catch (error) {
+    logger.error(error);
+    return res.render('payment/failedPayment');
+  }
 };
 
 export const reversePayment = async (req, res) => {

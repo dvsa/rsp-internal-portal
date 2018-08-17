@@ -1,3 +1,4 @@
+import { expect } from 'chai';
 import sinon from 'sinon';
 
 import * as PaymentController from '../../src/server/controllers/payment.controller';
@@ -93,6 +94,8 @@ describe('PaymentController', () => {
       PenaltyGroupService.prototype.getByPaymentCode.restore();
       CpmsService.prototype.confirmPayment.restore();
       PaymentService.prototype.recordGroupPayment.restore();
+      redirectSpy.resetHistory();
+      renderSpy.resetHistory();
     });
 
     context('given CPMS Service confirmation response has code 801', () => {
@@ -116,6 +119,29 @@ describe('PaymentController', () => {
           ],
         });
         sinon.assert.calledWith(redirectSpy, '/payment-code/5624r2wupfs/FPN/receipt');
+      });
+    });
+
+    context('given CPMS Service confirmation response has a code different from 801', () => {
+      beforeEach(() => {
+        cpmsServiceStub
+          .withArgs('FB02-18-20180816-154021-D8245D1F', 'FPN')
+          .resolves({ data: { code: 999, auth_code: '1234' } });
+      });
+      it('should render to failed payment page', async () => {
+        await PaymentController.confirmGroupPayment(request, response);
+        sinon.assert.calledWith(renderSpy, 'payment/failedPayment');
+      });
+    });
+
+    context('given collaborator rejects', () => {
+      beforeEach(() => {
+        cpmsServiceStub.reset();
+        cpmsServiceStub.rejects();
+      });
+      it('should render the failed payment page', async () => {
+        await PaymentController.confirmGroupPayment(request, response);
+        sinon.assert.calledWith(renderSpy, 'payment/failedPayment');
       });
     });
   });
