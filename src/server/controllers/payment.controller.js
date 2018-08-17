@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import PaymentService from './../services/payment.service';
 import PenaltyService from './../services/penalty.service';
 import CpmsService from './../services/cpms.service';
@@ -222,6 +223,32 @@ export const confirmPayment = async (req, res) => {
   }
 };
 
+export const confirmGroupPayment = async (req, res) => {
+  try {
+    const paymentCode = req.params.payment_code;
+    const penaltyType = req.params.type;
+    const receiptReference = req.query.receipt_reference;
+    const penaltyGroup = await penaltyGroupService.getByPaymentCode(paymentCode);
+    const confirmResp = await cpmsService.confirmPayment(receiptReference, penaltyType);
+
+    if (confirmResp.data.code === 801) {
+      const payload = buildGroupPaymentPayload(
+        paymentCode,
+        receiptReference,
+        penaltyType,
+        penaltyGroup,
+        confirmResp,
+      );
+      await paymentService.recordGroupPayment(payload);
+      return res.redirect(`${config.urlRoot}/payment-code/${paymentCode}/${penaltyType}/receipt`);
+    }
+    return res.render('payment/failedPayment');
+  } catch (error) {
+    logger.error(error);
+    return res.render('payment/failedPayment');
+  }
+};
+
 export const reversePayment = async (req, res) => {
   // Get penalty details
   try {
@@ -286,3 +313,22 @@ export const reversePayment = async (req, res) => {
   }
   return true;
 };
+
+function buildGroupPaymentPayload(paymentCode, receiptReference, type, penaltyGroup, confirmResp) {
+  const amountForType = penaltyGroup.penaltyGroupDetails.splitAmounts
+    .find(a => a.type === type).amount;
+  return {
+    PaymentCode: paymentCode,
+    PenaltyType: type,
+    PaymentDetail: {
+      PaymentMethod: 'CNP',
+      PaymentRef: receiptReference,
+      AuthCode: confirmResp.data.auth_code,
+      PaymentAmount: amountForType,
+      PaymentDate: Math.floor(Date.now() / 1000),
+    },
+    PenaltyIds: penaltyGroup.penaltyDetails
+      .find(penaltiesOfType => penaltiesOfType.type === type).penalties
+      .map(penalties => `${penalties.reference}_${type}`),
+  };
+}
