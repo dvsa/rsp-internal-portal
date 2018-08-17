@@ -25,6 +25,8 @@ describe('PaymentController', () => {
         query: { paymentType: 'card' },
         get: () => 'localhost',
       };
+      redirectSpy.resetHistory();
+      renderSpy.resetHistory();
     });
     afterEach(() => {
       PenaltyGroupService.prototype.getByPaymentCode.restore();
@@ -52,7 +54,7 @@ describe('PaymentController', () => {
             penaltyGroup.penaltyGroupDetails,
             'FPN',
             penaltyGroup.penaltyDetails[0].penalties,
-            'https://localhost/payment-code/5624r2wupfs',
+            'https://localhost/payment-code/5624r2wupfs/FPN/confirmGroupPayment',
           )
           .resolves({ data: { gateway_url: 'https://cpms.url' } });
       });
@@ -64,10 +66,32 @@ describe('PaymentController', () => {
         sinon.assert.calledWith(redirectSpy, 'https://cpms.url');
       });
     });
+
+    context('when the payment type is cash', () => {
+      const penaltyGroup = fakeEnrichedPenaltyGroups
+        .find(g => g.paymentCode === '5624r2wupfs');
+      beforeEach(() => {
+        request.query.paymentType = 'cash';
+      });
+      it('should render the cash group payment page', async () => {
+        await PaymentController.renderGroupPaymentPage(request, response);
+        sinon.assert.calledWith(renderSpy, 'payment/groupCash', { ...penaltyGroup, paymentPenaltyType: 'FPN' });
+      });
+    });
+
+    context('when the payment type is invalid', () => {
+      beforeEach(() => {
+        request.query.paymentType = 'notvalidtype';
+      });
+      it('should redirect to invalid payment code error page', async () => {
+        await PaymentController.renderGroupPaymentPage(request, response);
+        sinon.assert.calledWith(redirectSpy, '/?invalidPaymentCode');
+      });
+    });
   });
 
   describe('confirmGroupPayment', () => {
-    let penaltyGrpServiceStub;   
+    let penaltyGrpServiceStub;
     let cpmsServiceStub;
     let paymentServiceStub;
     const redirectSpy = sinon.spy();

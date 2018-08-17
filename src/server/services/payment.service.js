@@ -13,6 +13,10 @@ export default class PaymentService {
     return this.httpClient.post('groupPayments/', details);
   }
 
+  getGroupPayment(paymentCode) {
+    return this.httpClient.get(`groupPayments/${paymentCode}`);
+  }
+
   reversePayment(paymentId) {
     return this.httpClient.delete(`payments/${paymentId}`);
   }
