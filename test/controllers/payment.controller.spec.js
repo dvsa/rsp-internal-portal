@@ -169,4 +169,89 @@ describe('PaymentController', () => {
       });
     });
   });
+
+  describe('makeGroupPayment', () => {
+    let penaltyGroupSvcMock;
+    let cpmsSvcMock;
+    let paymentSvcMock;
+    const request = {
+      body: { paymentType: 'cash', slipNumber: '1234' },
+      params: { payment_code: '5624r2wupfs', type: 'FPN' },
+      get: () => 'localhost',
+    };
+    const redirectSpy = sinon.spy();
+    const renderSpy = sinon.spy();
+    const response = { render: renderSpy, redirect: redirectSpy };
+    const penaltyGroup = fakeEnrichedPenaltyGroups[1];
+
+    beforeEach(() => {
+      penaltyGroupSvcMock = sinon.stub(PenaltyGroupService.prototype, 'getByPaymentCode');
+      penaltyGroupSvcMock.callsFake(getPenaltyGroupFake);
+    });
+    afterEach(() => {
+      PenaltyGroupService.prototype.getByPaymentCode.restore();
+    });
+
+    context('when a cash payment is sent', async () => {
+      beforeEach(() => {
+        cpmsSvcMock = sinon.stub(CpmsService.prototype, 'createGroupCashTransaction');
+        paymentSvcMock = sinon.stub(PaymentService.prototype, 'recordGroupPayment');
+
+        cpmsSvcMock.withArgs(
+          '5624r2wupfs',
+          penaltyGroup.penaltyGroupDetails,
+          'FPN',
+          penaltyGroup.penaltyDetails,
+          '1234',
+          'https://localhost/payment-code/5624r2wupfs/FPN/receipt',
+        ).resolves({
+          data: {
+            receipt_reference: 'receipt-ref',
+            code: '000',
+            message: 'Success',
+          },
+        });
+      });
+      afterEach(() => {
+        CpmsService.prototype.createGroupCashTransaction.restore();
+        PaymentService.prototype.recordGroupPayment.restore();
+      });
+      it('should create a group cash transaction, make a group payment and return to the payment code', async () => {
+        await PaymentController.makeGroupPayment(request, response);
+        sinon.assert.calledWith(paymentSvcMock, {
+          PaymentCode: '5624r2wupfs',
+          PenaltyType: 'FPN',
+          PaymentDetail: {
+            PaymentMethod: 'CASH',
+            PaymentRef: 'receipt-ref',
+            PaymentAmount: 120,
+            PaymentDate: sinon.match.number,
+          },
+          PenaltyIds: [
+            '564548184556_FPN',
+            '5281756140484_FPN',
+          ],
+        });
+        sinon.assert.calledWith(redirectSpy, '/payment-code/5624r2wupfs/FPN/receipt');
+      });
+
+      context('given CPMS orchestration does not indicate the cash payment was successful', () => {
+        beforeEach(() => {
+          cpmsSvcMock.resetBehavior();
+          cpmsSvcMock.resolves({
+            data: {
+              receipt_reference: 'receipt-ref',
+              code: '001',
+              message: 'Not success',
+            },
+          });
+        });
+
+        it('should render the failed payment page', async () => {
+          await PaymentController.makeGroupPayment(request, response);
+          sinon.assert.calledWith(renderSpy, 'payment/failedPayment');
+        });
+      });
+    });
+  });
 });

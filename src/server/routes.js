@@ -24,6 +24,7 @@ router.get('/payment-code/:payment_code', paymentCodeController.getPenaltyDetail
 router.get('/payment-code/:payment_code/payment', paymentCodeController.validatePaymentCode, paymentController.renderPaymentPage);
 router.get('/payment-code/:payment_code/:type/payment', paymentCodeController.validatePaymentCode, paymentController.renderGroupPaymentPage);
 router.post('/payment-code/:payment_code/payment', paymentCodeController.validatePaymentCode, paymentController.makePayment);
+router.post('/payment-code/:payment_code/:type/payment', paymentController.makeGroupPayment);
 router.get('/payment-code/:payment_code/confirmPayment', paymentController.confirmPayment);
 router.get('/payment-code/:payment_code/:type/confirmGroupPayment', paymentController.confirmGroupPayment);
 router.post('/payment-code/:payment_code/reversePayment', paymentController.reversePayment);

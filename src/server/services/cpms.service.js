@@ -18,7 +18,7 @@ export default class PaymentService {
 
   createCardNotPresentGroupTransaction(penGrpId, penGrpDetails, type, penalties, redirectUrl) {
     const total = penGrpDetails.splitAmounts.find(a => a.type === type).amount;
-    return this.httpClient.post('groupCardPayment/', {
+    return this.httpClient.post('groupPayment/', {
       TotalAmount: total,
       PaymentMethod: 'CNP',
       VehicleRegistration: penGrpDetails.registrationNumber,
@@ -43,6 +43,29 @@ export default class PaymentService {
       batch_number: 1,
       vehicle_reg: vehicleReg,
     });
+  }
+
+  createGroupCashTransaction(penGrpId, penGrpDetails, type, penalties, slipNumber, redirectUrl) {
+    const total = penGrpDetails.splitAmounts.find(a => a.type === type).amount;
+    const penaltiesOfType = penalties.find(p => p.type === type).penalties;
+
+    const payload = {
+      TotalAmount: total,
+      PaymentMethod: 'CASH',
+      VehicleRegistration: penGrpDetails.registrationNumber,
+      PenaltyGroupId: penGrpId,
+      PenaltyType: type,
+      RedirectUrl: redirectUrl,
+      SlipNumber: slipNumber,
+      ReceiptDate: new Date().toISOString().split('T')[0],
+      BatchNumber: 1,
+      Penalties: penaltiesOfType.map(p => ({
+        PenaltyReference: p.reference,
+        PenaltyAmount: p.amount,
+        VehicleRegistration: p.vehicleReg,
+      })),
+    };
+    return this.httpClient.post('groupPayment/', payload);
   }
 
   createChequeTransaction(

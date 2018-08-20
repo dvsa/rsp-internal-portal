@@ -129,6 +129,49 @@ export const makePayment = async (req, res) => {
   }
 };
 
+export const makeGroupPayment = async (req, res) => {
+  const paymentCode = req.params.payment_code;
+  try {
+    const penaltyType = req.params.type;
+    const { slipNumber } = req.body;
+    const penaltyGroup = await penaltyGroupService.getByPaymentCode(paymentCode);
+    const penaltiesOfType = penaltyGroup.penaltyDetails.find(p => p.type === penaltyType).penalties;
+    const amountPaidForType = penaltyGroup.penaltyGroupDetails.splitAmounts
+      .find(s => s.type === penaltyType).amount;
+    const redirectUrl = `https://${req.get('host')}${config.urlRoot}/payment-code/${paymentCode}/${penaltyType}/receipt`;
+
+    const cpmsResp = await cpmsService.createGroupCashTransaction(
+      paymentCode,
+      penaltyGroup.penaltyGroupDetails,
+      penaltyType,
+      penaltyGroup.penaltyDetails,
+      slipNumber,
+      redirectUrl,
+    );
+
+    if (cpmsResp.data.code !== '000') {
+      return res.render('payment/failedPayment');
+    }
+
+    await paymentService.recordGroupPayment({
+      PaymentCode: paymentCode,
+      PenaltyType: penaltyType,
+      PaymentDetail: {
+        PaymentMethod: 'CASH',
+        PaymentRef: cpmsResp.data.receipt_reference,
+        PaymentAmount: amountPaidForType,
+        PaymentDate: Date.now() / 1000,
+      },
+      PenaltyIds: penaltiesOfType.map(p => `${p.reference}_${penaltyType}`),
+    });
+
+    return res.redirect(`${config.urlRoot}/payment-code/${paymentCode}/${penaltyType}/receipt`);
+  } catch (error) {
+    logger.error(error);
+    return res.redirect(`${config.urlRoot}/payment-code/${paymentCode}`);
+  }
+};
+
 export const renderPaymentPage = async (req, res) => {
   let penaltyDetails;
 
@@ -193,7 +236,6 @@ export const renderGroupPaymentPage = async (req, res) => {
   }
 
   const penaltyGroupWithPaymentType = { ...penaltyGroup, paymentPenaltyType: penaltyType };
-  console.log(JSON.stringify(penaltyGroupWithPaymentType));
   switch (paymentType) {
     case 'cash':
       return res.render('payment/groupCash', penaltyGroupWithPaymentType);
