@@ -74,8 +74,8 @@
                   {% endif %}
                 </span>
               </td>
-              {% if amountPaid == false %}
                 <td class='penalty-type-payment-cell'>
+                  {% if amountPaid == false %}
                     {% if amount.type == 'FPN' %}
                       {% set paymentButtonTxt = 'Pay fixed penalties' %}
                     {% elif amount.type == 'CDN' %}
@@ -86,8 +86,8 @@
                     <div>
                       {{ components.button(text=paymentButtonTxt, url='/payment-code/' + paymentCode + '/' + amount.type + '/details') }}
                     </div>
+                  {% endif %}
                 </td>
-              {% endif %}
             </tr>
           {% endfor %}
         </tbody>

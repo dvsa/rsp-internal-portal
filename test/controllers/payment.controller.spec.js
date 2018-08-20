@@ -216,7 +216,7 @@ describe('PaymentController', () => {
         CpmsService.prototype.createGroupCashTransaction.restore();
         PaymentService.prototype.recordGroupPayment.restore();
       });
-      it('should create a group cash transaction, make a group payment and return to the payment code', async () => {
+      it('should create a group cash transaction, make a group payment and return to the receipt page', async () => {
         await PaymentController.makeGroupPayment(request, response);
         sinon.assert.calledWith(paymentSvcMock, {
           PaymentCode: '5624r2wupfs',
