@@ -45,7 +45,7 @@ export default class PaymentService {
     });
   }
 
-  createGroupCashTransaction(penGrpId, penGrpDetails, type, penalties, slipNumber, redirectUrl) {
+  createGroupCashTransaction(penGrpId, penGrpDetails, type, penalties, redirectUrl, slipNumber) {
     const total = penGrpDetails.splitAmounts.find(a => a.type === type).amount;
     const penaltiesOfType = penalties.find(p => p.type === type).penalties;
 
@@ -66,6 +66,10 @@ export default class PaymentService {
       })),
     };
     return this.httpClient.post('groupPayment/', payload);
+  }
+
+  createGroupChequeTransaction(penGrpId, penGrpDetails, type, penalties, redirectUrl) {
+    return this.httpClient;
   }
 
   createChequeTransaction(

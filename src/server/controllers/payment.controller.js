@@ -133,21 +133,36 @@ export const makeGroupPayment = async (req, res) => {
   const paymentCode = req.params.payment_code;
   try {
     const penaltyType = req.params.type;
-    const { slipNumber } = req.body;
+    const { paymentType } = req.body;
     const penaltyGroup = await penaltyGroupService.getByPaymentCode(paymentCode);
     const penaltiesOfType = penaltyGroup.penaltyDetails.find(p => p.type === penaltyType).penalties;
     const amountPaidForType = penaltyGroup.penaltyGroupDetails.splitAmounts
       .find(s => s.type === penaltyType).amount;
     const redirectUrl = `https://${req.get('host')}${config.urlRoot}/payment-code/${paymentCode}/${penaltyType}/receipt`;
 
-    const cpmsResp = await cpmsService.createGroupCashTransaction(
+    const paymentMethodMappings = {
+      cash: { transactionCreationFunction: cpmsService.createGroupCashTransaction, paymentRecordMethod: 'CASH' },
+      cheque: { transactionCreationFunction: cpmsService.createGroupChequeTransaction, paymentRecordMethod: 'CHEQUE' },
+    };
+
+    const paymentMethodStrategy = paymentMethodMappings[paymentType];
+
+    const partialTransactionCreationFunction = paymentMethodStrategy.transactionCreationFunction.bind(
+      cpmsService,
       paymentCode,
       penaltyGroup.penaltyGroupDetails,
       penaltyType,
       penaltyGroup.penaltyDetails,
-      slipNumber,
       redirectUrl,
     );
+
+    const finalTransactionCreationFunction = bindArgsForPaymentType(
+      partialTransactionCreationFunction,
+      paymentType,
+      req.body,
+    );
+
+    const cpmsResp = await finalTransactionCreationFunction();
 
     if (cpmsResp.data.code !== '000') {
       return res.render('payment/failedPayment');
@@ -157,7 +172,7 @@ export const makeGroupPayment = async (req, res) => {
       PaymentCode: paymentCode,
       PenaltyType: penaltyType,
       PaymentDetail: {
-        PaymentMethod: 'CASH',
+        PaymentMethod: paymentMethodStrategy.paymentRecordMethod,
         PaymentRef: cpmsResp.data.receipt_reference,
         PaymentAmount: amountPaidForType,
         PaymentDate: Date.now() / 1000,
@@ -169,6 +184,20 @@ export const makeGroupPayment = async (req, res) => {
   } catch (error) {
     logger.error(error);
     return res.redirect(`${config.urlRoot}/payment-code/${paymentCode}`);
+  }
+};
+
+const bindArgsForPaymentType = (partialFn, paymentType, body) => {
+  switch (paymentType) { /* eslint-disable no-case-declarations */
+    case 'cash':
+      return partialFn.bind(cpmsService, body.slipNumber);
+    case 'cheque':
+      const { slipNumber, chequeDate, chequeNumber, nameOnCheque } = body;
+      return partialFn.bind(cpmsService, slipNumber, chequeDate, chequeNumber, nameOnCheque);
+    case 'postal-order':
+      return partialFn.bind(cpmsService);
+    default:
+      return partialFn;
   }
 };
 

@@ -202,8 +202,8 @@ describe('PaymentController', () => {
           penaltyGroup.penaltyGroupDetails,
           'FPN',
           penaltyGroup.penaltyDetails,
-          '1234',
           'https://localhost/payment-code/5624r2wupfs/FPN/receipt',
+          '1234',
         ).resolves({
           data: {
             receipt_reference: 'receipt-ref',
@@ -251,6 +251,51 @@ describe('PaymentController', () => {
           await PaymentController.makeGroupPayment(request, response);
           sinon.assert.calledWith(renderSpy, 'payment/failedPayment');
         });
+      });
+    });
+
+    context('when a cheque payment is sent', () => {
+      beforeEach(() => {
+        cpmsSvcMock = sinon.stub(CpmsService.prototype, 'createGroupChequeTransaction');
+        paymentSvcMock = sinon.stub(PaymentService.prototype, 'recordGroupPayment');
+
+        cpmsSvcMock.withArgs(
+          '5624r2wupfs',
+          penaltyGroup.penaltyGroupDetails,
+          'FPN',
+          penaltyGroup.penaltyDetails,
+          'https://localhost/payment-code/5624r2wupfs/FPN/receipt',
+          '1234',
+        ).resolves({
+          data: {
+            receipt_reference: 'receipt-ref',
+            code: '000',
+            message: 'Success',
+          },
+        });
+        request.body.paymentType = 'cheque';
+      });
+      afterEach(() => {
+        CpmsService.prototype.createGroupChequeTransaction.restore();
+        PaymentService.prototype.recordGroupPayment.restore();
+      });
+      it('should create a group cheque transaction, make a group payment and return to the receipt page', async () => {
+        await PaymentController.makeGroupPayment(request, response);
+        sinon.assert.calledWith(paymentSvcMock, {
+          PaymentCode: '5624r2wupfs',
+          PenaltyType: 'FPN',
+          PaymentDetail: {
+            PaymentMethod: 'CHEQUE',
+            PaymentRef: 'receipt-ref',
+            PaymentAmount: 120,
+            PaymentDate: sinon.match.number,
+          },
+          PenaltyIds: [
+            '564548184556_FPN',
+            '5281756140484_FPN',
+          ],
+        });
+        sinon.assert.calledWith(redirectSpy, '/payment-code/5624r2wupfs/FPN/receipt');
       });
     });
   });
