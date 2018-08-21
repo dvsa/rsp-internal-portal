@@ -5,7 +5,7 @@
     { text: 'Home', url: '/' },
     { text: 'Payment Code', url: '/' },
     { text: 'Penalty Details', url: '/payment-code/'+paymentCode },
-    { text: 'Payment by Cash' }
+    { text: 'Payment by Cheque' }
   ]
 %}
 
@@ -35,7 +35,8 @@
             </tr>
             <tr>
               <td>Status:</td>
-              <td>{{ paymentStatus }}</td>
+              {% set statusClass = 'confirmed' if paymentStatus == 'PAID' else 'unconfirmed' %}
+              <td><span class='{{statusClass}}'>{{ paymentStatus }}</span></td>
           </tbody>
         </table>
 

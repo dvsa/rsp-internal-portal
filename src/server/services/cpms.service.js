@@ -68,7 +68,17 @@ export default class PaymentService {
     return this.httpClient.post('groupPayment/', payload);
   }
 
-  createGroupChequeTransaction(penGrpId, penGrpDetails, type, penalties, redirectUrl, slipNumber, chequeNumber, chequeDate, nameOnCheque) {
+  createGroupChequeTransaction(
+    penGrpId,
+    penGrpDetails,
+    type,
+    penalties,
+    redirectUrl,
+    slipNumber,
+    chequeNumber,
+    chequeDate,
+    nameOnCheque,
+  ) {
     const total = penGrpDetails.splitAmounts.find(a => a.type === type).amount;
     const penaltiesOfType = penalties.find(p => p.type === type).penalties;
     const payload = {

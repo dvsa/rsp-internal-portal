@@ -35,7 +35,8 @@
             </tr>
             <tr>
               <td>Status:</td>
-              <td>{{ paymentStatus }}</td>
+              {% set statusClass = 'confirmed' if paymentStatus == 'PAID' else 'unconfirmed' %}
+              <td><span class='{{statusClass}}'>{{ paymentStatus }}</span></td>
           </tbody>
         </table>
 

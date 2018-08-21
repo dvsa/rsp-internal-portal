@@ -147,7 +147,7 @@ export const makeGroupPayment = async (req, res) => {
 
     const paymentMethodStrategy = paymentMethodMappings[paymentType];
 
-    const partialTransactionCreationFunction = paymentMethodStrategy.transactionCreationFunction.bind(
+    const partialCreationFunction = paymentMethodStrategy.transactionCreationFunction.bind(
       cpmsService,
       paymentCode,
       penaltyGroup.penaltyGroupDetails,
@@ -157,7 +157,7 @@ export const makeGroupPayment = async (req, res) => {
     );
 
     const finalTransactionCreationFunction = bindArgsForPaymentType(
-      partialTransactionCreationFunction,
+      partialCreationFunction,
       paymentType,
       req.body,
     );
