@@ -143,6 +143,7 @@ export const makeGroupPayment = async (req, res) => {
     const paymentMethodMappings = {
       cash: { transactionCreationFunction: cpmsService.createGroupCashTransaction, paymentRecordMethod: 'CASH' },
       cheque: { transactionCreationFunction: cpmsService.createGroupChequeTransaction, paymentRecordMethod: 'CHEQUE' },
+      postal: { transactionCreationFunction: cpmsService.createGroupPostalOrderTransaction, paymentRecordMethod: 'POSTAL_ORDER' },
     };
 
     const paymentMethodStrategy = paymentMethodMappings[paymentType];
@@ -199,8 +200,8 @@ const bindArgsForPaymentType = (partialFn, paymentType, body) => {
         nameOnCheque,
       } = body;
       return partialFn.bind(cpmsService, slipNumber, chequeDate, chequeNumber, nameOnCheque);
-    case 'postal-order':
-      return partialFn.bind(cpmsService);
+    case 'postal':
+      return partialFn.bind(cpmsService, body.slipNumber, body.postalOrderNumber);
     default:
       return partialFn;
   }
@@ -275,6 +276,8 @@ export const renderGroupPaymentPage = async (req, res) => {
       return res.render('payment/groupCash', penaltyGroupWithPaymentType);
     case 'cheque':
       return res.render('payment/groupCheque', penaltyGroupWithPaymentType);
+    case 'postal':
+      return res.render('payment/groupPostalOrder', penaltyGroupWithPaymentType);
     default:
       return res.redirect(`${config.urlRoot}/?invalidPaymentCode`);
   }

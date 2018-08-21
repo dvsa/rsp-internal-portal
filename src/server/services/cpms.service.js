@@ -68,6 +68,24 @@ export default class PaymentService {
     return this.httpClient.post('groupPayment/', payload);
   }
 
+  createChequeTransaction(
+    vehicleReg, penaltyReference, penaltyType, amount,
+    slipNumber, chequeDate, chequeNumber, nameOnCheque,
+  ) {
+    return this.httpClient.post('chequePayment/', {
+      penalty_reference: penaltyReference,
+      penalty_type: penaltyType,
+      penalty_amount: amount,
+      slip_number: slipNumber,
+      receipt_date: new Date().toISOString().split('T')[0],
+      batch_number: 1,
+      cheque_date: chequeDate,
+      cheque_number: chequeNumber,
+      name_on_cheque: nameOnCheque,
+      vehicle_reg: vehicleReg,
+    });
+  }
+
   createGroupChequeTransaction(
     penGrpId,
     penGrpDetails,
@@ -103,24 +121,6 @@ export default class PaymentService {
     return this.httpClient.post('groupPayment/', payload);
   }
 
-  createChequeTransaction(
-    vehicleReg, penaltyReference, penaltyType, amount,
-    slipNumber, chequeDate, chequeNumber, nameOnCheque,
-  ) {
-    return this.httpClient.post('chequePayment/', {
-      penalty_reference: penaltyReference,
-      penalty_type: penaltyType,
-      penalty_amount: amount,
-      slip_number: slipNumber,
-      receipt_date: new Date().toISOString().split('T')[0],
-      batch_number: 1,
-      cheque_date: chequeDate,
-      cheque_number: chequeNumber,
-      name_on_cheque: nameOnCheque,
-      vehicle_reg: vehicleReg,
-    });
-  }
-
   createPostalOrderTransaction(
     vehicleReg, penaltyReference, penaltyType, amount,
     slipNumber, postalOrderNumber,
@@ -135,6 +135,18 @@ export default class PaymentService {
       postal_order_number: postalOrderNumber,
       vehicle_reg: vehicleReg,
     });
+  }
+
+  createGroupPostalOrderTransaction(
+    penGrpId,
+    penGrpDetails,
+    type,
+    penalties,
+    redirectUrl,
+    slipNumber,
+    postalOrderNumber,
+  ) {
+    return this.httpClient.post('groupPayment/', {});
   }
 
   confirmPayment(receiptReference, penaltyType) {

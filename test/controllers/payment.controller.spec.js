@@ -91,6 +91,18 @@ describe('PaymentController', () => {
       });
     });
 
+    context('when the payment type is cheque', () => {
+      const penaltyGroup = fakeEnrichedPenaltyGroups
+        .find(g => g.paymentCode === '5624r2wupfs');
+      beforeEach(() => {
+        request.query.paymentType = 'postal';
+      });
+      it('should render the postal order group payment page', async () => {
+        await PaymentController.renderGroupPaymentPage(request, response);
+        sinon.assert.calledWith(renderSpy, 'payment/groupPostalOrder', { ...penaltyGroup, paymentPenaltyType: 'FPN' });
+      });
+    });
+
     context('when the payment type is invalid', () => {
       beforeEach(() => {
         request.query.paymentType = 'notvalidtype';
@@ -298,6 +310,56 @@ describe('PaymentController', () => {
           PenaltyType: 'FPN',
           PaymentDetail: {
             PaymentMethod: 'CHEQUE',
+            PaymentRef: 'receipt-ref',
+            PaymentAmount: 120,
+            PaymentDate: sinon.match.number,
+          },
+          PenaltyIds: [
+            '564548184556_FPN',
+            '5281756140484_FPN',
+          ],
+        });
+        sinon.assert.calledWith(redirectSpy, '/payment-code/5624r2wupfs/FPN/receipt');
+      });
+    });
+
+    context('when a postal payment is sent', () => {
+      beforeEach(() => {
+        cpmsSvcMock = sinon.stub(CpmsService.prototype, 'createGroupPostalOrderTransaction');
+        paymentSvcMock = sinon.stub(PaymentService.prototype, 'recordGroupPayment');
+
+        cpmsSvcMock
+          .withArgs(
+            '5624r2wupfs',
+            penaltyGroup.penaltyGroupDetails,
+            'FPN',
+            penaltyGroup.penaltyDetails,
+            'https://localhost/payment-code/5624r2wupfs/FPN/receipt',
+            '1234',
+            '2468',
+          )
+          .resolves({
+            data: {
+              receipt_reference: 'receipt-ref',
+              code: '000',
+              message: 'Success',
+            },
+          });
+        request.body.paymentType = 'postal';
+        request.body.slipNumber = '1234';
+        request.body.postalOrderNumber = '2468';
+      });
+      afterEach(() => {
+        CpmsService.prototype.createGroupPostalOrderTransaction.restore();
+        PaymentService.prototype.recordGroupPayment.restore();
+      });
+      it('should create a group postal order transaction, make a group payment and return to the receipt page', async () => {
+        await PaymentController.makeGroupPayment(request, response);
+        sinon.assert.calledWith(paymentSvcMock, {
+          PaymentCode: '5624r2wupfs',
+          PenaltyType: 'FPN',
+          PaymentDetail: {
+            PaymentMethod: 'POSTAL_ORDER',
             PaymentRef: 'receipt-ref',
             PaymentAmount: 120,
             PaymentDate: sinon.match.number,
