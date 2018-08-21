@@ -146,7 +146,26 @@ export default class PaymentService {
     slipNumber,
     postalOrderNumber,
   ) {
-    return this.httpClient.post('groupPayment/', {});
+    const total = penGrpDetails.splitAmounts.find(a => a.type === type).amount;
+    const penaltiesOfType = penalties.find(p => p.type === type).penalties;
+    const payload = {
+      TotalAmount: total,
+      PaymentMethod: 'CASH',
+      VehicleRegistration: penGrpDetails.registrationNumber,
+      PenaltyGroupId: penGrpId,
+      PenaltyType: type,
+      RedirectUrl: redirectUrl,
+      ReceiptDate: new Date().toISOString().split('T')[0],
+      SlipNumber: slipNumber,
+      PostalOrderNumber: postalOrderNumber,
+      BatchNumber: 1,
+      Penalties: penaltiesOfType.map(p => ({
+        PenaltyReference: p.reference,
+        PenaltyAmount: p.amount,
+        VehicleRegistration: p.vehicleReg,
+      })),
+    };
+    return this.httpClient.post('groupPayment/', payload);
   }
 
   confirmPayment(receiptReference, penaltyType) {

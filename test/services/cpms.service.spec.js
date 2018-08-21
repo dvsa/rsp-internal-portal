@@ -149,4 +149,52 @@ describe('CPMS Service', () => {
       expect(resolution).to.equal('resolved value');
     });
   });
+
+  describe('createGroupPostalOrderTransaction', () => {
+    const penaltyGroup = fakePenaltyGroups.find(group => group.paymentCode === '5624r2wupfs');
+    beforeEach(() => {
+      httpClientStub = sinon.stub(HttpClient.prototype, 'post');
+      httpClientStub
+        .withArgs('groupPayment/', {
+          TotalAmount: 120,
+          PaymentMethod: 'CASH',
+          VehicleRegistration: '11DDD',
+          PenaltyGroupId: '5624r2wupfs',
+          PenaltyType: 'FPN',
+          SlipNumber: '1234',
+          BatchNumber: 1,
+          PostalOrderNumber: '2468',
+          ReceiptDate: new Date().toISOString().split('T')[0],
+          RedirectUrl: 'https://redirect.url',
+          Penalties: [
+            {
+              PenaltyReference: '564548184556',
+              PenaltyAmount: 100,
+              VehicleRegistration: '11DDD',
+            },
+            {
+              PenaltyReference: '5281756140484',
+              PenaltyAmount: 20,
+              VehicleRegistration: '11DDD',
+            },
+          ],
+        })
+        .resolves('resolved value');
+    });
+    afterEach(() => {
+      HttpClient.prototype.post.restore();
+    });
+    it('should return a POST promise from the groupPayment endpoint', async () => {
+      const resolution = await cpmsService.createGroupPostalOrderTransaction(
+        '5624r2wupfs',
+        penaltyGroup.penaltyGroupDetails,
+        'FPN',
+        penaltyGroup.penaltyDetails,
+        'https://redirect.url',
+        '1234',
+        '2468',
+      );
+      expect(resolution).to.equal('resolved value');
+    });
+  });
 });
