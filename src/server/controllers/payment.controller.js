@@ -192,7 +192,12 @@ const bindArgsForPaymentType = (partialFn, paymentType, body) => {
     case 'cash':
       return partialFn.bind(cpmsService, body.slipNumber);
     case 'cheque':
-      const { slipNumber, chequeDate, chequeNumber, nameOnCheque } = body;
+      const {
+        slipNumber,
+        chequeDate,
+        chequeNumber,
+        nameOnCheque,
+      } = body;
       return partialFn.bind(cpmsService, slipNumber, chequeDate, chequeNumber, nameOnCheque);
     case 'postal-order':
       return partialFn.bind(cpmsService);
@@ -268,6 +273,8 @@ export const renderGroupPaymentPage = async (req, res) => {
   switch (paymentType) {
     case 'cash':
       return res.render('payment/groupCash', penaltyGroupWithPaymentType);
+    case 'cheque':
+      return res.render('payment/groupCheque', penaltyGroupWithPaymentType);
     default:
       return res.redirect(`${config.urlRoot}/?invalidPaymentCode`);
   }

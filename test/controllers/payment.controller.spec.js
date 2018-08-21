@@ -79,6 +79,18 @@ describe('PaymentController', () => {
       });
     });
 
+    context('when the payment type is cheque', () => {
+      const penaltyGroup = fakeEnrichedPenaltyGroups
+        .find(g => g.paymentCode === '5624r2wupfs');
+      beforeEach(() => {
+        request.query.paymentType = 'cheque';
+      });
+      it('should render the cheque group payment page', async () => {
+        await PaymentController.renderGroupPaymentPage(request, response);
+        sinon.assert.calledWith(renderSpy, 'payment/groupCheque', { ...penaltyGroup, paymentPenaltyType: 'FPN' });
+      });
+    });
+
     context('when the payment type is invalid', () => {
       beforeEach(() => {
         request.query.paymentType = 'notvalidtype';

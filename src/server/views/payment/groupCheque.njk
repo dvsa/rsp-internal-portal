@@ -1,0 +1,81 @@
+{% extends 'layouts/default.layout.njk' %}
+
+{% set pageTitle = 'DVSA Road Side Payment Portal' %}
+{% set pageBreadcrumbItems = [
+    { text: 'Home', url: '/' },
+    { text: 'Payment Code', url: '/' },
+    { text: 'Penalty Details', url: '/payment-code/'+paymentCode },
+    { text: 'Payment by Cash' }
+  ]
+%}
+
+{% block content %}
+  
+  {% call components.gridRow() %}
+    {% call components.columnTwoThirds() %}
+      {{ components.heading(text="Payment by cash", tag="h1", size="large") }}
+        <table class="details">
+          <caption class="heading-medium">Penalty Details</caption>
+          <tbody>
+            <tr>
+              <td>Payment Code:</td>
+              <td>{{ paymentCode }}</td> 
+            </tr>
+            <tr>
+              <td>Vehicle registration:</td>
+              <td>{{ penaltyGroupDetails.registrationNumber }}</td>
+            </tr>
+            <tr>
+              <td>Date issued:</td>
+              <td>{{ penaltyGroupDetails.date }}</td>
+            </tr>
+            <tr>
+              <td>Location:</td>
+              <td>{{ penaltyGroupDetails.location }}</td>
+            </tr>
+            <tr>
+              <td>Status:</td>
+              <td>{{ paymentStatus }}</td>
+          </tbody>
+        </table>
+
+        <br />
+
+        <table>
+          <thead>
+            <th>Penalty Reference</th>
+            <th>Amount</th>
+          </thead>
+          <tbody>
+            {% for penaltyTypeGroup in penaltyDetails %}
+              {% if penaltyTypeGroup.type == paymentPenaltyType %}
+                {% for penalty in penaltyTypeGroup.penalties %}
+                  <tr>
+                    <td>{{ penalty.formattedReference }}</td>
+                    <td>&pound;{{ penalty.amount }}</td>
+                  </tr>
+                {% endfor %}
+              {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <p>
+        {% call components.form(action="", method="POST") %}
+						<input type="hidden" name="reference" value="{{ reference }}">
+						<input type="hidden" name="type" value="{{ type }}">
+						<input type="hidden" name="amount" value="{{ amount }}">
+						<input type="hidden" name="paymentCode" value="{{ paymentCode }}">
+            <input type="hidden" name="vehicleReg" value="{{ vehicleReg }}">
+            <input type="hidden" name="paymentType" value="cheque">
+
+          {{ components.heading(text="Payment details ", tag="h3", size="medium") }}
+          <p>{{ components.field(id="chequeDate", type="date", label="Date on cheque", required=true) }}</p>
+          <p>{{ components.field(id="chequeNumber", type="number", label= "Cheque number", required=true) }}</p>
+          <p>{{ components.field(id="nameOnCheque", label="Name on cheque", required=true) }}</p>
+          <p>{{ components.field(id="slipNumber", type="number", label="Paying in slip number", required=true) }}</p>
+          {{ components.button(text="Confirm payment", type="submit") }}
+        {%- endcall %}
+    {%- endcall %}
+  {%- endcall %}
+{% endblock %}
