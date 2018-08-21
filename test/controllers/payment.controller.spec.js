@@ -199,6 +199,23 @@ describe('PaymentController', () => {
         });
     };
 
+    const assertPaymentRecordCreatedForPaymentMethod = (paymentMethod) => {
+      sinon.assert.calledWith(paymentServiceStub, {
+        PaymentCode: '5624r2wupfs',
+        PenaltyType: 'FPN',
+        PaymentDetail: {
+          PaymentMethod: paymentMethod,
+          PaymentRef: 'receipt-ref',
+          PaymentAmount: 120,
+          PaymentDate: sinon.match.number,
+        },
+        PenaltyIds: [
+          '564548184556_FPN',
+          '5281756140484_FPN',
+        ],
+      });
+    };
+
     context('when a cash payment is sent', async () => {
       beforeEach(() => {
         cpmsSvcMock = sinon.stub(CpmsService.prototype, 'createGroupCashTransaction');
@@ -214,33 +231,14 @@ describe('PaymentController', () => {
       });
       it('should create a group cash transaction, make a group payment and return to the receipt page', async () => {
         await PaymentController.makeGroupPayment(request, response);
-        sinon.assert.calledWith(paymentServiceStub, {
-          PaymentCode: '5624r2wupfs',
-          PenaltyType: 'FPN',
-          PaymentDetail: {
-            PaymentMethod: 'CASH',
-            PaymentRef: 'receipt-ref',
-            PaymentAmount: 120,
-            PaymentDate: sinon.match.number,
-          },
-          PenaltyIds: [
-            '564548184556_FPN',
-            '5281756140484_FPN',
-          ],
-        });
+        assertPaymentRecordCreatedForPaymentMethod('CASH');
         sinon.assert.calledWith(redirectSpy, '/payment-code/5624r2wupfs/FPN/receipt');
       });
 
       context('given CPMS orchestration does not indicate the cash payment was successful', () => {
         beforeEach(() => {
           cpmsSvcMock.resetBehavior();
-          cpmsSvcMock.resolves({
-            data: {
-              receipt_reference: 'receipt-ref',
-              code: '001',
-              message: 'Not success',
-            },
-          });
+          cpmsSvcMock.resolves({ data: { receipt_reference: 'receipt-ref', code: '001', message: 'Not success' } });
         });
 
         it('should render the failed payment page', async () => {
@@ -261,20 +259,7 @@ describe('PaymentController', () => {
       });
       it('should create a group cheque transaction, make a group payment and return to the receipt page', async () => {
         await PaymentController.makeGroupPayment(request, response);
-        sinon.assert.calledWith(paymentServiceStub, {
-          PaymentCode: '5624r2wupfs',
-          PenaltyType: 'FPN',
-          PaymentDetail: {
-            PaymentMethod: 'CHEQUE',
-            PaymentRef: 'receipt-ref',
-            PaymentAmount: 120,
-            PaymentDate: sinon.match.number,
-          },
-          PenaltyIds: [
-            '564548184556_FPN',
-            '5281756140484_FPN',
-          ],
-        });
+        assertPaymentRecordCreatedForPaymentMethod('CHEQUE');
         sinon.assert.calledWith(redirectSpy, '/payment-code/5624r2wupfs/FPN/receipt');
       });
     });
@@ -292,20 +277,7 @@ describe('PaymentController', () => {
       });
       it('should create a group postal order transaction, make a group payment and return to the receipt page', async () => {
         await PaymentController.makeGroupPayment(request, response);
-        sinon.assert.calledWith(paymentServiceStub, {
-          PaymentCode: '5624r2wupfs',
-          PenaltyType: 'FPN',
-          PaymentDetail: {
-            PaymentMethod: 'POSTAL_ORDER',
-            PaymentRef: 'receipt-ref',
-            PaymentAmount: 120,
-            PaymentDate: sinon.match.number,
-          },
-          PenaltyIds: [
-            '564548184556_FPN',
-            '5281756140484_FPN',
-          ],
-        });
+        assertPaymentRecordCreatedForPaymentMethod('POSTAL_ORDER');
         sinon.assert.calledWith(redirectSpy, '/payment-code/5624r2wupfs/FPN/receipt');
       });
     });
