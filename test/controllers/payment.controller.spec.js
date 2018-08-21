@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import sinon from 'sinon';
 
 import * as PaymentController from '../../src/server/controllers/payment.controller';
@@ -8,28 +7,35 @@ import getPenaltyGroupFake from '../data/penaltyGroup/enchrichedPenaltyGroupFake
 import fakeEnrichedPenaltyGroups from '../data/penaltyGroup/fake-penalty-groups-enriched.json';
 import PaymentService from '../../src/server/services/payment.service';
 
-describe('PaymentController', () => {
-  describe('renderGroupPaymentPage', () => {
-    let penaltyGroupServiceStub;
-    const redirectSpy = sinon.spy();
-    const renderSpy = sinon.spy();
-    const response = { render: renderSpy, redirect: redirectSpy };
-    let request;
+const penaltyGroup = fakeEnrichedPenaltyGroups.find(g => g.paymentCode === '5624r2wupfs');
 
+describe('PaymentController', () => {
+  let penaltyGroupServiceStub;
+  let paymentServiceStub;
+  const redirectSpy = sinon.spy();
+  const renderSpy = sinon.spy();
+  let request;
+  const response = { render: renderSpy, redirect: redirectSpy };
+
+  beforeEach(() => {
+    penaltyGroupServiceStub = sinon.stub(PenaltyGroupService.prototype, 'getByPaymentCode');
+    penaltyGroupServiceStub.callsFake(getPenaltyGroupFake);
+    paymentServiceStub = sinon.stub(PaymentService.prototype, 'recordGroupPayment');
+  });
+  afterEach(() => {
+    PenaltyGroupService.prototype.getByPaymentCode.restore();
+    PaymentService.prototype.recordGroupPayment.restore();
+    redirectSpy.resetHistory();
+    renderSpy.resetHistory();
+  });
+
+  describe('renderGroupPaymentPage', () => {
     beforeEach(() => {
-      penaltyGroupServiceStub = sinon.stub(PenaltyGroupService.prototype, 'getByPaymentCode');
-      penaltyGroupServiceStub
-        .callsFake(code => getPenaltyGroupFake(code));
       request = {
         params: { payment_code: '5624r2wupfs', type: 'FPN' },
         query: { paymentType: 'card' },
         get: () => 'localhost',
       };
-      redirectSpy.resetHistory();
-      renderSpy.resetHistory();
-    });
-    afterEach(() => {
-      PenaltyGroupService.prototype.getByPaymentCode.restore();
     });
 
     context('when the penalties of that type are already paid', () => {
@@ -45,8 +51,6 @@ describe('PaymentController', () => {
     context('when the payment type is card', () => {
       let cpmsServiceStub;
       beforeEach(() => {
-        const penaltyGroup = fakeEnrichedPenaltyGroups
-          .find(g => g.paymentCode === '5624r2wupfs');
         cpmsServiceStub = sinon.stub(CpmsService.prototype, 'createCardNotPresentGroupTransaction');
         cpmsServiceStub
           .withArgs(
@@ -68,8 +72,6 @@ describe('PaymentController', () => {
     });
 
     context('when the payment type is cash', () => {
-      const penaltyGroup = fakeEnrichedPenaltyGroups
-        .find(g => g.paymentCode === '5624r2wupfs');
       beforeEach(() => {
         request.query.paymentType = 'cash';
       });
@@ -80,8 +82,6 @@ describe('PaymentController', () => {
     });
 
     context('when the payment type is cheque', () => {
-      const penaltyGroup = fakeEnrichedPenaltyGroups
-        .find(g => g.paymentCode === '5624r2wupfs');
       beforeEach(() => {
         request.query.paymentType = 'cheque';
       });
@@ -92,8 +92,6 @@ describe('PaymentController', () => {
     });
 
     context('when the payment type is cheque', () => {
-      const penaltyGroup = fakeEnrichedPenaltyGroups
-        .find(g => g.paymentCode === '5624r2wupfs');
       beforeEach(() => {
         request.query.paymentType = 'postal';
       });
@@ -115,41 +113,28 @@ describe('PaymentController', () => {
   });
 
   describe('confirmGroupPayment', () => {
-    let penaltyGrpServiceStub;
     let cpmsServiceStub;
-    let paymentServiceStub;
-    const redirectSpy = sinon.spy();
-    const renderSpy = sinon.spy();
-    const response = { render: renderSpy, redirect: redirectSpy };
-    let request;
 
     beforeEach(() => {
-      penaltyGrpServiceStub = sinon.stub(PenaltyGroupService.prototype, 'getByPaymentCode');
       cpmsServiceStub = sinon.stub(CpmsService.prototype, 'confirmPayment');
-      paymentServiceStub = sinon.stub(PaymentService.prototype, 'recordGroupPayment');
 
       request = {
         params: { payment_code: '5624r2wupfs', type: 'FPN' },
         query: { receipt_reference: 'FB02-18-20180816-154021-D8245D1F' },
       };
 
-      penaltyGrpServiceStub.callsFake(paymentCode => getPenaltyGroupFake(paymentCode));
       cpmsServiceStub
         .withArgs('FB02-18-20180816-154021-D8245D1F', 'FPN')
         .resolves({ data: { code: 801, auth_code: '1234' } });
     });
     afterEach(() => {
-      PenaltyGroupService.prototype.getByPaymentCode.restore();
       CpmsService.prototype.confirmPayment.restore();
-      PaymentService.prototype.recordGroupPayment.restore();
-      redirectSpy.resetHistory();
-      renderSpy.resetHistory();
     });
 
     context('given CPMS Service confirmation response has code 801', () => {
       it('should call payment service to create a group payment record and redirect to the receipt page', async () => {
         await PaymentController.confirmGroupPayment(request, response);
-        sinon.assert.calledWith(penaltyGrpServiceStub, '5624r2wupfs');
+        sinon.assert.calledWith(penaltyGroupServiceStub, '5624r2wupfs');
         sinon.assert.calledWith(cpmsServiceStub, 'FB02-18-20180816-154021-D8245D1F', 'FPN');
         sinon.assert.calledWith(paymentServiceStub, {
           PaymentCode: '5624r2wupfs',
@@ -195,54 +180,41 @@ describe('PaymentController', () => {
   });
 
   describe('makeGroupPayment', () => {
-    let penaltyGroupSvcMock;
     let cpmsSvcMock;
-    let paymentSvcMock;
-    const request = {
-      body: { paymentType: 'cash', slipNumber: '1234' },
-      params: { payment_code: '5624r2wupfs', type: 'FPN' },
-      get: () => 'localhost',
-    };
-    const redirectSpy = sinon.spy();
-    const renderSpy = sinon.spy();
-    const response = { render: renderSpy, redirect: redirectSpy };
-    const penaltyGroup = fakeEnrichedPenaltyGroups[1];
-
-    beforeEach(() => {
-      penaltyGroupSvcMock = sinon.stub(PenaltyGroupService.prototype, 'getByPaymentCode');
-      penaltyGroupSvcMock.callsFake(getPenaltyGroupFake);
-    });
-    afterEach(() => {
-      PenaltyGroupService.prototype.getByPaymentCode.restore();
-    });
-
-    context('when a cash payment is sent', async () => {
-      beforeEach(() => {
-        cpmsSvcMock = sinon.stub(CpmsService.prototype, 'createGroupCashTransaction');
-        paymentSvcMock = sinon.stub(PaymentService.prototype, 'recordGroupPayment');
-
-        cpmsSvcMock.withArgs(
-          '5624r2wupfs',
-          penaltyGroup.penaltyGroupDetails,
-          'FPN',
-          penaltyGroup.penaltyDetails,
-          'https://localhost/payment-code/5624r2wupfs/FPN/receipt',
-          '1234',
-        ).resolves({
+    const standardTransactionPayloadWithExtraArgsResolvesSuccess = (a, ...rest) => { // eslint-disable-line
+      return cpmsSvcMock.withArgs(
+        '5624r2wupfs',
+        penaltyGroup.penaltyGroupDetails,
+        'FPN',
+        penaltyGroup.penaltyDetails,
+        'https://localhost/payment-code/5624r2wupfs/FPN/receipt',
+        ...rest,
+      )
+        .resolves({
           data: {
             receipt_reference: 'receipt-ref',
             code: '000',
             message: 'Success',
           },
         });
+    };
+
+    context('when a cash payment is sent', async () => {
+      beforeEach(() => {
+        cpmsSvcMock = sinon.stub(CpmsService.prototype, 'createGroupCashTransaction');
+        standardTransactionPayloadWithExtraArgsResolvesSuccess(cpmsSvcMock, '1234');
+        request = {
+          body: { paymentType: 'cash', slipNumber: '1234' },
+          params: { payment_code: '5624r2wupfs', type: 'FPN' },
+          get: () => 'localhost',
+        };
       });
       afterEach(() => {
         CpmsService.prototype.createGroupCashTransaction.restore();
-        PaymentService.prototype.recordGroupPayment.restore();
       });
       it('should create a group cash transaction, make a group payment and return to the receipt page', async () => {
         await PaymentController.makeGroupPayment(request, response);
-        sinon.assert.calledWith(paymentSvcMock, {
+        sinon.assert.calledWith(paymentServiceStub, {
           PaymentCode: '5624r2wupfs',
           PenaltyType: 'FPN',
           PaymentDetail: {
@@ -281,31 +253,15 @@ describe('PaymentController', () => {
     context('when a cheque payment is sent', () => {
       beforeEach(() => {
         cpmsSvcMock = sinon.stub(CpmsService.prototype, 'createGroupChequeTransaction');
-        paymentSvcMock = sinon.stub(PaymentService.prototype, 'recordGroupPayment');
-
-        cpmsSvcMock.withArgs(
-          '5624r2wupfs',
-          penaltyGroup.penaltyGroupDetails,
-          'FPN',
-          penaltyGroup.penaltyDetails,
-          'https://localhost/payment-code/5624r2wupfs/FPN/receipt',
-          '1234',
-        ).resolves({
-          data: {
-            receipt_reference: 'receipt-ref',
-            code: '000',
-            message: 'Success',
-          },
-        });
+        standardTransactionPayloadWithExtraArgsResolvesSuccess(cpmsSvcMock, '1234');
         request.body.paymentType = 'cheque';
       });
       afterEach(() => {
         CpmsService.prototype.createGroupChequeTransaction.restore();
-        PaymentService.prototype.recordGroupPayment.restore();
       });
       it('should create a group cheque transaction, make a group payment and return to the receipt page', async () => {
         await PaymentController.makeGroupPayment(request, response);
-        sinon.assert.calledWith(paymentSvcMock, {
+        sinon.assert.calledWith(paymentServiceStub, {
           PaymentCode: '5624r2wupfs',
           PenaltyType: 'FPN',
           PaymentDetail: {
@@ -326,36 +282,17 @@ describe('PaymentController', () => {
     context('when a postal payment is sent', () => {
       beforeEach(() => {
         cpmsSvcMock = sinon.stub(CpmsService.prototype, 'createGroupPostalOrderTransaction');
-        paymentSvcMock = sinon.stub(PaymentService.prototype, 'recordGroupPayment');
-
-        cpmsSvcMock
-          .withArgs(
-            '5624r2wupfs',
-            penaltyGroup.penaltyGroupDetails,
-            'FPN',
-            penaltyGroup.penaltyDetails,
-            'https://localhost/payment-code/5624r2wupfs/FPN/receipt',
-            '1234',
-            '2468',
-          )
-          .resolves({
-            data: {
-              receipt_reference: 'receipt-ref',
-              code: '000',
-              message: 'Success',
-            },
-          });
+        standardTransactionPayloadWithExtraArgsResolvesSuccess(cpmsSvcMock, '1234', '2468');
         request.body.paymentType = 'postal';
         request.body.slipNumber = '1234';
         request.body.postalOrderNumber = '2468';
       });
       afterEach(() => {
         CpmsService.prototype.createGroupPostalOrderTransaction.restore();
-        PaymentService.prototype.recordGroupPayment.restore();
       });
       it('should create a group postal order transaction, make a group payment and return to the receipt page', async () => {
         await PaymentController.makeGroupPayment(request, response);
-        sinon.assert.calledWith(paymentSvcMock, {
+        sinon.assert.calledWith(paymentServiceStub, {
           PaymentCode: '5624r2wupfs',
           PenaltyType: 'FPN',
           PaymentDetail: {
