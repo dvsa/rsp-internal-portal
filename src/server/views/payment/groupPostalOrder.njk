@@ -5,7 +5,7 @@
     { text: 'Home', url: '/' },
     { text: 'Payment Code', url: '/' },
     { text: 'Penalty Details', url: '/payment-code/'+paymentCode },
-    { text: 'Payment by Cheque' }
+    { text: 'Payment by postal order' }
   ]
 %}
 
@@ -13,7 +13,7 @@
   
   {% call components.gridRow() %}
     {% call components.columnTwoThirds() %}
-      {{ components.heading(text="Payment by cash", tag="h1", size="large") }}
+      {{ components.heading(text="Payment by postal order", tag="h1", size="large") }}
         <table class="details">
           <caption class="heading-medium">Penalty Details</caption>
           <tbody>
