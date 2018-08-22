@@ -43,12 +43,44 @@
               </strong>
             </td>
           </tr>
-          <tr>
-            <td>Authorisation code</td>
-            <td>
-              <strong>{{ paymentDetails.Payments[paymentType].AuthCode }}</strong>
-            </td>
-          </tr>
+          {% if paymentDetails.Payments[paymentType].PaymentMethod == 'CNP' %}
+            <tr>
+              <td>Payment method</td>
+              <td><strong>Card (internal portal)</td>
+            </tr>
+            <tr>
+              <td>Authorisation code</td>
+              <td>
+                <strong>{{ paymentDetails.Payments[paymentType].AuthCode }}</strong>
+              </td>
+            </tr>
+          {% elif paymentDetails.Payments[paymentType].PaymentMethod == 'CARD' %}
+            <tr>
+              <td>Payment method</td>
+              <td><strong>Card (public portal)</td>
+            </tr>
+            <tr>
+              <td>Authorisation code</td>
+              <td>
+                <strong>{{ paymentDetails.Payments[paymentType].AuthCode }}</strong>
+              </td>
+            </tr>
+          {% elif paymentDetails.Payments[paymentType].PaymentMethod == 'CASH' %}
+            <tr>
+              <td>Payment method</td>
+              <td><strong>Cash</strong></td>
+            </tr>
+          {% elif paymentDetails.Payments[paymentType].PaymentMethod == 'CHEQUE' %}
+            <tr>
+              <td>Payment method</td>
+              <td><strong>Cheque</strong></td>
+            </tr>
+          {% elif paymentDetails.Payments[paymentType].PaymentMethod == 'POSTAL_ORDER' %}
+            <tr>
+              <td>Payment method</td>
+              <td><strong>Postal order</strong></td>
+            </tr>
+          {% endif %}
         </tbody>
       </table>
 
