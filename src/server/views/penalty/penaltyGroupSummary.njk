@@ -2,9 +2,8 @@
 
 {% set pageTitle = t.site_title %}
 {% set pageBreadcrumbItems = [
-    { text: t.breadcrumbs.home, url: '/' },
-    { text: t.breadcrumbs.payment_code, url: '/payment-code' },
-    { text: t.breadcrumbs.penalty_details }
+    { text: 'Home', url: '/' },
+    { text: paymentCode }
   ] 
 %}
 
@@ -15,8 +14,7 @@
   {% call components.gridRow() %}
     {% call components.columnTwoThirds() %}
       {% if paid == false %}
-        {{ components.heading(text='Pay a DVSA Penalty', tag='h1', size='xlarge') }}
-        <p>Payment code: <strong>{{ paymentCode }}</strong></p>
+        {{ components.heading(text='Summary of DVSA roadside fines', tag='h1', size='large') }}
         {{ components.paragraph(text='We found the following details in our records') }}
       {% else %}
         {{ components.heading(text='Penalty Payment Confirmation', tag='h1', size='xlarge') }}
@@ -26,6 +24,10 @@
 
       <table class="details">
         <tbody>
+          <tr>
+            <td>Payment code</td>
+            <td>{{ paymentCode }}</td>
+          </tr>
           <tr>
             <td>Vehicle Registration</td>
             {% if isPenaltyGroup == false %}

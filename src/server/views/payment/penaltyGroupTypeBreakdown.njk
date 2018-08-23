@@ -3,24 +3,21 @@
 {% set pageTitle = 'DVSA Road Side Payment Portal' %}
 {% set pageBreadcrumbItems = [
     { text: 'Home', url: '/' },
-    { text: 'Payment Code', url: '/payment-code' },
-    { text: 'Penalty Details' }
+    { text: paymentCode, url: '/payment-code/' + paymentCode },
+    { text: 'Fines' }
   ] 
 %}
   
 {% block content %}
   {% call components.gridRow() %}
     {% call components.columnTwoThirds() %}
-      {{ components.heading(text='Pay fixed penalties and immobilisation fees', tag='h1', size='xlarge') }}
-      <h3 class="heading-medium">
         {% if penaltyType == 'FPN' %}
-          Pay fixed penalties
+          {{ components.heading(text='Pay fixed penalties', tag='h1', size='xlarge') }}
         {% elif penaltyType == 'CDN' %}
-          Pay court deposits
+          {{ components.heading(text='Pay court deposits', tag='h1', size='xlarge') }}
         {% elif penaltyType == 'IM' %}
-          Pay immobilisation fee
+          {{ components.heading(text='Pay immobilisation fee', tag='h1', size='xlarge') }}
         {% endif %}
-      </h3>
       {# Payment summary table #}
       <table>
         <thead>
@@ -57,22 +54,14 @@
           {{ components.radio(text='Cheque', value='cheque', id='pay-by-cheque', name='paymentType') }}
           {{ components.radio(text='Postal Order', value='postal', id='pay-by-postal', name='paymentType') }}
         {%- endcall %}
-        {{ components.button(text='Continue to payment', type='submit') }}
+        {% if penaltyType == 'FPN' %}
+          {{ components.button(text='Pay fixed penalties', type='submit') }}
+        {% elif penaltyType == 'CDN' %}
+          {{ components.button(text='Pay court deposits', type='submit') }}
+        {% elif penaltyType == 'IM' %}
+          {{ components.button(text='Pay immobilisation fee', type='submit') }}
+        {% endif %}
       {%- endcall %}
-    {%- endcall %}
-
-    {% call components.columnOneThird() %}
-    <aside class="govuk-related-items" role="complementary">
-        <nav role="navigation" aria-labelledby="subsection-title">
-          <ul class="font-xsmall">
-            <li> {{ components.link(text='French', url='?clang=fr') if clang != 'fr' else components.link(text='English', url='?clang=en') }}</li>
-            <li>{{ components.link(text='German', url='?clang=de') if clang != 'de' else components.link(text='English', url='?clang=en') }}</li>
-            <li>{{ components.link(text='Polish', url='?clang=pl') if clang != 'pl' else components.link(text='English', url='?clang=en') }}</li>
-            <li>{{ components.link(text='Spanish', url='?clang=es') if clang != 'es' else components.link(text='English', url='?clang=en') }}</li>
-            <li>{{ components.link(text='Welsh', url='?clang=cy') if clang != 'cy' else components.link(text='English', url='?clang=en') }}</li>
-          </ul>
-        </nav>
-      </aside>
     {%- endcall %}
 
   {%- endcall %}
