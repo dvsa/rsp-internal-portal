@@ -61,6 +61,12 @@
                   Court Deposits
                 {% elif amount.type == 'IM' %}
                   Immobilisation Fee
+                  <br />
+                  {% for penaltyType in penaltyDetails %}
+                    {% if penaltyType.type == 'IM' %}
+                      {{ penaltyType.penalties[0].formattedReference }}
+                    {% endif %}
+                  {% endfor %}
                 {% endif %}
               </td>
               <td>
@@ -92,6 +98,59 @@
           {% endfor %}
         </tbody>
       </table>
+
+      {% for penaltyType in penaltyDetails %}
+        {% if penaltyType.type == 'FPN' %}
+          <p>
+            <details>
+              <summary><span class="summary">See fixed penalty details</span></summary>
+              <div class="panel panel-border-narrow">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Reference</th>
+                      <th>Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for penalty in penaltyType.penalties %}
+                      <tr>
+                        <td>{{ penalty.formattedReference }}</td>
+                        <td>&pound;{{ penalty.amount }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </details>    
+          </p>
+        {% elif penaltyType.type == 'CDN' %}
+          <p>
+            <details>
+              <summary><span class="summary">See court deposit details</span></summary>
+              <div class="panel panel-border-narrow">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Reference</th>
+                      <th>Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for penalty in penaltyType.penalties %}
+                      <tr>
+                        <td>{{ penalty.formattedReference }}</td>
+                        <td>&pound;{{ penalty.amount }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </details>    
+          </p>
+        {% endif %}
+      {% endfor %}
+
       {% if paid %}
         <p>
         You can: &nbsp; 
@@ -104,21 +163,6 @@
         {{ components.button(text='Pay another penalty', url='/payment-code') }}
       {% endif %}
     {# ends components.columnTwoThirds #}
-    {%- endcall %}
-
-    {% call components.columnOneThird() %}
-
-    <aside class="govuk-related-items" role="complementary">
-        <nav role="navigation" aria-labelledby="subsection-title">
-          <ul class="font-xsmall">
-            <li> {{ components.link(text='French', url='?clang=fr') if clang != 'fr' else components.link(text='English', url='?clang=en') }}</li>
-            <li>{{ components.link(text='German', url='?clang=de') if clang != 'de' else components.link(text='English', url='?clang=en') }}</li>
-            <li>{{ components.link(text='Polish', url='?clang=pl') if clang != 'pl' else components.link(text='English', url='?clang=en') }}</li>
-            <li>{{ components.link(text='Spanish', url='?clang=es') if clang != 'es' else components.link(text='English', url='?clang=en') }}</li>
-            <li>{{ components.link(text='Welsh', url='?clang=cy') if clang != 'cy' else components.link(text='English', url='?clang=en') }}</li>
-          </ul>
-        </nav>
-      </aside>
     {%- endcall %}
   {# ends components.gridRow #}
   {%- endcall %}
