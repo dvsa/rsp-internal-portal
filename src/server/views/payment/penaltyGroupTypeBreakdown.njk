@@ -3,12 +3,15 @@
 {% if penaltyType == 'FPN' %}
   {% set title = 'Pay fixed penalties' %}
   {% set breadcrumbLeaf = 'Fixed penalties' %}
+  {% set submitButtonText = 'Pay fixed penalties' %}
 {% elif penaltyType == 'CDN' %}
   {% set title = 'Pay court deposits' %}
   {% set breadcrumbLeaf = 'Court deposit' %}
+  {% set submitButtonText = 'Pay court deposits' %}
 {% elif penaltyType == 'IM' %}
   {% set title = 'Pay immobilisation fee' %}
   {% set breadcrumbLeaf = 'Immobilisation' %}
+  {% set submitButtonText = 'Pay immobilisation fee' %}
 {% endif %}
 
 {% set pageTitle = 'DVSA Road Side Payment Portal' %}
@@ -59,13 +62,7 @@
           {{ components.radio(text='Cheque', value='cheque', id='pay-by-cheque', name='paymentType') }}
           {{ components.radio(text='Postal Order', value='postal', id='pay-by-postal', name='paymentType') }}
         {%- endcall %}
-        {% if penaltyType == 'FPN' %}
-          {{ components.button(text='Pay fixed penalties', type='submit') }}
-        {% elif penaltyType == 'CDN' %}
-          {{ components.button(text='Pay court deposits', type='submit') }}
-        {% elif penaltyType == 'IM' %}
-          {{ components.button(text='Pay immobilisation fee', type='submit') }}
-        {% endif %}
+        {{ components.button(text=submitButtonText, type='submit') }}
       {%- endcall %}
     {%- endcall %}
 
