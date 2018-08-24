@@ -39,4 +39,19 @@ export default [
     paymentDate: 1519135329,
     paymentAuthCode: '1234TBD',
   },
+  {
+    inPenaltyGroup: true,
+    paymentStatus: 'UNPAID',
+    paymentToken: '3333333333333333',
+    penaltyType: 'FPN',
+    penaltyAmount: 100,
+    referenceNo: '4597595755914',
+    vehicleDetails: {
+      regNo: 'ABC123',
+    },
+    dateTime: 1419171700,
+    placeWhereIssued: 'Ashford HRTI',
+    paymentDate: 1519135329,
+    paymentAuthCode: '1234TBD',
+  },
 ];
