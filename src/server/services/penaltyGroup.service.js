@@ -82,10 +82,12 @@ export default class PenaltyGroupService {
       }
       const { Payments } = response.data;
       const pensOfType = Payments.filter(p => p.PaymentCategory === type)[0].Penalties;
+      const parsedPenalties = pensOfType.map(p => PenaltyService.parsePenalty(p));
       return {
-        penaltyDetails: pensOfType.map(p => PenaltyService.parsePenalty(p)),
+        penaltyDetails: parsedPenalties,
         penaltyType: type,
         totalAmount: pensOfType.reduce((total, pen) => total + pen.Value.penaltyAmount, 0),
+        paymentStatus: parsedPenalties.every(p => p.status === 'PAID') ? 'PAID' : 'PAID',
       };
     }).catch((error) => {
       throw new Error(error);
