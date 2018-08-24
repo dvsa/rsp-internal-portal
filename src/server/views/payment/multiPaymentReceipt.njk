@@ -138,13 +138,7 @@
           {% endfor %}
         </thead>
       </table>
-
-      <h3 class="heading-medium">Send payment receipt by email</h3>
-      {{ components.field(id='email_address', label='Email address') }}
-      <div id="send-receipt-button-container">
-        {{ components.button(text='Send receipt', type="submit") }}
-      </div>
-
+      <br />
       <p>
         <a href='{{ urlroot }}/payment-code/{{ paymentCode }}'>Return to the payment code summary</a>
       </p>

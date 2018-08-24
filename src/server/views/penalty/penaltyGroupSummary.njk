@@ -17,9 +17,9 @@
         {{ components.heading(text='Summary of DVSA roadside fines', tag='h1', size='large') }}
         {{ components.paragraph(text='We found the following details in our records') }}
       {% else %}
-        {{ components.heading(text='Penalty Payment Confirmation', tag='h1', size='xlarge') }}
-        <p>You paid a penalty for the payment code:&nbsp;<b>{{ paymentCode }}</b>
-        {{ components.paragraph(text='A confirmation has been sent to the DVSA location where the penalty has been issued.') }}
+        {{ components.heading(text='Payment confirmation', tag='h1', size='xlarge') }}
+        <p>All outstanding fines for this payment code have been paid.</p>
+        {{ components.paragraph(text='A confirmation has been sent to the DVSA location where it was issued.') }}
       {% endif %}
 
       <table class="details">
@@ -154,15 +154,7 @@
       {% endfor %}
 
       {% if paid %}
-        <p>
-        You can: &nbsp; 
-          {{ components.list(items=[
-            { text: 'share payment confirmation via SMS', url: '#' },
-            { text: 'share payment confirmation via email', url: '#' },
-            { text: 'alternatively, make a note of the confirmation code for later reference.' }
-          ], type='bullet') }}
-        </p>
-        {{ components.button(text='Pay another penalty', url='/payment-code') }}
+        {{ components.button(text='Home', url='/') }}
       {% endif %}
     {# ends components.columnTwoThirds #}
     {%- endcall %}
