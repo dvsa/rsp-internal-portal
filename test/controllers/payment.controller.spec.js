@@ -48,6 +48,21 @@ describe('PaymentController', () => {
       });
     });
 
+    context('when one of the collaborators rejects', () => {
+      let cpmsServiceStub;
+      beforeEach(() => {
+        cpmsServiceStub = sinon.stub(CpmsService.prototype, 'createCardNotPresentGroupTransaction');
+        cpmsServiceStub.rejects(new Error('timed out'));
+      });
+      afterEach(() => {
+        CpmsService.prototype.createCardNotPresentGroupTransaction.restore();
+      });
+      it('should redirect back to the payment code', async () => {
+        await PaymentController.renderGroupPaymentPage(request, response);
+        sinon.assert.calledWith(redirectSpy, '/payment-code/5624r2wupfs');
+      });
+    });
+
     context('when the payment type is card', () => {
       let cpmsServiceStub;
       beforeEach(() => {
