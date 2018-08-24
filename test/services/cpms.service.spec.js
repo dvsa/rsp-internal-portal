@@ -64,7 +64,7 @@ describe('CPMS Service', () => {
           PenaltyGroupId: '5624r2wupfs',
           PenaltyType: 'FPN',
           SlipNumber: '1234',
-          BatchNumber: 1,
+          BatchNumber: '1',
           ReceiptDate: new Date().toISOString().split('T')[0],
           RedirectUrl: 'https://redirect.url',
           Penalties: [
@@ -105,12 +105,12 @@ describe('CPMS Service', () => {
       httpClientStub
         .withArgs('groupPayment/', {
           TotalAmount: 120,
-          PaymentMethod: 'CASH',
+          PaymentMethod: 'CHEQUE',
           VehicleRegistration: '11DDD',
           PenaltyGroupId: '5624r2wupfs',
           PenaltyType: 'FPN',
           SlipNumber: '1234',
-          BatchNumber: 1,
+          BatchNumber: '1',
           ReceiptDate: new Date().toISOString().split('T')[0],
           ChequeNumber: '2468',
           ChequeDate: sinon.match.date,
@@ -157,12 +157,12 @@ describe('CPMS Service', () => {
       httpClientStub
         .withArgs('groupPayment/', {
           TotalAmount: 120,
-          PaymentMethod: 'CASH',
+          PaymentMethod: 'POSTAL_ORDER',
           VehicleRegistration: '11DDD',
           PenaltyGroupId: '5624r2wupfs',
           PenaltyType: 'FPN',
           SlipNumber: '1234',
-          BatchNumber: 1,
+          BatchNumber: '1',
           PostalOrderNumber: '2468',
           ReceiptDate: new Date().toISOString().split('T')[0],
           RedirectUrl: 'https://redirect.url',
