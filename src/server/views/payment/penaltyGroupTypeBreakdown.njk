@@ -1,26 +1,31 @@
 {% extends 'layouts/default.layout.njk' %}
 
+{% if penaltyType == 'FPN' %}
+  {% set title = 'Pay fixed penalties' %}
+  {% set breadcrumbLeaf = 'Fixed penalties' %}
+  {% set submitButtonText = 'Pay fixed penalties' %}
+{% elif penaltyType == 'CDN' %}
+  {% set title = 'Pay court deposits' %}
+  {% set breadcrumbLeaf = 'Court deposit' %}
+  {% set submitButtonText = 'Pay court deposits' %}
+{% elif penaltyType == 'IM' %}
+  {% set title = 'Pay immobilisation fee' %}
+  {% set breadcrumbLeaf = 'Immobilisation' %}
+  {% set submitButtonText = 'Pay immobilisation fee' %}
+{% endif %}
+
 {% set pageTitle = 'DVSA Road Side Payment Portal' %}
 {% set pageBreadcrumbItems = [
     { text: 'Home', url: '/' },
-    { text: 'Payment Code', url: '/payment-code' },
-    { text: 'Penalty Details' }
+    { text: paymentCode, url: '/payment-code/' + paymentCode },
+    { text: breadcrumbLeaf }
   ] 
 %}
   
 {% block content %}
   {% call components.gridRow() %}
     {% call components.columnTwoThirds() %}
-      {{ components.heading(text='Pay fixed penalties and immobilisation fees', tag='h1', size='xlarge') }}
-      <h3 class="heading-medium">
-        {% if penaltyType == 'FPN' %}
-          Pay fixed penalties
-        {% elif penaltyType == 'CDN' %}
-          Pay court deposits
-        {% elif penaltyType == 'IM' %}
-          Pay immobilisation fee
-        {% endif %}
-      </h3>
+      {{ components.heading(text=title, tag='h1', size='xlarge') }}
       {# Payment summary table #}
       <table>
         <thead>
@@ -57,22 +62,8 @@
           {{ components.radio(text='Cheque', value='cheque', id='pay-by-cheque', name='paymentType') }}
           {{ components.radio(text='Postal Order', value='postal', id='pay-by-postal', name='paymentType') }}
         {%- endcall %}
-        {{ components.button(text='Continue to payment', type='submit') }}
+        {{ components.button(text=submitButtonText, type='submit') }}
       {%- endcall %}
-    {%- endcall %}
-
-    {% call components.columnOneThird() %}
-    <aside class="govuk-related-items" role="complementary">
-        <nav role="navigation" aria-labelledby="subsection-title">
-          <ul class="font-xsmall">
-            <li> {{ components.link(text='French', url='?clang=fr') if clang != 'fr' else components.link(text='English', url='?clang=en') }}</li>
-            <li>{{ components.link(text='German', url='?clang=de') if clang != 'de' else components.link(text='English', url='?clang=en') }}</li>
-            <li>{{ components.link(text='Polish', url='?clang=pl') if clang != 'pl' else components.link(text='English', url='?clang=en') }}</li>
-            <li>{{ components.link(text='Spanish', url='?clang=es') if clang != 'es' else components.link(text='English', url='?clang=en') }}</li>
-            <li>{{ components.link(text='Welsh', url='?clang=cy') if clang != 'cy' else components.link(text='English', url='?clang=en') }}</li>
-          </ul>
-        </nav>
-      </aside>
     {%- endcall %}
 
   {%- endcall %}

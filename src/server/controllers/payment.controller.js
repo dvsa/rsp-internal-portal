@@ -129,6 +129,84 @@ export const makePayment = async (req, res) => {
   }
 };
 
+export const makeGroupPayment = async (req, res) => {
+  const paymentCode = req.params.payment_code;
+  try {
+    const penaltyType = req.params.type;
+    const { paymentType } = req.body;
+    const penaltyGroup = await penaltyGroupService.getByPaymentCode(paymentCode);
+    const penaltiesOfType = penaltyGroup.penaltyDetails.find(p => p.type === penaltyType).penalties;
+    const amountPaidForType = penaltyGroup.penaltyGroupDetails.splitAmounts
+      .find(s => s.type === penaltyType).amount;
+    const redirectUrl = `https://${req.get('host')}${config.urlRoot}/payment-code/${paymentCode}/${penaltyType}/receipt`;
+
+    const paymentMethodMappings = {
+      cash: { transactionCreationFunction: cpmsService.createGroupCashTransaction, paymentRecordMethod: 'CASH' },
+      cheque: { transactionCreationFunction: cpmsService.createGroupChequeTransaction, paymentRecordMethod: 'CHEQUE' },
+      postal: { transactionCreationFunction: cpmsService.createGroupPostalOrderTransaction, paymentRecordMethod: 'POSTAL_ORDER' },
+    };
+
+    const paymentMethodStrategy = paymentMethodMappings[paymentType];
+
+    const partialCreationFunction = paymentMethodStrategy.transactionCreationFunction.bind(
+      cpmsService,
+      paymentCode,
+      penaltyGroup.penaltyGroupDetails,
+      penaltyType,
+      penaltyGroup.penaltyDetails,
+      redirectUrl,
+    );
+
+    const finalTransactionCreationFunction = bindArgsForPaymentType(
+      partialCreationFunction,
+      paymentType,
+      req.body,
+    );
+
+    const cpmsResp = await finalTransactionCreationFunction();
+
+    if (cpmsResp.data.code !== '000') {
+      return res.render('payment/failedPayment');
+    }
+
+    await paymentService.recordGroupPayment({
+      PaymentCode: paymentCode,
+      PenaltyType: penaltyType,
+      PaymentDetail: {
+        PaymentMethod: paymentMethodStrategy.paymentRecordMethod,
+        PaymentRef: cpmsResp.data.receipt_reference,
+        PaymentAmount: amountPaidForType,
+        PaymentDate: Date.now() / 1000,
+      },
+      PenaltyIds: penaltiesOfType.map(p => `${p.reference}_${penaltyType}`),
+    });
+
+    return res.redirect(`${config.urlRoot}/payment-code/${paymentCode}/${penaltyType}/receipt`);
+  } catch (error) {
+    logger.error(error);
+    return res.redirect(`${config.urlRoot}/payment-code/${paymentCode}`);
+  }
+};
+
+const bindArgsForPaymentType = (partialFn, paymentType, body) => {
+  switch (paymentType) { /* eslint-disable no-case-declarations */
+    case 'cash':
+      return partialFn.bind(cpmsService, body.slipNumber);
+    case 'cheque':
+      const {
+        slipNumber,
+        chequeDate,
+        chequeNumber,
+        nameOnCheque,
+      } = body;
+      return partialFn.bind(cpmsService, slipNumber, chequeDate, chequeNumber, nameOnCheque);
+    case 'postal':
+      return partialFn.bind(cpmsService, body.slipNumber, body.postalOrderNumber);
+    default:
+      return partialFn;
+  }
+};
+
 export const renderPaymentPage = async (req, res) => {
   let penaltyDetails;
 
@@ -193,10 +271,13 @@ export const renderGroupPaymentPage = async (req, res) => {
   }
 
   const penaltyGroupWithPaymentType = { ...penaltyGroup, paymentPenaltyType: penaltyType };
-  console.log(JSON.stringify(penaltyGroupWithPaymentType));
   switch (paymentType) {
     case 'cash':
       return res.render('payment/groupCash', penaltyGroupWithPaymentType);
+    case 'cheque':
+      return res.render('payment/groupCheque', penaltyGroupWithPaymentType);
+    case 'postal':
+      return res.render('payment/groupPostalOrder', penaltyGroupWithPaymentType);
     default:
       return res.redirect(`${config.urlRoot}/?invalidPaymentCode`);
   }

@@ -5,7 +5,7 @@
     { text: 'Home', url: '/' },
     { text: 'Payment Code', url: '/' },
     { text: 'Penalty Details', url: '/payment-code/'+paymentCode },
-    { text: 'Payment by cash' }
+    { text: 'Payment by postal order' }
   ]
 %}
 
@@ -13,7 +13,7 @@
   
   {% call components.gridRow() %}
     {% call components.columnTwoThirds() %}
-      {{ components.heading(text="Payment by cash", tag="h1", size="large") }}
+      {{ components.heading(text="Payment by postal order", tag="h1", size="large") }}
         <table class="details">
           <caption class="heading-medium">Penalty Details</caption>
           <tbody>
@@ -62,13 +62,17 @@
         </table>
 
         {% call components.form(action="", method="POST") %}
-          <input type="hidden" name="paymentCode" value="{{ paymentCode }}">
-          <input type="hidden" name="paymentType" value="cash">
+						<input type="hidden" name="reference" value="{{ reference }}">
+						<input type="hidden" name="type" value="{{ type }}">
+						<input type="hidden" name="amount" value="{{ amount }}">
+						<input type="hidden" name="paymentCode" value="{{ paymentCode }}">
+            <input type="hidden" name="vehicleReg" value="{{ vehicleReg }}">
+            <input type="hidden" name="paymentType" value="postal">
+
           {{ components.heading(text="Payment details ", tag="h3", size="medium") }}
-          <p>
-            {{ components.field(id="slipNumber", type="number", label="Paying in slip number", required=true) }}
-          </p>
-          {{ components.button(text="Confirm cash payment", type="submit") }}
+          <p>{{ components.field(id="postalOrderNumber", type="number", label= "Postal order number", required=true) }}</p>
+          <p>{{ components.field(id="slipNumber", type="number", label="Paying in slip number", required=true) }}</p>
+          {{ components.button(text="Confirm payment", type="submit") }}
         {%- endcall %}
     {%- endcall %}
   {%- endcall %}

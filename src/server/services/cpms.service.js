@@ -18,7 +18,7 @@ export default class PaymentService {
 
   createCardNotPresentGroupTransaction(penGrpId, penGrpDetails, type, penalties, redirectUrl) {
     const total = penGrpDetails.splitAmounts.find(a => a.type === type).amount;
-    return this.httpClient.post('groupCardPayment/', {
+    return this.httpClient.post('groupPayment/', {
       TotalAmount: total,
       PaymentMethod: 'CNP',
       VehicleRegistration: penGrpDetails.registrationNumber,
@@ -45,6 +45,29 @@ export default class PaymentService {
     });
   }
 
+  createGroupCashTransaction(penGrpId, penGrpDetails, type, penalties, redirectUrl, slipNumber) {
+    const total = penGrpDetails.splitAmounts.find(a => a.type === type).amount;
+    const penaltiesOfType = penalties.find(p => p.type === type).penalties;
+
+    const payload = {
+      TotalAmount: total,
+      PaymentMethod: 'CASH',
+      VehicleRegistration: penGrpDetails.registrationNumber,
+      PenaltyGroupId: penGrpId,
+      PenaltyType: type,
+      RedirectUrl: redirectUrl,
+      SlipNumber: slipNumber,
+      ReceiptDate: new Date().toISOString().split('T')[0],
+      BatchNumber: 1,
+      Penalties: penaltiesOfType.map(p => ({
+        PenaltyReference: p.reference,
+        PenaltyAmount: p.amount,
+        VehicleRegistration: p.vehicleReg,
+      })),
+    };
+    return this.httpClient.post('groupPayment/', payload);
+  }
+
   createChequeTransaction(
     vehicleReg, penaltyReference, penaltyType, amount,
     slipNumber, chequeDate, chequeNumber, nameOnCheque,
@@ -63,6 +86,41 @@ export default class PaymentService {
     });
   }
 
+  createGroupChequeTransaction(
+    penGrpId,
+    penGrpDetails,
+    type,
+    penalties,
+    redirectUrl,
+    slipNumber,
+    chequeNumber,
+    chequeDate,
+    nameOnCheque,
+  ) {
+    const total = penGrpDetails.splitAmounts.find(a => a.type === type).amount;
+    const penaltiesOfType = penalties.find(p => p.type === type).penalties;
+    const payload = {
+      TotalAmount: total,
+      PaymentMethod: 'CASH',
+      VehicleRegistration: penGrpDetails.registrationNumber,
+      PenaltyGroupId: penGrpId,
+      PenaltyType: type,
+      RedirectUrl: redirectUrl,
+      ReceiptDate: new Date().toISOString().split('T')[0],
+      SlipNumber: slipNumber,
+      BatchNumber: 1,
+      ChequeNumber: chequeNumber,
+      ChequeDate: chequeDate,
+      NameOnCheque: nameOnCheque,
+      Penalties: penaltiesOfType.map(p => ({
+        PenaltyReference: p.reference,
+        PenaltyAmount: p.amount,
+        VehicleRegistration: p.vehicleReg,
+      })),
+    };
+    return this.httpClient.post('groupPayment/', payload);
+  }
+
   createPostalOrderTransaction(
     vehicleReg, penaltyReference, penaltyType, amount,
     slipNumber, postalOrderNumber,
@@ -77,6 +135,37 @@ export default class PaymentService {
       postal_order_number: postalOrderNumber,
       vehicle_reg: vehicleReg,
     });
+  }
+
+  createGroupPostalOrderTransaction(
+    penGrpId,
+    penGrpDetails,
+    type,
+    penalties,
+    redirectUrl,
+    slipNumber,
+    postalOrderNumber,
+  ) {
+    const total = penGrpDetails.splitAmounts.find(a => a.type === type).amount;
+    const penaltiesOfType = penalties.find(p => p.type === type).penalties;
+    const payload = {
+      TotalAmount: total,
+      PaymentMethod: 'CASH',
+      VehicleRegistration: penGrpDetails.registrationNumber,
+      PenaltyGroupId: penGrpId,
+      PenaltyType: type,
+      RedirectUrl: redirectUrl,
+      ReceiptDate: new Date().toISOString().split('T')[0],
+      SlipNumber: slipNumber,
+      PostalOrderNumber: postalOrderNumber,
+      BatchNumber: 1,
+      Penalties: penaltiesOfType.map(p => ({
+        PenaltyReference: p.reference,
+        PenaltyAmount: p.amount,
+        VehicleRegistration: p.vehicleReg,
+      })),
+    };
+    return this.httpClient.post('groupPayment/', payload);
   }
 
   confirmPayment(receiptReference, penaltyType) {
