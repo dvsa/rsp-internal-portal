@@ -195,11 +195,11 @@ const bindArgsForPaymentType = (partialFn, paymentType, body) => {
     case 'cheque':
       const {
         slipNumber,
-        chequeDate,
         chequeNumber,
+        chequeDate,
         nameOnCheque,
       } = body;
-      return partialFn.bind(cpmsService, slipNumber, chequeDate, chequeNumber, nameOnCheque);
+      return partialFn.bind(cpmsService, slipNumber, chequeNumber, chequeDate, nameOnCheque);
     case 'postal':
       return partialFn.bind(cpmsService, body.slipNumber, body.postalOrderNumber);
     default:
