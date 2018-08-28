@@ -1,8 +1,11 @@
 import * as _ from 'lodash';
 import AuthService from '../services/auth.service';
 import config from '../config';
+import logger from '../utils/logger';
+import PenaltyService from '../services/penalty.service';
 
 const authService = new AuthService(config.cognitoUrl);
+const penaltyService = new PenaltyService(config.penaltyServiceUrl);
 
 // Robots
 export const robots = (req, res) => {
@@ -16,12 +19,14 @@ export const index = (req, res) => {
   const invalidCDN = Object.keys(req.query).some(param => param === 'invalidCDN');
   const invalidFPN = Object.keys(req.query).some(param => param === 'invalidFPN');
   const invalidIM = Object.keys(req.query).some(param => param === 'invalidIM');
+  const invalidReg = Object.keys(req.query).some(param => param === 'invalidReg');
 
   const viewData = {
     invalidPaymentCode,
     invalidCDN,
     invalidFPN,
     invalidIM,
+    invalidReg,
     invalid: invalidPaymentCode || invalidCDN || invalidFPN
       || invalidIM,
     input: invalidPaymentCode ? 'payment code' : 'penalty reference',
@@ -30,16 +35,25 @@ export const index = (req, res) => {
   res.render('main/index', viewData);
 };
 
-const getSearchDetails = (form) => {
+const getSearchDetails = async (form) => {
   // Clean up empty properties
   const search = _.omitBy(form, _.isEmpty);
 
   const isSearchByCode = search['search-by'] === 'code';
+  const isSearchByReg = search['search-by'] === 'vehicle-reg';
   let value;
   let penaltyType;
 
   if (isSearchByCode) {
     value = search.payment_code ? search.payment_code.replace(/\W|_/g, '').toLowerCase() : null;
+  } else if (isSearchByReg) {
+    try {
+      const docOrGroup = await penaltyService.searchByRegistration(search.vehicle_reg);
+      value = docOrGroup.Value ? docOrGroup.Value.paymentCode : docOrGroup.ID;
+    } catch (error) {
+      logger.error(error);
+      value = null;
+    }
   } else {
     // Get the penalty type
     const key = `penalty_ref_${search['search-by']}`;
@@ -57,14 +71,16 @@ const getSearchDetails = (form) => {
     }
   }
 
-  return { isSearchByCode, value };
+  return { isSearchByCode, isSearchByReg, value };
 };
 
 // Search by payment code or penalty reference
-export const searchPenalty = (req, res) => {
-  const searchDetails = getSearchDetails(req.body);
-  if (searchDetails.isSearchByCode) {
-    res.redirect(`payment-code/${searchDetails.value}`);
+export const searchPenalty = async (req, res) => {
+  const searchDetails = await getSearchDetails(req.body);
+  if (searchDetails.isSearchByCode || searchDetails.isSearchByReg) {
+    const { value } = searchDetails;
+    const path = value !== null ? `payment-code/${value}` : '/?invalidReg';
+    res.redirect(path);
   } else {
     res.redirect(`penalty/${searchDetails.value}`);
   }
