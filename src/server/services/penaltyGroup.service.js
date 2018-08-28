@@ -87,7 +87,7 @@ export default class PenaltyGroupService {
         penaltyDetails: parsedPenalties,
         penaltyType: type,
         totalAmount: pensOfType.reduce((total, pen) => total + pen.Value.penaltyAmount, 0),
-        paymentStatus: parsedPenalties.every(p => p.status === 'PAID') ? 'PAID' : 'PAID',
+        paymentStatus: parsedPenalties.every(p => p.status === 'PAID') ? 'PAID' : 'UNPAID',
       };
     }).catch((error) => {
       throw new Error(error);
