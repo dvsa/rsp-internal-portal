@@ -77,12 +77,14 @@ const getSearchDetails = async (form) => {
 // Search by payment code or penalty reference
 export const searchPenalty = async (req, res) => {
   const searchDetails = await getSearchDetails(req.body);
-  if (searchDetails.isSearchByCode || searchDetails.isSearchByReg) {
-    const { value } = searchDetails;
+  const { value } = searchDetails;
+  if (searchDetails.isSearchByCode) {
+    res.redirect(`payment-code/${value}`);
+  } else if (searchDetails.isSearchByReg) {
     const path = value !== null ? `payment-code/${value}` : '/?invalidReg';
     res.redirect(path);
   } else {
-    res.redirect(`penalty/${searchDetails.value}`);
+    res.redirect(`penalty/${value}`);
   }
 };
 
