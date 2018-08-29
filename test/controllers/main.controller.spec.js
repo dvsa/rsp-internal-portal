@@ -33,13 +33,13 @@ describe('MainController', () => {
       PenaltyService.prototype.searchByRegistration.restore();
     });
 
-    context('given document service returns a penalty group for the registration', () => {
+    context('given document service returns a single penalty group for the registration', () => {
       beforeEach(() => {
         mockDocumentSvc
           .withArgs('11AAA')
-          .resolves({
+          .resolves([{
             ID: 'abc123',
-          });
+          }]);
       });
       it('should redirect to the payment code', async () => {
         await MainController.searchPenalty(request, response);
@@ -51,13 +51,13 @@ describe('MainController', () => {
       beforeEach(() => {
         mockDocumentSvc
           .withArgs('11AAA')
-          .resolves({
+          .resolves([{
             ID: 'abc123',
             Value: {
               isPenaltyGroup: false,
               paymentCode: '789def',
             },
-          });
+          }]);
       });
       it('should redirect to the payment code', async () => {
         await MainController.searchPenalty(request, response);

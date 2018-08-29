@@ -48,8 +48,11 @@ const getSearchDetails = async (form) => {
     value = search.payment_code ? search.payment_code.replace(/\W|_/g, '').toLowerCase() : null;
   } else if (isSearchByReg) {
     try {
-      const docOrGroup = await penaltyService.searchByRegistration(search.vehicle_reg);
-      value = docOrGroup.Value ? docOrGroup.Value.paymentCode : docOrGroup.ID;
+      const docOrGroupList = await penaltyService.searchByRegistration(search.vehicle_reg);
+      if (docOrGroupList.length === 1) {
+        const docOrGroup = docOrGroupList[0];
+        value = docOrGroup.Value ? docOrGroup.Value.paymentCode : docOrGroup.ID;
+      }
     } catch (error) {
       logger.error(error);
       value = null;
