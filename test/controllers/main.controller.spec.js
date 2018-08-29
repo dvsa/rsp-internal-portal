@@ -5,10 +5,10 @@ import PenaltyService from '../../src/server/services/penalty.service';
 
 describe('MainController', () => {
   let searchForm;
-  const redirectSpy = sinon.spy();
-  const renderSpy = sinon.spy();
+  let redirectSpy;
+  let renderSpy;
   let request;
-  const response = { redirect: redirectSpy, render: renderSpy };
+  let response;
   let mockDocumentSvc;
 
   beforeEach(() => {
@@ -20,6 +20,14 @@ describe('MainController', () => {
       payment_code: '',
       vehicle_reg: '',
     };
+    redirectSpy = sinon.spy();
+    renderSpy = sinon.spy();
+    response = { redirect: redirectSpy, render: renderSpy };
+  });
+
+  afterEach(() => {
+    redirectSpy.reset();
+    renderSpy.reset();
   });
 
   context('search by vehicle reg', () => {
@@ -62,6 +70,49 @@ describe('MainController', () => {
       it('should redirect to the payment code', async () => {
         await MainController.searchPenalty(request, response);
         sinon.assert.calledWith(redirectSpy, 'payment-code/789def');
+      });
+    });
+
+    context('given document service returns more than one penalty doc/group for the registration', () => {
+      const searchResponse = [
+        {
+          ID: 'abc123',
+          Timestamp: 1533562273.803,
+          PenaltyGroupIds: [
+            '123_FPN',
+            '246_FPN',
+          ],
+        },
+        {
+          ID: 'zyx555',
+          Timestamp: 1535531871.342,
+          PenaltyGroupIds: [
+            '555_IM',
+            '666_CDN',
+          ],
+        },
+      ];
+      beforeEach(() => {
+        mockDocumentSvc
+          .withArgs('11AAA')
+          .resolves(searchResponse);
+      });
+      it('should render the vehicle reg search results page', async () => {
+        await MainController.searchPenalty(request, response);
+        const expectedViewData = {
+          vehicleReg: '11AAA',
+          results: [
+            {
+              paymentCode: 'abc123',
+              date: '06/08/2018 14:31',
+            },
+            {
+              paymentCode: 'zyx555',
+              date: '29/08/2018 09:37',
+            },
+          ],
+        };
+        sinon.assert.calledWith(renderSpy, 'penalty/vehicleRegSearchResults', expectedViewData);
       });
     });
 

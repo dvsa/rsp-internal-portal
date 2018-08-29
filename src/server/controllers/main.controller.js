@@ -1,4 +1,7 @@
+/* eslint-disable no-use-before-define */
 import * as _ from 'lodash';
+import moment from 'moment-timezone';
+
 import AuthService from '../services/auth.service';
 import config from '../config';
 import logger from '../utils/logger';
@@ -52,6 +55,8 @@ const getSearchDetails = async (form) => {
       if (docOrGroupList.length === 1) {
         const docOrGroup = docOrGroupList[0];
         value = docOrGroup.Value ? docOrGroup.Value.paymentCode : docOrGroup.ID;
+      } else {
+        value = docOrGroupList;
       }
     } catch (error) {
       logger.error(error);
@@ -84,12 +89,32 @@ export const searchPenalty = async (req, res) => {
   if (searchDetails.isSearchByCode) {
     res.redirect(`payment-code/${value}`);
   } else if (searchDetails.isSearchByReg) {
-    const path = value !== null ? `payment-code/${value}` : '/?invalidReg';
-    res.redirect(path);
+    const vehicleReg = req.body.vehicle_reg;
+    handleVehicleRegSearchResults(res, vehicleReg, value);
   } else {
     res.redirect(`penalty/${value}`);
   }
 };
+
+const handleVehicleRegSearchResults = (res, vehicleReg, value) => {
+  if (value !== null) {
+    if (typeof value === 'string') {
+      res.redirect(`payment-code/${value}`);
+    } else {
+      res.render('penalty/vehicleRegSearchResults', generateSearchResultViewData(vehicleReg, value));
+    }
+  } else {
+    res.redirect('/?invalidReg');
+  }
+};
+
+const generateSearchResultViewData = (vehicleReg, resultArr) => ({
+  vehicleReg,
+  results: resultArr.map(result => ({
+    paymentCode: result.ID,
+    date: moment.tz(result.Timestamp * 1000, 'Europe/London').format('DD/MM/YYYY HH:mm'),
+  })),
+});
 
 export const authenticate = (req, res) => {
   const {
