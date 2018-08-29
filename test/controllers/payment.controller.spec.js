@@ -48,6 +48,21 @@ describe('PaymentController', () => {
       });
     });
 
+    context('when one of the collaborators rejects', () => {
+      let cpmsServiceStub;
+      beforeEach(() => {
+        cpmsServiceStub = sinon.stub(CpmsService.prototype, 'createCardNotPresentGroupTransaction');
+        cpmsServiceStub.rejects(new Error('timed out'));
+      });
+      afterEach(() => {
+        CpmsService.prototype.createCardNotPresentGroupTransaction.restore();
+      });
+      it('should redirect back to the payment code', async () => {
+        await PaymentController.renderGroupPaymentPage(request, response);
+        sinon.assert.calledWith(redirectSpy, '/payment-code/5624r2wupfs');
+      });
+    });
+
     context('when the payment type is card', () => {
       let cpmsServiceStub;
       beforeEach(() => {
@@ -181,7 +196,7 @@ describe('PaymentController', () => {
 
   describe('makeGroupPayment', () => {
     let cpmsSvcMock;
-    const standardTransactionPayloadWithExtraArgsResolvesSuccess = (a, ...rest) => { // eslint-disable-line
+    const standardTransactionPayloadWithExtraArgsResolvesSuccess = (...rest) => { // eslint-disable-line
       return cpmsSvcMock.withArgs(
         '5624r2wupfs',
         penaltyGroup.penaltyGroupDetails,
@@ -219,7 +234,7 @@ describe('PaymentController', () => {
     context('when a cash payment is sent', async () => {
       beforeEach(() => {
         cpmsSvcMock = sinon.stub(CpmsService.prototype, 'createGroupCashTransaction');
-        standardTransactionPayloadWithExtraArgsResolvesSuccess(cpmsSvcMock, '1234');
+        standardTransactionPayloadWithExtraArgsResolvesSuccess('1234');
         request = {
           body: { paymentType: 'cash', slipNumber: '1234' },
           params: { payment_code: '5624r2wupfs', type: 'FPN' },
@@ -251,8 +266,18 @@ describe('PaymentController', () => {
     context('when a cheque payment is sent', () => {
       beforeEach(() => {
         cpmsSvcMock = sinon.stub(CpmsService.prototype, 'createGroupChequeTransaction');
-        standardTransactionPayloadWithExtraArgsResolvesSuccess(cpmsSvcMock, '1234');
-        request.body.paymentType = 'cheque';
+        standardTransactionPayloadWithExtraArgsResolvesSuccess('2468', '369', '2018-08-24', 'Joe Bloggs');
+        request = {
+          body: {
+            paymentType: 'cheque',
+            slipNumber: '2468',
+            chequeNumber: '369',
+            chequeDate: '2018-08-24',
+            nameOnCheque: 'Joe Bloggs',
+          },
+          params: { payment_code: '5624r2wupfs', type: 'FPN' },
+          get: () => 'localhost',
+        };
       });
       afterEach(() => {
         CpmsService.prototype.createGroupChequeTransaction.restore();
@@ -267,7 +292,7 @@ describe('PaymentController', () => {
     context('when a postal payment is sent', () => {
       beforeEach(() => {
         cpmsSvcMock = sinon.stub(CpmsService.prototype, 'createGroupPostalOrderTransaction');
-        standardTransactionPayloadWithExtraArgsResolvesSuccess(cpmsSvcMock, '1234', '2468');
+        standardTransactionPayloadWithExtraArgsResolvesSuccess('1234', '2468');
         request.body.paymentType = 'postal';
         request.body.slipNumber = '1234';
         request.body.postalOrderNumber = '2468';

@@ -24,7 +24,7 @@ export const index = (req, res) => {
     invalidIM,
     invalid: invalidPaymentCode || invalidCDN || invalidFPN
       || invalidIM,
-    input: invalidPaymentCode ? 'payment code' : 'penalty reference',
+    input: invalidPaymentCode ? 'payment code' : 'fine reference',
   };
 
   res.render('main/index', viewData);

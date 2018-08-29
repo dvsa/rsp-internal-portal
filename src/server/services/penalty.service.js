@@ -61,9 +61,12 @@ export default class PenaltyService {
 
   getById(penaltyId) {
     const promise = new Promise((resolve, reject) => {
-      this.httpClient.get(`${penaltyId}`).then((response) => {
+      this.httpClient.get(`documents/${penaltyId}`).then((response) => {
         if (isEmpty(response.data) || response.data.Enabled === false) {
           reject(new Error('Penalty reference not found'));
+        }
+        if (response.data.Value.inPenaltyGroup) {
+          reject(new Error('Penalty is part of a penalty group'));
         }
         resolve(PenaltyService.parsePenalty(response.data));
       }).catch((error) => {

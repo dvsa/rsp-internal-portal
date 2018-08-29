@@ -195,11 +195,11 @@ const bindArgsForPaymentType = (partialFn, paymentType, body) => {
     case 'cheque':
       const {
         slipNumber,
-        chequeDate,
         chequeNumber,
+        chequeDate,
         nameOnCheque,
       } = body;
-      return partialFn.bind(cpmsService, slipNumber, chequeDate, chequeNumber, nameOnCheque);
+      return partialFn.bind(cpmsService, slipNumber, chequeNumber, chequeDate, nameOnCheque);
     case 'postal':
       return partialFn.bind(cpmsService, body.slipNumber, body.postalOrderNumber);
     default:
@@ -247,39 +247,44 @@ export const renderPaymentPage = async (req, res) => {
 
 export const renderGroupPaymentPage = async (req, res) => {
   const paymentCode = req.params.payment_code;
-  const penaltyType = req.params.type;
-  const { paymentType } = req.query;
-  const penaltyGroup = await penaltyGroupService.getByPaymentCode(paymentCode);
+  try {
+    const penaltyType = req.params.type;
+    const { paymentType } = req.query;
+    const penaltyGroup = await penaltyGroupService.getByPaymentCode(paymentCode);
 
-  if (penaltyGroup.paymentStatus === 'PAID') {
+    if (penaltyGroup.paymentStatus === 'PAID') {
+      return res.redirect(`${config.urlRoot}/payment-code/${paymentCode}`);
+    }
+
+    if (paymentType === 'card') {
+      const penaltyDetails = penaltyGroup.penaltyDetails
+        .find(typeGrp => typeGrp.type === penaltyType).penalties;
+      const redirectUrl = `https://${req.get('host')}${config.urlRoot}/payment-code/${paymentCode}/${penaltyType}/confirmGroupPayment`;
+
+      const cpmsResp = await cpmsService.createCardNotPresentGroupTransaction(
+        penaltyGroup.paymentCode,
+        penaltyGroup.penaltyGroupDetails,
+        penaltyType,
+        penaltyDetails,
+        redirectUrl,
+      );
+      return res.redirect(cpmsResp.data.gateway_url);
+    }
+
+    const penaltyGroupWithPaymentType = { ...penaltyGroup, paymentPenaltyType: penaltyType };
+    switch (paymentType) {
+      case 'cash':
+        return res.render('payment/groupCash', penaltyGroupWithPaymentType);
+      case 'cheque':
+        return res.render('payment/groupCheque', penaltyGroupWithPaymentType);
+      case 'postal':
+        return res.render('payment/groupPostalOrder', penaltyGroupWithPaymentType);
+      default:
+        return res.redirect(`${config.urlRoot}/?invalidPaymentCode`);
+    }
+  } catch (err) {
+    logger.error(err);
     return res.redirect(`${config.urlRoot}/payment-code/${paymentCode}`);
-  }
-
-  if (paymentType === 'card') {
-    const penaltyDetails = penaltyGroup.penaltyDetails
-      .find(typeGrp => typeGrp.type === penaltyType).penalties;
-    const redirectUrl = `https://${req.get('host')}${config.urlRoot}/payment-code/${paymentCode}/${penaltyType}/confirmGroupPayment`;
-
-    const cpmsResp = await cpmsService.createCardNotPresentGroupTransaction(
-      penaltyGroup.paymentCode,
-      penaltyGroup.penaltyGroupDetails,
-      penaltyType,
-      penaltyDetails,
-      redirectUrl,
-    );
-    return res.redirect(cpmsResp.data.gateway_url);
-  }
-
-  const penaltyGroupWithPaymentType = { ...penaltyGroup, paymentPenaltyType: penaltyType };
-  switch (paymentType) {
-    case 'cash':
-      return res.render('payment/groupCash', penaltyGroupWithPaymentType);
-    case 'cheque':
-      return res.render('payment/groupCheque', penaltyGroupWithPaymentType);
-    case 'postal':
-      return res.render('payment/groupPostalOrder', penaltyGroupWithPaymentType);
-    default:
-      return res.redirect(`${config.urlRoot}/?invalidPaymentCode`);
   }
 };
 

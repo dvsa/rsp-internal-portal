@@ -82,5 +82,16 @@ describe('Penalty Service', () => {
       // Assert
       return expect(result).to.be.rejected;
     });
+    it('should return a rejected promise [WHEN] a reference refers to a penalty which is part of a group', () => {
+      const groupReferenceNumber = '4597595755914';
+
+      mockedHttpClient = sinon.stub(httpClient, 'get').callsFake(reference => mockedBackendAPI.getPenaltyByReference(reference));
+      penaltyService = new PenaltyService();
+      penaltyService.httpClient = mockedHttpClient.rootObj;
+
+      const result = penaltyService.getById(groupReferenceNumber);
+
+      return expect(result).to.be.rejected;
+    });
   });
 });

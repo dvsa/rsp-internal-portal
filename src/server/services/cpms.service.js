@@ -58,7 +58,7 @@ export default class PaymentService {
       RedirectUrl: redirectUrl,
       SlipNumber: slipNumber,
       ReceiptDate: new Date().toISOString().split('T')[0],
-      BatchNumber: 1,
+      BatchNumber: '1',
       Penalties: penaltiesOfType.map(p => ({
         PenaltyReference: p.reference,
         PenaltyAmount: p.amount,
@@ -101,14 +101,14 @@ export default class PaymentService {
     const penaltiesOfType = penalties.find(p => p.type === type).penalties;
     const payload = {
       TotalAmount: total,
-      PaymentMethod: 'CASH',
+      PaymentMethod: 'CHEQUE',
       VehicleRegistration: penGrpDetails.registrationNumber,
       PenaltyGroupId: penGrpId,
       PenaltyType: type,
       RedirectUrl: redirectUrl,
       ReceiptDate: new Date().toISOString().split('T')[0],
       SlipNumber: slipNumber,
-      BatchNumber: 1,
+      BatchNumber: '1',
       ChequeNumber: chequeNumber,
       ChequeDate: chequeDate,
       NameOnCheque: nameOnCheque,
@@ -150,7 +150,7 @@ export default class PaymentService {
     const penaltiesOfType = penalties.find(p => p.type === type).penalties;
     const payload = {
       TotalAmount: total,
-      PaymentMethod: 'CASH',
+      PaymentMethod: 'POSTAL_ORDER',
       VehicleRegistration: penGrpDetails.registrationNumber,
       PenaltyGroupId: penGrpId,
       PenaltyType: type,
@@ -158,7 +158,7 @@ export default class PaymentService {
       ReceiptDate: new Date().toISOString().split('T')[0],
       SlipNumber: slipNumber,
       PostalOrderNumber: postalOrderNumber,
-      BatchNumber: 1,
+      BatchNumber: '1',
       Penalties: penaltiesOfType.map(p => ({
         PenaltyReference: p.reference,
         PenaltyAmount: p.amount,
