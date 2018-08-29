@@ -51,13 +51,7 @@ const getSearchDetails = async (form) => {
     value = search.payment_code ? search.payment_code.replace(/\W|_/g, '').toLowerCase() : null;
   } else if (isSearchByReg) {
     try {
-      const docOrGroupList = await penaltyService.searchByRegistration(search.vehicle_reg);
-      if (docOrGroupList.length === 1) {
-        const docOrGroup = docOrGroupList[0];
-        value = docOrGroup.Value ? docOrGroup.Value.paymentCode : docOrGroup.ID;
-      } else {
-        value = docOrGroupList;
-      }
+      value = await penaltyService.searchByRegistration(search.vehicle_reg);
     } catch (error) {
       logger.error(error);
       value = null;
@@ -98,23 +92,40 @@ export const searchPenalty = async (req, res) => {
 
 const handleVehicleRegSearchResults = (res, vehicleReg, value) => {
   if (value !== null) {
-    if (typeof value === 'string') {
-      res.redirect(`payment-code/${value}`);
+    const { Penalties, PenaltyGroups } = value;
+    const numberOfResults = Penalties.length + PenaltyGroups.length;
+    if (numberOfResults === 1) {
+      const paymentCode = Penalties.length === 1
+        ? Penalties[0].Value.paymentToken : PenaltyGroups[0].ID;
+      res.redirect(`payment-code/${paymentCode}`);
     } else {
-      res.render('penalty/vehicleRegSearchResults', generateSearchResultViewData(vehicleReg, value));
+      const viewData = generateSearchResultViewData(vehicleReg, Penalties, PenaltyGroups);
+      res.render('penalty/vehicleRegSearchResults', viewData);
     }
   } else {
     res.redirect('/?invalidReg');
   }
 };
 
-const generateSearchResultViewData = (vehicleReg, resultArr) => ({
-  vehicleReg,
-  results: resultArr.map(result => ({
-    paymentCode: result.ID,
-    date: moment.tz(result.Timestamp * 1000, 'Europe/London').format('DD/MM/YYYY HH:mm'),
-  })),
-});
+const generateSearchResultViewData = (vehicleReg, penalties, penaltyGroups) => {
+  const tzLocation = 'Europe/London';
+  const dateFormat = 'DD/MM/YYYY HH:mm';
+
+  const penaltyGroupsMapping = penaltyGroups.map(penaltyGroup => ({
+    paymentCode: penaltyGroup.ID,
+    date: moment.tz(penaltyGroup.Timestamp * 1000, tzLocation).format(dateFormat),
+  }));
+  const penaltyMapping = penalties.map(penalty => ({
+    paymentCode: penalty.Value.paymentToken,
+    date: moment.tz(penalty.Value.dateTime * 1000, tzLocation).format(dateFormat),
+  }));
+  const results = _.flatten([penaltyGroupsMapping, penaltyMapping]);
+
+  return {
+    vehicleReg,
+    results,
+  };
+};
 
 export const authenticate = (req, res) => {
   const {
