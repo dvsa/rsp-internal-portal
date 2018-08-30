@@ -15,15 +15,23 @@
       <thead>
         <th>Payment code</th>
         <th>Date</th>
+        <th>Status</th>
+        <th>Summary</th>
       </thead>
       <tbody>
-        {% for result in results %}
+        {% for result in results|sort(attribute='date', reverse=true) %}
           <tr>
-            <td><a href="payment-code/{{result.paymentCode}}">{{ result.paymentCode }}</a></td>
-            <td>{{ result.date }}</td>
+            <td>
+              {{ components.link(text=result.paymentCode, url='payment-code/' + result.paymentCode) }}
+            </td>
+            <td>{{ result.formattedDate }}</td>
+            <td>{{ result.paymentStatus }}</td>
+            <td>{{ result.summary }}</td>
           </tr>
         {% endfor %}
       </tbody>
     </table>
+    <br />
+    {{ components.button(text='Home', url='/') }}
   {%- endcall %}
 {% endblock %}

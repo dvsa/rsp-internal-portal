@@ -67,11 +67,17 @@ describe('MainController', () => {
           results: [
             {
               paymentCode: 'abc123',
-              date: '29/08/2018 13:45',
+              paymentStatus: 'UNPAID',
+              summary: '2 penalties',
+              date: 1535546734.879,
+              formattedDate: '29/08/2018 13:45',
             },
             {
               paymentCode: 'def456',
-              date: '24/08/2018 16:06',
+              paymentStatus: 'UNPAID',
+              summary: '2 penalties',
+              date: 1535123187.565,
+              formattedDate: '24/08/2018 16:06',
             },
           ],
         };
@@ -88,19 +94,31 @@ describe('MainController', () => {
           results: [
             {
               paymentCode: 'abc123',
-              date: '29/08/2018 13:45',
+              paymentStatus: 'UNPAID',
+              summary: '2 penalties',
+              date: 1535546734.879,
+              formattedDate: '29/08/2018 13:45',
             },
             {
               paymentCode: 'def456',
-              date: '24/07/2018 20:45',
+              paymentStatus: 'UNPAID',
+              summary: '2 penalties',
+              date: 1532461537.865,
+              formattedDate: '24/07/2018 20:45',
             },
             {
               paymentCode: 'f99c8e4035c8e1ae',
-              date: '28/02/2018 00:00',
+              paymentStatus: 'PAID',
+              summary: '1 penalty',
+              date: 1519776000,
+              formattedDate: '28/02/2018 00:00',
             },
             {
               paymentCode: '55602ee4b37ab59e',
-              date: '28/02/2018 00:00',
+              paymentStatus: 'CANCELLED',
+              summary: '1 penalty',
+              date: 1519776000,
+              formattedDate: '28/02/2018 00:00',
             },
           ],
         };

@@ -113,11 +113,17 @@ const generateSearchResultViewData = (vehicleReg, penalties, penaltyGroups) => {
 
   const penaltyGroupsMapping = penaltyGroups.map(penaltyGroup => ({
     paymentCode: penaltyGroup.ID,
-    date: moment.tz(penaltyGroup.Timestamp * 1000, tzLocation).format(dateFormat),
+    paymentStatus: penaltyGroup.Enabled ? penaltyGroup.PaymentStatus : 'CANCELLED',
+    summary: summarisePenaltyGroup(penaltyGroup),
+    date: penaltyGroup.Timestamp,
+    formattedDate: moment.tz(penaltyGroup.Timestamp * 1000, tzLocation).format(dateFormat),
   }));
   const penaltyMapping = penalties.map(penalty => ({
     paymentCode: penalty.Value.paymentToken,
-    date: moment.tz(penalty.Value.dateTime * 1000, tzLocation).format(dateFormat),
+    paymentStatus: penalty.Enabled ? penalty.Value.paymentStatus : 'CANCELLED',
+    summary: summarisePenalty(penalty),
+    date: penalty.Value.dateTime,
+    formattedDate: moment.tz(penalty.Value.dateTime * 1000, tzLocation).format(dateFormat),
   }));
   const results = _.flatten([penaltyGroupsMapping, penaltyMapping]);
 
@@ -125,6 +131,27 @@ const generateSearchResultViewData = (vehicleReg, penalties, penaltyGroups) => {
     vehicleReg,
     results,
   };
+};
+
+const summarisePenaltyGroup = (penaltyGroup) => {
+  const grouping = _.groupBy(penaltyGroup.PenaltyDocumentIds, (id) => {
+    const type = id.split('_')[1];
+    return type === 'IM' ? 'immobilisation' : 'penalty';
+  });
+  const penaltyLabel = grouping.penalty.length === 1 ? 'penalty' : 'penalties';
+  const penaltyDesc = `${grouping.penalty.length} ${penaltyLabel}`;
+  const afterPenaltyDesc = grouping.immobilisation !== undefined ? ' + immobilisation' : '';
+  return `${penaltyDesc}${afterPenaltyDesc}`;
+};
+
+const summarisePenalty = (penalty) => {
+  const descriptionMap = {
+    FPN: 'penalty',
+    CDN: 'penalty',
+    IM: 'immobilisation',
+  };
+  const typeName = descriptionMap[penalty.ID.split('_')[1]];
+  return `1 ${typeName}`;
 };
 
 export const authenticate = (req, res) => {

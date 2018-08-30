@@ -11,7 +11,7 @@ export default {
         VehicleRegistration: '11AAA',
         Origin: 'APP',
         Timestamp: 1533562273.803,
-        PenaltyGroupIds: [
+        PenaltyDocumentIds: [
           '123_FPN',
           '246_FPN',
         ],
@@ -51,6 +51,7 @@ export default {
     PenaltyGroups: [
       {
         ID: 'abc123',
+        Enabled: true,
         SiteCode: 19,
         TotalAmount: 888,
         PaymentStatus: 'UNPAID',
@@ -59,13 +60,14 @@ export default {
         VehicleRegistration: '11CCC',
         Origin: 'APP',
         Timestamp: 1535546734.879,
-        PenaltyGroupIds: [
+        PenaltyDocumentIds: [
           '123_FPN',
           '246_FPN',
         ],
       },
       {
         ID: 'def456',
+        Enabled: true,
         SiteCode: 19,
         TotalAmount: 100,
         PaymentStatus: 'UNPAID',
@@ -74,7 +76,7 @@ export default {
         VehicleRegistration: '11CCC',
         Origin: 'APP',
         Timestamp: 1535123187.565,
-        PenaltyGroupIds: [
+        PenaltyDocumentIds: [
           '135_FPN',
           '802_FPN',
         ],
@@ -86,6 +88,7 @@ export default {
     PenaltyGroups: [
       {
         ID: 'abc123',
+        Enabled: true,
         SiteCode: 19,
         TotalAmount: 888,
         PaymentStatus: 'UNPAID',
@@ -94,13 +97,14 @@ export default {
         VehicleRegistration: '11DDD',
         Origin: 'APP',
         Timestamp: 1535546734.879,
-        PenaltyGroupIds: [
+        PenaltyDocumentIds: [
           '123_FPN',
           '246_FPN',
         ],
       },
       {
         ID: 'def456',
+        Enabled: true,
         SiteCode: 19,
         TotalAmount: 100,
         PaymentStatus: 'UNPAID',
@@ -109,7 +113,7 @@ export default {
         VehicleRegistration: '11DDD',
         Origin: 'APP',
         Timestamp: 1532461537.865,
-        PenaltyGroupIds: [
+        PenaltyDocumentIds: [
           '135_FPN',
           '802_FPN',
         ],
@@ -141,7 +145,7 @@ export default {
       },
       {
         ID: '145256398741_FPN',
-        Enabled: true,
+        Enabled: false,
         Hash: 'ea4693ed04e6b28a42684b1dc876b4ad392ee74b8adbb467d820f402dd5fb029',
         Offset: 1522309582.258,
         Origin: 'APP',
