@@ -82,20 +82,22 @@
                   {% endif %}
                 </span>
               </td>
-                <td class='penalty-type-payment-cell'>
-                  {% if amountPaid == false %}
-                    {% if amount.type == 'FPN' %}
-                      {% set paymentButtonTxt = 'Pay fixed penalties' %}
-                    {% elif amount.type == 'CDN' %}
-                      {% set paymentButtonTxt = 'Pay court deposits' %}
-                    {% elif amount.type == 'IM' %}
-                      {% set paymentButtonTxt = 'Pay immobilisation fee' %}
-                    {% endif %}
-                    <div>
-                      {{ components.button(text=paymentButtonTxt, url='/payment-code/' + paymentCode + '/' + amount.type + '/details') }}
-                    </div>
+              <td>
+                {% if amountPaid == false %}
+                  {% if amount.type == 'FPN' %}
+                    {% set paymentButtonTxt = 'Pay fixed penalties' %}
+                  {% elif amount.type == 'CDN' %}
+                    {% set paymentButtonTxt = 'Pay court deposits' %}
+                  {% elif amount.type == 'IM' %}
+                    {% set paymentButtonTxt = 'Pay immobilisation fee' %}
                   {% endif %}
-                </td>
+                  <div>
+                    {{ components.button(text=paymentButtonTxt, url='/payment-code/' + paymentCode + '/' + amount.type + '/details') }}
+                  </div>
+                {% else %}
+                  <a href="/payment-code/{{paymentCode}}/{{amount.type}}/receipt">Receipt</a>
+                {% endif %}
+              </td>
             </tr>
           {% endfor %}
         </tbody>
