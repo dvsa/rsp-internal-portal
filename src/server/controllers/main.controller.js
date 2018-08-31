@@ -69,7 +69,7 @@ const getSearchDetails = async (form) => {
 
 // Search by payment code or penalty reference
 export const searchPenalty = async (req, res) => {
-  if (req.body.vehicle_reg !== undefined && req.body.vehicle_reg.trim().length > 0) {
+  if (req.body['search-by'] === 'vehicle-reg') {
     const vehicleReg = req.body.vehicle_reg;
     return res.redirect(`${config.urlRoot}/vehicle-reg-search-results/${vehicleReg}`);
   }
