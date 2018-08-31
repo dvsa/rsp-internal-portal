@@ -120,7 +120,7 @@ const generateSearchResultViewData = (vehicleReg, penalties, penaltyGroups) => {
   }));
   const penaltyMapping = penalties.map(penalty => ({
     paymentCode: penalty.Value.paymentToken,
-    paymentStatus: penalty.Enabled ? penalty.Value.paymentStatus : 'CANCELLED',
+    paymentStatus: penalty.Enabled ? penalty.Value.paymentStatus || 'UNPAID' : 'CANCELLED',
     summary: summarisePenalty(penalty),
     date: penalty.Value.dateTime,
     formattedDate: moment.tz(penalty.Value.dateTime * 1000, tzLocation).format(dateFormat),

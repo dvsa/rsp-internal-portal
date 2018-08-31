@@ -108,7 +108,7 @@ describe('MainController', () => {
             },
             {
               paymentCode: 'f99c8e4035c8e1ae',
-              paymentStatus: 'PAID',
+              paymentStatus: 'UNPAID',
               summary: '1 penalty',
               date: 1519776000,
               formattedDate: '28/02/2018 00:00',

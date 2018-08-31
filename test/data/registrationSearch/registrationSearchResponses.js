@@ -131,7 +131,6 @@ export default {
           nonEndorsableOffence: [],
           officerID: 'Z7F6yxnw--6DJf4sLsxjg_S-3Gvrl5MxV-1iY7RRNiA',
           officerName: 'dvsa.officerfpns@bjss.com',
-          paymentStatus: 'PAID',
           paymentToken: 'f99c8e4035c8e1ae',
           penaltyAmount: 4556,
           penaltyType: 'FPN',
