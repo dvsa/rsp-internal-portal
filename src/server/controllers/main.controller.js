@@ -1,8 +1,13 @@
+/* eslint-disable no-use-before-define */
 import * as _ from 'lodash';
+import moment from 'moment-timezone';
+
 import AuthService from '../services/auth.service';
 import config from '../config';
+import PenaltyService from '../services/penalty.service';
 
 const authService = new AuthService(config.cognitoUrl);
+const penaltyService = new PenaltyService(config.penaltyServiceUrl);
 
 // Robots
 export const robots = (req, res) => {
@@ -16,12 +21,14 @@ export const index = (req, res) => {
   const invalidCDN = Object.keys(req.query).some(param => param === 'invalidCDN');
   const invalidFPN = Object.keys(req.query).some(param => param === 'invalidFPN');
   const invalidIM = Object.keys(req.query).some(param => param === 'invalidIM');
+  const invalidReg = Object.keys(req.query).some(param => param === 'invalidReg');
 
   const viewData = {
     invalidPaymentCode,
     invalidCDN,
     invalidFPN,
     invalidIM,
+    invalidReg,
     invalid: invalidPaymentCode || invalidCDN || invalidFPN
       || invalidIM,
     input: invalidPaymentCode ? 'payment code' : 'fine reference',
@@ -30,7 +37,7 @@ export const index = (req, res) => {
   res.render('main/index', viewData);
 };
 
-const getSearchDetails = (form) => {
+const getSearchDetails = async (form) => {
   // Clean up empty properties
   const search = _.omitBy(form, _.isEmpty);
 
@@ -61,13 +68,87 @@ const getSearchDetails = (form) => {
 };
 
 // Search by payment code or penalty reference
-export const searchPenalty = (req, res) => {
-  const searchDetails = getSearchDetails(req.body);
-  if (searchDetails.isSearchByCode) {
-    res.redirect(`payment-code/${searchDetails.value}`);
-  } else {
-    res.redirect(`penalty/${searchDetails.value}`);
+export const searchPenalty = async (req, res) => {
+  if (req.body.vehicle_reg !== undefined) {
+    const vehicleReg = req.body.vehicle_reg;
+    return res.redirect(`/vehicle-reg-search-results/${vehicleReg}`);
   }
+  const searchDetails = await getSearchDetails(req.body);
+  const { value } = searchDetails;
+  if (searchDetails.isSearchByCode) {
+    return res.redirect(`payment-code/${value}`);
+  }
+  return res.redirect(`penalty/${value}`);
+};
+
+export const searchVehicleReg = async (req, res) => {
+  try {
+    const reg = req.params.vehicle_reg;
+    const searchResult = await penaltyService.searchByRegistration(reg);
+    handleVehicleRegSearchResults(res, reg, searchResult);
+  } catch (error) {
+    res.redirect('/?invalidReg');
+  }
+};
+
+const handleVehicleRegSearchResults = (res, vehicleReg, value) => {
+  const { Penalties, PenaltyGroups } = value;
+  const numberOfResults = Penalties.length + PenaltyGroups.length;
+  if (numberOfResults === 1) {
+    const paymentCode = Penalties.length === 1
+      ? Penalties[0].Value.paymentToken : PenaltyGroups[0].ID;
+    res.redirect(`/payment-code/${paymentCode}`);
+  } else {
+    const viewData = generateSearchResultViewData(vehicleReg, Penalties, PenaltyGroups);
+    res.render('penalty/vehicleRegSearchResults', viewData);
+  }
+};
+
+const generateSearchResultViewData = (vehicleReg, penalties, penaltyGroups) => {
+  const tzLocation = 'Europe/London';
+  const dateFormat = 'DD/MM/YYYY HH:mm';
+
+  const penaltyGroupsMapping = penaltyGroups.map(penaltyGroup => ({
+    paymentCode: penaltyGroup.ID,
+    paymentStatus: penaltyGroup.Enabled ? penaltyGroup.PaymentStatus : 'CANCELLED',
+    summary: summarisePenaltyGroup(penaltyGroup),
+    date: penaltyGroup.Timestamp,
+    formattedDate: moment.tz(penaltyGroup.Timestamp * 1000, tzLocation).format(dateFormat),
+  }));
+  const penaltyMapping = penalties.map(penalty => ({
+    paymentCode: penalty.Value.paymentToken,
+    paymentStatus: penalty.Enabled ? penalty.Value.paymentStatus || 'UNPAID' : 'CANCELLED',
+    summary: summarisePenalty(penalty),
+    date: penalty.Value.dateTime,
+    formattedDate: moment.tz(penalty.Value.dateTime * 1000, tzLocation).format(dateFormat),
+  }));
+  const results = _.flatten([penaltyGroupsMapping, penaltyMapping]);
+
+  return {
+    vehicleReg,
+    results,
+  };
+};
+
+const summarisePenaltyGroup = (penaltyGroup) => {
+  const grouping = _.groupBy(penaltyGroup.PenaltyDocumentIds, (id) => {
+    const type = id.split('_')[1];
+    return type === 'IM' ? 'immobilisation' : 'penalty';
+  });
+  const penaltyLabel = grouping.penalty.length === 1 ? 'penalty' : 'penalties';
+  const penaltyDesc = `${grouping.penalty.length} ${penaltyLabel}`;
+  const afterPenaltyDesc = grouping.immobilisation !== undefined ? ' + immobilisation' : '';
+  return `${penaltyDesc}${afterPenaltyDesc}`;
+};
+
+const summarisePenalty = (penalty) => {
+  const descriptionMap = {
+    FPN: 'penalty',
+    CDN: 'penalty',
+    IM: 'immobilisation',
+  };
+  const typeName = descriptionMap[penalty.ID.split('_')[1]];
+  return `1 ${typeName}`;
 };
 
 export const authenticate = (req, res) => {

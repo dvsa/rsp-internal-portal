@@ -85,6 +85,19 @@
             </label>
             <input class="form-control {{ 'form-control-error' if invalidPaymentCode }}" name="payment_code" type="text" id="payment_code" maxlength="19">
           </div>
+          <!-- Vehicle reg -->
+          <div class="multiple-choice" data-target="search-vehicle-reg">
+            <input id="search-by-vehicle-reg" type="radio" name="search-by" value='vehicle-reg' {% if invalidReg %} checked {% endif %}>
+            <label class="{{ 'error' if invalidReg }}" for="search-by-vehicle-reg"><strong>Vehicle registration</strong></label>
+          </div>
+          <div class="panel panel-border-narrow js-hidden {{ 'form-group-error' if invalidReg }}" id="search-vehicle-reg">
+            <label class="form-label" for="payment_code">
+            {% if invalidReg %}
+              <span class="error-message">Enter a valid vehicle registration</span>
+            {% endif %}
+            </label>
+            <input class="form-control {{ 'form-control-error' if invalidReg }}" name="vehicle_reg" type="text" id="vehicle_reg" maxlength="10">
+          </div>
         </fieldset>
       </div>
       {{ components.button(text='Continue') }}
