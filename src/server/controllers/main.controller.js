@@ -87,7 +87,7 @@ export const searchVehicleReg = async (req, res) => {
     const searchResult = await penaltyService.searchByRegistration(reg);
     handleVehicleRegSearchResults(res, reg, searchResult);
   } catch (error) {
-    res.redirect('/?invalidReg');
+    res.redirect(`${config.urlRoot}/?invalidReg`);
   }
 };
 
