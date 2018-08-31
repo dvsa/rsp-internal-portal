@@ -97,7 +97,7 @@ const handleVehicleRegSearchResults = (res, vehicleReg, value) => {
   if (numberOfResults === 1) {
     const paymentCode = Penalties.length === 1
       ? Penalties[0].Value.paymentToken : PenaltyGroups[0].ID;
-    res.redirect(`/payment-code/${paymentCode}`);
+    res.redirect(`${config.urlRoot}/payment-code/${paymentCode}`);
   } else {
     const viewData = generateSearchResultViewData(vehicleReg, Penalties, PenaltyGroups);
     res.render('penalty/vehicleRegSearchResults', viewData);
