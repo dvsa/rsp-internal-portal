@@ -4,7 +4,6 @@ import moment from 'moment-timezone';
 
 import AuthService from '../services/auth.service';
 import config from '../config';
-import logger from '../utils/logger';
 import PenaltyService from '../services/penalty.service';
 
 const authService = new AuthService(config.cognitoUrl);
