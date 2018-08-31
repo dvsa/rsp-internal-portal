@@ -43,19 +43,11 @@ const getSearchDetails = async (form) => {
   const search = _.omitBy(form, _.isEmpty);
 
   const isSearchByCode = search['search-by'] === 'code';
-  const isSearchByReg = search['search-by'] === 'vehicle-reg';
   let value;
   let penaltyType;
 
   if (isSearchByCode) {
     value = search.payment_code ? search.payment_code.replace(/\W|_/g, '').toLowerCase() : null;
-  } else if (isSearchByReg) {
-    try {
-      value = await penaltyService.searchByRegistration(search.vehicle_reg);
-    } catch (error) {
-      logger.error(error);
-      value = null;
-    }
   } else {
     // Get the penalty type
     const key = `penalty_ref_${search['search-by']}`;
@@ -73,37 +65,43 @@ const getSearchDetails = async (form) => {
     }
   }
 
-  return { isSearchByCode, isSearchByReg, value };
+  return { isSearchByCode, value };
 };
 
 // Search by payment code or penalty reference
 export const searchPenalty = async (req, res) => {
+  if (req.body.vehicle_reg !== undefined) {
+    const vehicleReg = req.body.vehicle_reg;
+    return res.redirect(`/vehicle-reg-search-results/${vehicleReg}`);
+  }
   const searchDetails = await getSearchDetails(req.body);
   const { value } = searchDetails;
   if (searchDetails.isSearchByCode) {
-    res.redirect(`payment-code/${value}`);
-  } else if (searchDetails.isSearchByReg) {
-    const vehicleReg = req.body.vehicle_reg;
-    handleVehicleRegSearchResults(res, vehicleReg, value);
-  } else {
-    res.redirect(`penalty/${value}`);
+    return res.redirect(`payment-code/${value}`);
+  }
+  return res.redirect(`penalty/${value}`);
+};
+
+export const searchVehicleReg = async (req, res) => {
+  try {
+    const reg = req.params.vehicle_reg;
+    const searchResult = await penaltyService.searchByRegistration(reg);
+    handleVehicleRegSearchResults(res, reg, searchResult);
+  } catch (error) {
+    res.redirect('/?invalidReg');
   }
 };
 
 const handleVehicleRegSearchResults = (res, vehicleReg, value) => {
-  if (value !== null) {
-    const { Penalties, PenaltyGroups } = value;
-    const numberOfResults = Penalties.length + PenaltyGroups.length;
-    if (numberOfResults === 1) {
-      const paymentCode = Penalties.length === 1
-        ? Penalties[0].Value.paymentToken : PenaltyGroups[0].ID;
-      res.redirect(`payment-code/${paymentCode}`);
-    } else {
-      const viewData = generateSearchResultViewData(vehicleReg, Penalties, PenaltyGroups);
-      res.render('penalty/vehicleRegSearchResults', viewData);
-    }
+  const { Penalties, PenaltyGroups } = value;
+  const numberOfResults = Penalties.length + PenaltyGroups.length;
+  if (numberOfResults === 1) {
+    const paymentCode = Penalties.length === 1
+      ? Penalties[0].Value.paymentToken : PenaltyGroups[0].ID;
+    res.redirect(`/payment-code/${paymentCode}`);
   } else {
-    res.redirect('/?invalidReg');
+    const viewData = generateSearchResultViewData(vehicleReg, Penalties, PenaltyGroups);
+    res.render('penalty/vehicleRegSearchResults', viewData);
   }
 };
 

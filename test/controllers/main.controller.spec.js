@@ -46,7 +46,9 @@ describe('MainController', () => {
       it('should redirect to the payment code', async () => {
         searchForm.vehicle_reg = '11AAA';
         await MainController.searchPenalty(request, response);
-        sinon.assert.calledWith(redirectSpy, 'payment-code/abc123');
+        await MainController.searchVehicleReg({ params: { vehicle_reg: '11AAA' } }, response);
+        sinon.assert.calledWith(redirectSpy, '/vehicle-reg-search-results/11AAA');
+        sinon.assert.calledWith(redirectSpy, '/payment-code/abc123');
       });
     });
 
@@ -54,7 +56,9 @@ describe('MainController', () => {
       it('should redirect to the payment code', async () => {
         searchForm.vehicle_reg = '11BBB';
         await MainController.searchPenalty(request, response);
-        sinon.assert.calledWith(redirectSpy, 'payment-code/f99c8e4035c8e1ae');
+        await MainController.searchVehicleReg({ params: { vehicle_reg: '11BBB' } }, response);
+        sinon.assert.calledWith(redirectSpy, '/vehicle-reg-search-results/11BBB');
+        sinon.assert.calledWith(redirectSpy, '/payment-code/f99c8e4035c8e1ae');
       });
     });
 
@@ -62,6 +66,7 @@ describe('MainController', () => {
       it('should render the search results page with overviews of everything issued', async () => {
         searchForm.vehicle_reg = '11CCC';
         await MainController.searchPenalty(request, response);
+        await MainController.searchVehicleReg({ params: { vehicle_reg: '11CCC' } }, response);
         const expectedViewData = {
           vehicleReg: '11CCC',
           results: [
@@ -81,6 +86,7 @@ describe('MainController', () => {
             },
           ],
         };
+        sinon.assert.calledWith(redirectSpy, '/vehicle-reg-search-results/11CCC');
         sinon.assert.calledWith(renderSpy, 'penalty/vehicleRegSearchResults', expectedViewData);
       });
     });
@@ -89,6 +95,7 @@ describe('MainController', () => {
       it('should render the search results page with overviews of everything issued', async () => {
         searchForm.vehicle_reg = '11DDD';
         await MainController.searchPenalty(request, response);
+        await MainController.searchVehicleReg({ params: { vehicle_reg: '11DDD' } }, response);
         const expectedViewData = {
           vehicleReg: '11DDD',
           results: [
@@ -122,6 +129,7 @@ describe('MainController', () => {
             },
           ],
         };
+        sinon.assert.calledWith(redirectSpy, '/vehicle-reg-search-results/11DDD');
         sinon.assert.calledWith(renderSpy, 'penalty/vehicleRegSearchResults', expectedViewData);
       });
     });
@@ -132,7 +140,10 @@ describe('MainController', () => {
           .rejects(new Error('timeout'));
       });
       it('should redirect home with invalid vehicle reg query parameter', async () => {
+        searchForm.vehicle_reg = '11ZZZ';
         await MainController.searchPenalty(request, response);
+        await MainController.searchVehicleReg({ params: { vehicle_reg: '11ZZZ' } }, response);
+        sinon.assert.calledWith(redirectSpy, '/vehicle-reg-search-results/11ZZZ');
         sinon.assert.calledWith(redirectSpy, '/?invalidReg');
       });
     });

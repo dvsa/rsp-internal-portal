@@ -22,7 +22,7 @@
         {% for result in results|sort(attribute='date', reverse=true) %}
           <tr>
             <td>
-              {{ components.link(text=result.paymentCode, url='payment-code/' + result.paymentCode) }}
+              {{ components.link(text=result.paymentCode, url='/payment-code/' + result.paymentCode) }}
             </td>
             <td>{{ result.formattedDate }}</td>
               {% set statusClass = 'confirmed' if result.paymentStatus == 'PAID' else 'unconfirmed' %}

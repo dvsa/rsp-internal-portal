@@ -14,6 +14,7 @@ router.get('/robots.txt', mainController.robots);
 // Search Page
 router.get('/', authorizationMiddleware, mainController.index);
 router.post('/', authorizationMiddleware, mainController.searchPenalty);
+router.get('/vehicle-reg-search-results/:vehicle_reg', mainController.searchVehicleReg);
 
 router.get('/login', mainController.login);
 router.post('/login', mainController.authenticate);
