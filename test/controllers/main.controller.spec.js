@@ -1,3 +1,4 @@
+import { expect } from 'chai';
 import sinon from 'sinon';
 
 import * as MainController from '../../src/server/controllers/main.controller';
@@ -145,6 +146,29 @@ describe('MainController', () => {
         await MainController.searchVehicleReg({ params: { vehicle_reg: '11ZZZ' } }, response);
         sinon.assert.calledWith(redirectSpy, '/vehicle-reg-search-results/11ZZZ');
         sinon.assert.calledWith(redirectSpy, '/?invalidReg');
+      });
+    });
+
+    context('normaliseRegistration', () => {
+      it('should always call next middleware, modifying request registration parameter where applicable', () => {
+        const cases = [
+          { regIn: undefined, regOut: undefined },
+          { regIn: '13JJJ', regOut: '13JJJ' },
+          { regIn: '13 JJJ', regOut: '13JJJ' },
+          { regIn: ' 13 JJJ   ', regOut: '13JJJ' },
+          { regIn: ' 13 #JJ   ', regOut: '13JJ' },
+          { regIn: ' 13 JjJ   ', regOut: '13JJJ' },
+        ];
+
+        for (let i = 0; i < cases.length; i += 1) {
+          const theCase = cases[i];
+          const nextMiddleware = sinon.stub();
+          const responseStub = sinon.stub();
+          const req = { params: { vehicle_reg: theCase.regIn } };
+          MainController.normaliseRegistration(req, responseStub, nextMiddleware);
+          expect(req.params.vehicle_reg).to.equal(theCase.regOut);
+          sinon.assert.called(nextMiddleware);
+        }
       });
     });
   });

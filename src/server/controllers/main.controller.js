@@ -151,6 +151,15 @@ const summarisePenalty = (penalty) => {
   return `1 ${typeName}`;
 };
 
+export const normaliseRegistration = (req, res, next) => {
+  if (_.isString(req.params.vehicle_reg)) {
+    const regIn = req.params.vehicle_reg;
+    const regOut = regIn.replace(/[^0-9a-z]/gi, '').toUpperCase();
+    req.params.vehicle_reg = regOut;
+  }
+  next();
+};
+
 export const authenticate = (req, res) => {
   const {
     identityProvider,
