@@ -7,6 +7,7 @@ export default {
         TotalAmount: 888,
         PaymentStatus: 'UNPAID',
         Offset: 1533562273.803,
+        Enabled: true,
         Location: 'Dalar Hir (A55 near Holyhead)',
         VehicleRegistration: '11AAA',
         Origin: 'APP',

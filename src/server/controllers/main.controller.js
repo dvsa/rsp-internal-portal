@@ -85,22 +85,11 @@ export const searchVehicleReg = async (req, res) => {
   try {
     const reg = req.params.vehicle_reg;
     const searchResult = await penaltyService.searchByRegistration(reg);
-    handleVehicleRegSearchResults(res, reg, searchResult);
+    const { Penalties, PenaltyGroups } = searchResult;
+    const viewData = generateSearchResultViewData(reg, Penalties, PenaltyGroups);
+    res.render('penalty/vehicleRegSearchResults', viewData);
   } catch (error) {
     res.redirect(`${config.urlRoot}/?invalidReg`);
-  }
-};
-
-const handleVehicleRegSearchResults = (res, vehicleReg, value) => {
-  const { Penalties, PenaltyGroups } = value;
-  const numberOfResults = Penalties.length + PenaltyGroups.length;
-  if (numberOfResults === 1) {
-    const paymentCode = Penalties.length === 1
-      ? Penalties[0].Value.paymentToken : PenaltyGroups[0].ID;
-    res.redirect(`${config.urlRoot}/payment-code/${paymentCode}`);
-  } else {
-    const viewData = generateSearchResultViewData(vehicleReg, Penalties, PenaltyGroups);
-    res.render('penalty/vehicleRegSearchResults', viewData);
   }
 };
 

@@ -48,18 +48,42 @@ describe('MainController', () => {
         searchForm.vehicle_reg = '11AAA';
         await MainController.searchPenalty(request, response);
         await MainController.searchVehicleReg({ params: { vehicle_reg: '11AAA' } }, response);
+        const expectedViewData = {
+          vehicleReg: '11AAA',
+          results: [
+            {
+              paymentCode: 'abc123',
+              paymentStatus: 'UNPAID',
+              summary: '2 penalties',
+              date: 1533562273.803,
+              formattedDate: '06/08/2018 14:31',
+            },
+          ],
+        };
         sinon.assert.calledWith(redirectSpy, '/vehicle-reg-search-results/11AAA');
-        sinon.assert.calledWith(redirectSpy, '/payment-code/abc123');
+        sinon.assert.calledWith(renderSpy, 'penalty/vehicleRegSearchResults', expectedViewData);
       });
     });
 
     context('when we search for a reg with 1 single penalty', () => {
-      it('should redirect to the payment code', async () => {
+      it('should render the search results page with overviews of everything issued', async () => {
         searchForm.vehicle_reg = '11BBB';
         await MainController.searchPenalty(request, response);
         await MainController.searchVehicleReg({ params: { vehicle_reg: '11BBB' } }, response);
+        const expectedViewData = {
+          vehicleReg: '11BBB',
+          results: [
+            {
+              paymentCode: 'f99c8e4035c8e1ae',
+              paymentStatus: 'PAID',
+              summary: '1 penalty',
+              date: 1519776000,
+              formattedDate: '28/02/2018 00:00',
+            },
+          ],
+        };
         sinon.assert.calledWith(redirectSpy, '/vehicle-reg-search-results/11BBB');
-        sinon.assert.calledWith(redirectSpy, '/payment-code/f99c8e4035c8e1ae');
+        sinon.assert.calledWith(renderSpy, 'penalty/vehicleRegSearchResults', expectedViewData);
       });
     });
 
