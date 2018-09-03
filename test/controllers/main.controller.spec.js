@@ -184,15 +184,14 @@ describe('MainController', () => {
           { regIn: ' 13 JjJ   ', regOut: '13JJJ' },
         ];
 
-        for (let i = 0; i < cases.length; i += 1) {
-          const theCase = cases[i];
+        cases.forEach((theCase) => {
           const nextMiddleware = sinon.stub();
           const responseStub = sinon.stub();
           const req = { params: { vehicle_reg: theCase.regIn } };
           MainController.normaliseRegistration(req, responseStub, nextMiddleware);
           expect(req.params.vehicle_reg).to.equal(theCase.regOut);
           sinon.assert.called(nextMiddleware);
-        }
+        });
       });
     });
   });
