@@ -7,18 +7,19 @@ export default class PaymentService {
   }
 
   createCardNotPresentTransaction(vehicleReg, penaltyReference, penaltyType, amount, redirectUrl) {
-    return this.httpClient.post('cardNotPresentPayment/', {
+    const payload = {
       penalty_reference: penaltyReference,
       penalty_type: penaltyType,
       penalty_amount: amount,
       redirect_url: redirectUrl,
       vehicle_reg: vehicleReg,
-    });
+    };
+    return this.httpClient.post('cardNotPresentPayment/', payload, 3);
   }
 
   createCardNotPresentGroupTransaction(penGrpId, penGrpDetails, type, penalties, redirectUrl) {
     const total = penGrpDetails.splitAmounts.find(a => a.type === type).amount;
-    return this.httpClient.post('groupPayment/', {
+    const payload = {
       TotalAmount: total,
       PaymentMethod: 'CNP',
       VehicleRegistration: penGrpDetails.registrationNumber,
@@ -30,11 +31,12 @@ export default class PaymentService {
         PenaltyAmount: p.amount,
         VehicleRegistration: p.vehicleReg,
       })),
-    });
+    };
+    return this.httpClient.post('groupPayment/', payload, 3);
   }
 
   createCashTransaction(vehicleReg, penaltyReference, penaltyType, amount, slipNumber) {
-    return this.httpClient.post('cashPayment/', {
+    const payload = {
       penalty_reference: penaltyReference,
       penalty_type: penaltyType,
       penalty_amount: amount,
@@ -42,7 +44,8 @@ export default class PaymentService {
       receipt_date: new Date().toISOString().split('T')[0],
       batch_number: 1,
       vehicle_reg: vehicleReg,
-    });
+    };
+    return this.httpClient.post('cashPayment/', payload, 3);
   }
 
   createGroupCashTransaction(penGrpId, penGrpDetails, type, penalties, redirectUrl, slipNumber) {
@@ -65,14 +68,14 @@ export default class PaymentService {
         VehicleRegistration: p.vehicleReg,
       })),
     };
-    return this.httpClient.post('groupPayment/', payload);
+    return this.httpClient.post('groupPayment/', payload, 3);
   }
 
   createChequeTransaction(
     vehicleReg, penaltyReference, penaltyType, amount,
     slipNumber, chequeDate, chequeNumber, nameOnCheque,
   ) {
-    return this.httpClient.post('chequePayment/', {
+    const payload = {
       penalty_reference: penaltyReference,
       penalty_type: penaltyType,
       penalty_amount: amount,
@@ -83,7 +86,8 @@ export default class PaymentService {
       cheque_number: chequeNumber,
       name_on_cheque: nameOnCheque,
       vehicle_reg: vehicleReg,
-    });
+    };
+    return this.httpClient.post('chequePayment/', payload, 3);
   }
 
   createGroupChequeTransaction(
@@ -118,14 +122,14 @@ export default class PaymentService {
         VehicleRegistration: p.vehicleReg,
       })),
     };
-    return this.httpClient.post('groupPayment/', payload);
+    return this.httpClient.post('groupPayment/', payload, 3);
   }
 
   createPostalOrderTransaction(
     vehicleReg, penaltyReference, penaltyType, amount,
     slipNumber, postalOrderNumber,
   ) {
-    return this.httpClient.post('postalOrderPayment/', {
+    const payload = {
       penalty_reference: penaltyReference,
       penalty_type: penaltyType,
       penalty_amount: amount,
@@ -134,7 +138,8 @@ export default class PaymentService {
       batch_number: 1,
       postal_order_number: postalOrderNumber,
       vehicle_reg: vehicleReg,
-    });
+    };
+    return this.httpClient.post('postalOrderPayment/', payload, 3);
   }
 
   createGroupPostalOrderTransaction(
@@ -165,14 +170,15 @@ export default class PaymentService {
         VehicleRegistration: p.vehicleReg,
       })),
     };
-    return this.httpClient.post('groupPayment/', payload);
+    return this.httpClient.post('groupPayment/', payload, 3);
   }
 
   confirmPayment(receiptReference, penaltyType) {
-    return this.httpClient.post('confirm/', {
+    const payload = {
       receipt_reference: receiptReference,
       penalty_type: penaltyType,
-    });
+    };
+    return this.httpClient.post('confirm/', payload, 3);
   }
 
   reverseCardPayment(receiptReference, penaltyType, penaltyId) {

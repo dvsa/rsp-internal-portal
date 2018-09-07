@@ -1,0 +1,13 @@
+{% extends 'layouts/default.layout.njk' %}
+
+{% set pageTitle = t.site_title %}
+
+{% block content %}
+  {% call components.gridRow() %}
+    {% call components.columnTwoThirds() %}
+        {{ components.heading(text='Whoops', tag='h1', size='xlarge') }}
+        <p>Something went wrong</p>
+        {{ components.button(text='Start again', url='/payment-code') }}
+    {%- endcall %}
+  {%- endcall %}
+{% endblock %}
