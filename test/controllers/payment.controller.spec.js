@@ -176,9 +176,9 @@ describe('PaymentController', () => {
           .withArgs('FB02-18-20180816-154021-D8245D1F', 'FPN')
           .resolves({ data: { code: 999, auth_code: '1234' } });
       });
-      it('should render to failed payment page', async () => {
+      it('should render to confirm error page', async () => {
         await PaymentController.confirmGroupPayment(request, response);
-        sinon.assert.calledWith(renderSpy, 'payment/failedPayment');
+        sinon.assert.calledWith(renderSpy, 'payment/confirmError');
       });
     });
 
@@ -187,9 +187,9 @@ describe('PaymentController', () => {
         cpmsServiceStub.reset();
         cpmsServiceStub.rejects();
       });
-      it('should render the failed payment page', async () => {
+      it('should render the confirm error page', async () => {
         await PaymentController.confirmGroupPayment(request, response);
-        sinon.assert.calledWith(renderSpy, 'payment/failedPayment');
+        sinon.assert.calledWith(renderSpy, 'payment/confirmError');
       });
     });
   });
