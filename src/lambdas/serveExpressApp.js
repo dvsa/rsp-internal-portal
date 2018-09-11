@@ -26,5 +26,11 @@ const binaryMimeTypes = [
 ];
 
 const server = awsServerlessExpress.createServer(app, null, binaryMimeTypes);
+const isProd = typeof process.env.NODE_ENV !== 'undefined' && process.env.NODE_ENV === 'production';
 
-export default (event, context) => awsServerlessExpress.proxy(server, event, context);
+export default (event, context) => {
+  if (isProd) {
+    event.path = modifyPath(event.path); // eslint-disable-line
+  }
+  return awsServerlessExpress.proxy(server, event, context);
+};
