@@ -26,6 +26,7 @@ const binaryMimeTypes = [
 ];
 
 const server = awsServerlessExpress.createServer(app, null, binaryMimeTypes);
+const isProd = typeof process.env.NODE_ENV !== 'undefined' && process.env.NODE_ENV === 'production';
 
 export default (event, context) => {
   if (isProd) {
