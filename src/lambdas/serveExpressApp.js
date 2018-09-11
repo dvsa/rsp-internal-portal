@@ -30,8 +30,16 @@ const server = awsServerlessExpress.createServer(app, null, binaryMimeTypes);
 const isProd = typeof process.env.NODE_ENV !== 'undefined' && process.env.NODE_ENV === 'production';
 
 export default (event, context) => {
+  console.log('NODE_ENV');
+  console.log(process.env.NODE_ENV);
+  console.log('event');
+  console.log(event);
+  console.log('event.path');
+  console.log(event.path);
   if (isProd) {
     event.path = modifyPath(event.path); // eslint-disable-line
   }
+  console.log('path modified');
+  console.log(event.path);
   return awsServerlessExpress.proxy(server, event, context);
 };
