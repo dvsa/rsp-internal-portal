@@ -13,7 +13,9 @@ const cognitoExpress = new CognitoExpress({
 });
 
 export default (req, res, next) => {
+  console.log('authorization middleware running');
   if (!req.cookies.rsp_access) {
+    console.log('no rsp_access cookie');
     // If there's a refresh token on the cookies try to use that to get a new access token
     if (req.cookies.rsp_refresh) {
       authService.refreshAccessToken(req.cookies.rsp_refresh.refreshToken).then((token) => {
@@ -30,7 +32,9 @@ export default (req, res, next) => {
       res.redirect(`${config.urlRoot}/login`);
     }
   } else {
+    console.log('found rsp_access cookie');
     cognitoExpress.validate(req.cookies.rsp_access.accessToken, (err) => {
+      console.log('cognitoExpress.validate callback');
       if (err) {
         if (req.cookies.rsp_refresh) {
           authService.refreshAccessToken(req.cookies.rsp_refresh.refreshToken).then((token) => {
@@ -61,6 +65,7 @@ export default (req, res, next) => {
           return next();
         }
       }
+      console.log('fallback forbidden render');
       return res.render('main/forbidden');
     });
   }
