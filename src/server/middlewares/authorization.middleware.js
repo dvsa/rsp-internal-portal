@@ -50,6 +50,8 @@ export default (req, res, next) => {
 
         // Ensure that user information is available through the application (including views)
         req.app.set('rsp_user', userInfo);
+        console.log('userInfo');
+        console.log(userInfo);
 
         if (userInfo['custom:Role']) {
           if (!authorizedRoles.some(item => item === userInfo['custom:Role'].toLowerCase())) {
