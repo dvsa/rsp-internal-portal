@@ -56,6 +56,8 @@ export default (req, res, next) => {
         req.app.set('rsp_user', userInfo);
         console.log('userInfo');
         console.log(userInfo);
+        // No roles in Azure AD production
+        if (config.env === 'production') return next();
 
         if (userInfo['custom:Role']) {
           if (!authorizedRoles.some(item => item === userInfo['custom:Role'].toLowerCase())) {
