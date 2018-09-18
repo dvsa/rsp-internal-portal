@@ -19,9 +19,10 @@ const getPenaltyDetails = (req) => {
 };
 
 export const makePayment = async (req, res) => {
+  const paymentCode = req.params.payment_code;
   if (!req.body.paymentType) {
     logger.warn('Missing payment type');
-    return res.redirect(`${config.urlRoot}/payment-code/${req.params.payment_code}`);
+    return res.redirect(`${config.urlRoot}/payment-code/${paymentCode}`);
   }
   const details = { ...req.body };
   logger.info(details);
@@ -32,6 +33,7 @@ export const makePayment = async (req, res) => {
     switch (req.body.paymentType) {
       case 'cash':
         return cpmsService.createCashTransaction(
+          paymentCode,
           penaltyDetails.vehicleReg,
           penaltyDetails.reference,
           penaltyDetails.type,
@@ -61,6 +63,7 @@ export const makePayment = async (req, res) => {
         });
       case 'cheque':
         return cpmsService.createChequeTransaction(
+          paymentCode,
           penaltyDetails.vehicleReg,
           penaltyDetails.reference,
           penaltyDetails.type,
@@ -93,6 +96,7 @@ export const makePayment = async (req, res) => {
         });
       case 'postal':
         return cpmsService.createPostalOrderTransaction(
+          paymentCode,
           penaltyDetails.vehicleReg,
           penaltyDetails.reference,
           penaltyDetails.type,
@@ -218,7 +222,8 @@ export const renderPaymentPage = async (req, res) => {
     }
     // Payment Type is expected to come from the query string, otherwise the default is used
     const paymentType = req.query.paymentType ? req.query.paymentType : 'card';
-    const redirectUrl = `https://${req.get('host')}${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}/confirmPayment`;
+    const { paymentCode } = penaltyDetails;
+    const redirectUrl = `https://${req.get('host')}${config.urlRoot}/payment-code/${paymentCode}/confirmPayment`;
 
     switch (paymentType) {
       case 'cash':
@@ -229,6 +234,7 @@ export const renderPaymentPage = async (req, res) => {
         return res.render('payment/postal', penaltyDetails);
       default:
         return cpmsService.createCardNotPresentTransaction(
+          paymentCode,
           penaltyDetails.vehicleReg,
           penaltyDetails.reference,
           penaltyDetails.type,
