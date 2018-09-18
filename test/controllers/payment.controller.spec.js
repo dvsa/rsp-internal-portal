@@ -34,7 +34,6 @@ describe('PaymentController', () => {
       request = {
         params: { payment_code: '5624r2wupfs', type: 'FPN' },
         query: { paymentType: 'card' },
-        get: () => 'localhost',
       };
     });
 
@@ -73,7 +72,7 @@ describe('PaymentController', () => {
             penaltyGroup.penaltyGroupDetails,
             'FPN',
             penaltyGroup.penaltyDetails[0].penalties,
-            'https://localhost/payment-code/5624r2wupfs/FPN/confirmGroupPayment',
+            'http://localhost:3000/payment-code/5624r2wupfs/FPN/confirmGroupPayment',
           )
           .resolves({ data: { gateway_url: 'https://cpms.url' } });
       });
@@ -202,7 +201,7 @@ describe('PaymentController', () => {
         penaltyGroup.penaltyGroupDetails,
         'FPN',
         penaltyGroup.penaltyDetails,
-        'https://localhost/payment-code/5624r2wupfs/FPN/receipt',
+        'http://localhost:3000/payment-code/5624r2wupfs/FPN/receipt',
         ...rest,
       )
         .resolves({
@@ -238,7 +237,6 @@ describe('PaymentController', () => {
         request = {
           body: { paymentType: 'cash', slipNumber: '1234' },
           params: { payment_code: '5624r2wupfs', type: 'FPN' },
-          get: () => 'localhost',
         };
       });
       afterEach(() => {
@@ -276,7 +274,6 @@ describe('PaymentController', () => {
             nameOnCheque: 'Joe Bloggs',
           },
           params: { payment_code: '5624r2wupfs', type: 'FPN' },
-          get: () => 'localhost',
         };
       });
       afterEach(() => {
