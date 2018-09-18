@@ -44,7 +44,7 @@ export default class PaymentService {
       penalty_amount: amount,
       slip_number: slipNumber,
       receipt_date: new Date().toISOString().split('T')[0],
-      batch_number: 1,
+      batch_number: slipNumber,
       vehicle_reg: reg,
     };
     return this.httpClient.post('cashPayment/', payload, 3);
@@ -63,7 +63,7 @@ export default class PaymentService {
       RedirectUrl: redirectUrl,
       SlipNumber: slipNumber,
       ReceiptDate: new Date().toISOString().split('T')[0],
-      BatchNumber: '1',
+      BatchNumber: slipNumber,
       Penalties: penaltiesOfType.map(p => ({
         PenaltyReference: p.reference,
         PenaltyAmount: p.amount,
@@ -84,7 +84,7 @@ export default class PaymentService {
       penalty_amount: amount,
       slip_number: slipNumber,
       receipt_date: new Date().toISOString().split('T')[0],
-      batch_number: 1,
+      batch_number: slipNumber,
       cheque_date: chequeDate,
       cheque_number: chequeNumber,
       name_on_cheque: nameOnCheque,
@@ -115,7 +115,7 @@ export default class PaymentService {
       RedirectUrl: redirectUrl,
       ReceiptDate: new Date().toISOString().split('T')[0],
       SlipNumber: slipNumber,
-      BatchNumber: '1',
+      BatchNumber: slipNumber,
       ChequeNumber: chequeNumber,
       ChequeDate: chequeDate,
       NameOnCheque: nameOnCheque,
@@ -139,7 +139,7 @@ export default class PaymentService {
       penalty_amount: amount,
       slip_number: slipNumber,
       receipt_date: new Date().toISOString().split('T')[0],
-      batch_number: 1,
+      batch_number: slipNumber,
       postal_order_number: postalOrderNumber,
       vehicle_reg: vehicleReg,
     };
@@ -167,7 +167,7 @@ export default class PaymentService {
       ReceiptDate: new Date().toISOString().split('T')[0],
       SlipNumber: slipNumber,
       PostalOrderNumber: postalOrderNumber,
-      BatchNumber: '1',
+      BatchNumber: slipNumber,
       Penalties: penaltiesOfType.map(p => ({
         PenaltyReference: p.reference,
         PenaltyAmount: p.amount,
