@@ -6,13 +6,14 @@ export default class PaymentService {
     this.httpClient = new SignedHttpClient(serviceUrl);
   }
 
-  createCardNotPresentTransaction(vehicleReg, penaltyReference, penaltyType, amount, redirectUrl) {
+  createCardNotPresentTransaction(paymentCode, reg, penaltyRef, penaltyType, amount, redirectUrl) {
     const payload = {
-      penalty_reference: penaltyReference,
+      payment_code: paymentCode,
+      penalty_reference: penaltyRef,
       penalty_type: penaltyType,
       penalty_amount: amount,
       redirect_url: redirectUrl,
-      vehicle_reg: vehicleReg,
+      vehicle_reg: reg,
     };
     return this.httpClient.post('cardNotPresentPayment/', payload, 3);
   }
@@ -35,15 +36,16 @@ export default class PaymentService {
     return this.httpClient.post('groupPayment/', payload, 3);
   }
 
-  createCashTransaction(vehicleReg, penaltyReference, penaltyType, amount, slipNumber) {
+  createCashTransaction(paymentCode, reg, penaltyRef, penaltyType, amount, slipNumber) {
     const payload = {
-      penalty_reference: penaltyReference,
+      payment_code: paymentCode,
+      penalty_reference: penaltyRef,
       penalty_type: penaltyType,
       penalty_amount: amount,
       slip_number: slipNumber,
       receipt_date: new Date().toISOString().split('T')[0],
-      batch_number: 1,
-      vehicle_reg: vehicleReg,
+      batch_number: slipNumber,
+      vehicle_reg: reg,
     };
     return this.httpClient.post('cashPayment/', payload, 3);
   }
@@ -61,7 +63,7 @@ export default class PaymentService {
       RedirectUrl: redirectUrl,
       SlipNumber: slipNumber,
       ReceiptDate: new Date().toISOString().split('T')[0],
-      BatchNumber: '1',
+      BatchNumber: slipNumber,
       Penalties: penaltiesOfType.map(p => ({
         PenaltyReference: p.reference,
         PenaltyAmount: p.amount,
@@ -72,16 +74,17 @@ export default class PaymentService {
   }
 
   createChequeTransaction(
-    vehicleReg, penaltyReference, penaltyType, amount,
+    paymentCode, vehicleReg, penaltyReference, penaltyType, amount,
     slipNumber, chequeDate, chequeNumber, nameOnCheque,
   ) {
     const payload = {
+      payment_code: paymentCode,
       penalty_reference: penaltyReference,
       penalty_type: penaltyType,
       penalty_amount: amount,
       slip_number: slipNumber,
       receipt_date: new Date().toISOString().split('T')[0],
-      batch_number: 1,
+      batch_number: slipNumber,
       cheque_date: chequeDate,
       cheque_number: chequeNumber,
       name_on_cheque: nameOnCheque,
@@ -112,7 +115,7 @@ export default class PaymentService {
       RedirectUrl: redirectUrl,
       ReceiptDate: new Date().toISOString().split('T')[0],
       SlipNumber: slipNumber,
-      BatchNumber: '1',
+      BatchNumber: slipNumber,
       ChequeNumber: chequeNumber,
       ChequeDate: chequeDate,
       NameOnCheque: nameOnCheque,
@@ -126,16 +129,17 @@ export default class PaymentService {
   }
 
   createPostalOrderTransaction(
-    vehicleReg, penaltyReference, penaltyType, amount,
+    paymentCode, vehicleReg, penaltyReference, penaltyType, amount,
     slipNumber, postalOrderNumber,
   ) {
     const payload = {
+      payment_code: paymentCode,
       penalty_reference: penaltyReference,
       penalty_type: penaltyType,
       penalty_amount: amount,
       slip_number: slipNumber,
       receipt_date: new Date().toISOString().split('T')[0],
-      batch_number: 1,
+      batch_number: slipNumber,
       postal_order_number: postalOrderNumber,
       vehicle_reg: vehicleReg,
     };
@@ -163,7 +167,7 @@ export default class PaymentService {
       ReceiptDate: new Date().toISOString().split('T')[0],
       SlipNumber: slipNumber,
       PostalOrderNumber: postalOrderNumber,
-      BatchNumber: '1',
+      BatchNumber: slipNumber,
       Penalties: penaltiesOfType.map(p => ({
         PenaltyReference: p.reference,
         PenaltyAmount: p.amount,
