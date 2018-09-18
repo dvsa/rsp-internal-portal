@@ -33,6 +33,7 @@ const cognitoUrl = process.env.COGNITO_URL;
 const cpmsServiceUrl = process.env.CPMS_SERVICE_URL;
 const iamClientId = process.env.IAM_CLIENT_ID;
 const iamClientSecret = process.env.IAM_CLIENT_SECRET;
+const postPaymentRedirectBaseUrl = process.env.POST_PAYMENT_REDIRECT_BASE_URL;
 
 const config = {
   env,
@@ -53,6 +54,7 @@ const config = {
   cpmsServiceUrl,
   iamClientId,
   iamClientSecret,
+  postPaymentRedirectBaseUrl,
 };
 
 export default config;
