@@ -336,9 +336,9 @@ export const confirmPayment = async (req, res) => {
           .catch(() => res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`));
       } else {
         logger.warn(response.data);
-        res.render('payment/failedPayment');
+        res.render('payment/failedPayment', req.session);
       }
-    }).catch(() => res.render('payment/failedPayment'));
+    }).catch(() => res.render('payment/failedPayment', req.session));
   } catch (error) {
     res.redirect(`${config.urlRoot}/?invalidPaymentCode`);
   }
@@ -363,10 +363,10 @@ export const confirmGroupPayment = async (req, res) => {
       await paymentService.recordGroupPayment(payload);
       return res.redirect(`${config.urlRoot}/payment-code/${paymentCode}/${penaltyType}/receipt`);
     }
-    return res.render('payment/confirmError');
+    return res.render('payment/confirmError', req.session);
   } catch (error) {
     logger.error(error);
-    return res.render('payment/confirmError');
+    return res.render('payment/confirmError', req.session);
   }
 };
 
