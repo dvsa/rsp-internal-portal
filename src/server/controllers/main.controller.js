@@ -178,6 +178,7 @@ export const login = (req, res) => {
 };
 
 export const logout = (req, res) => {
+  req.session = null;
   res.clearCookie('rsp_access');
   res.clearCookie('rsp_refresh');
   res.redirect(`${config.cognitoUrl}/logout?client_id=${config.clientId}&logout_uri=${encodeURIComponent(config.redirectUri)}`);
