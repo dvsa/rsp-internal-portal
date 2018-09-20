@@ -37,7 +37,7 @@ export const index = (req, res) => {
   res.render('main/index', {
     ...viewData,
     ...req.session,
-  );
+  });
 };
 
 const getSearchDetails = async (form) => {
