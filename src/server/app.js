@@ -12,6 +12,8 @@ import resolvePath from 'resolve-path';
 import validator from 'express-validator';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
+import session from 'cookie-session';
+
 import routes from './routes';
 import config from './config';
 
@@ -69,6 +71,14 @@ app.use((req, res, next) => {
   });
   next();
 });
+
+app.use(session({
+  maxAge: 1000 * 60 * 60 * 4, // 4 hours
+  secure: true,
+  name: 'dvsa_rsp_internal_portal',
+  // TODO: clientSecret will be removed eventually, will need to use a different app secret for this
+  secret: config.clientSecret,
+}));
 
 app.use(cookieParser());
 app.use(awsServerlessExpressMiddleware.eventContext());
