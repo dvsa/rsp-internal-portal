@@ -12,6 +12,8 @@ import resolvePath from 'resolve-path';
 import validator from 'express-validator';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
+import session from 'cookie-session';
+
 import routes from './routes';
 import config from './config';
 
@@ -46,6 +48,14 @@ app.use(helmet());
 
 // Add express to the nunjucks enviroment instance
 env.express(app);
+
+app.use(session({
+  maxAge: 1000 * 60 * 60 * 4, // 4 hours
+  secure: true,
+  name: 'rsp_internal_portal_user',
+  // TODO: clientSecret will be removed eventually, will need to use a different app secret for this
+  secret: config.clientSecret,
+}));
 
 // Create a view engine from nunjucks enviroment variable
 app.engine('njk', env.render);

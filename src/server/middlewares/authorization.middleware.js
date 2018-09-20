@@ -53,7 +53,7 @@ export default (req, res, next) => {
         const userInfo = jwtDecode(req.cookies.rsp_access.idToken);
 
         // Ensure that user information is available through the application (including views)
-        req.app.set('rsp_user', userInfo);
+        req.session.rsp_user = userInfo;
         console.log('userInfo');
         console.log(userInfo);
         // No roles in Azure AD production
@@ -62,13 +62,13 @@ export default (req, res, next) => {
         if (userInfo['custom:Role']) {
           if (!authorizedRoles.some(item => item === userInfo['custom:Role'].toLowerCase())) {
             // User doesn't have an authorized role, forbid access
-            return res.render('main/forbidden');
+            return res.render('main/forbidden', req.session);
           }
           return next();
         }
       }
       console.log('fallback forbidden render');
-      return res.render('main/forbidden');
+      return res.render('main/forbidden', req.session);
     });
   }
 };

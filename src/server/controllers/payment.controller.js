@@ -170,7 +170,7 @@ export const makeGroupPayment = async (req, res) => {
     const cpmsResp = await finalTransactionCreationFunction();
 
     if (cpmsResp.data.code !== '000') {
-      return res.render('payment/failedPayment');
+      return res.render('payment/failedPayment', req.session);
     }
 
     await paymentService.recordGroupPayment({
@@ -227,11 +227,20 @@ export const renderPaymentPage = async (req, res) => {
 
     switch (paymentType) {
       case 'cash':
-        return res.render('payment/cash', penaltyDetails);
+        return res.render('payment/cash', {
+          ...penaltyDetails,
+          ...req.session,
+        });
       case 'cheque':
-        return res.render('payment/cheque', penaltyDetails);
+        return res.render('payment/cheque', {
+          ...penaltyDetails,
+          ...req.session,
+        });
       case 'postal':
-        return res.render('payment/postal', penaltyDetails);
+        return res.render('payment/postal', {
+          ...penaltyDetails,
+          ...req.session,
+        });
       default:
         return cpmsService.createCardNotPresentTransaction(
           paymentCode,
@@ -279,11 +288,20 @@ export const renderGroupPaymentPage = async (req, res) => {
     const penaltyGroupWithPaymentType = { ...penaltyGroup, paymentPenaltyType: penaltyType };
     switch (paymentType) {
       case 'cash':
-        return res.render('payment/groupCash', penaltyGroupWithPaymentType);
+        return res.render('payment/groupCash', {
+          ...penaltyGroupWithPaymentType,
+          ...req.session,
+        });
       case 'cheque':
-        return res.render('payment/groupCheque', penaltyGroupWithPaymentType);
+        return res.render('payment/groupCheque', {
+          ...penaltyGroupWithPaymentType,
+          ...req.session,
+        });
       case 'postal':
-        return res.render('payment/groupPostalOrder', penaltyGroupWithPaymentType);
+        return res.render('payment/groupPostalOrder', {
+          ...penaltyGroupWithPaymentType,
+          ...req.session,
+        });
       default:
         return res.redirect(`${config.urlRoot}/?invalidPaymentCode`);
     }
@@ -318,9 +336,9 @@ export const confirmPayment = async (req, res) => {
           .catch(() => res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`));
       } else {
         logger.warn(response.data);
-        res.render('payment/failedPayment');
+        res.render('payment/failedPayment', req.session);
       }
-    }).catch(() => res.render('payment/failedPayment'));
+    }).catch(() => res.render('payment/failedPayment', req.session));
   } catch (error) {
     res.redirect(`${config.urlRoot}/?invalidPaymentCode`);
   }
@@ -345,10 +363,10 @@ export const confirmGroupPayment = async (req, res) => {
       await paymentService.recordGroupPayment(payload);
       return res.redirect(`${config.urlRoot}/payment-code/${paymentCode}/${penaltyType}/receipt`);
     }
-    return res.render('payment/confirmError');
+    return res.render('payment/confirmError', req.session);
   } catch (error) {
     logger.error(error);
-    return res.render('payment/confirmError');
+    return res.render('payment/confirmError', req.session);
   }
 };
 
