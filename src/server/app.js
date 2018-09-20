@@ -75,7 +75,7 @@ app.use((req, res, next) => {
 app.use(session({
   maxAge: 1000 * 60 * 60 * 4, // 4 hours
   secure: true,
-  name: 'dvsa_rsp_internal_portal',
+  name: 'rsp_internal_portal_user',
   // TODO: clientSecret will be removed eventually, will need to use a different app secret for this
   secret: config.clientSecret,
 }));
