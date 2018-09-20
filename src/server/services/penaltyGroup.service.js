@@ -32,6 +32,7 @@ export default class PenaltyGroupService {
       } = PenaltyGroupService.parsePayments(Payments);
       return {
         isPenaltyGroup: true,
+        isCancellable: splitAmounts.every(a => a.status === 'UNPAID'),
         penaltyGroupDetails: {
           registrationNumber: VehicleRegistration,
           location: Location,

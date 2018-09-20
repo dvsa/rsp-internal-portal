@@ -80,7 +80,7 @@ export default class PenaltyService {
     const promise = new Promise((resolve, reject) => {
       this.httpClient.get(`vehicle-reg/${registration}`).then((response) => {
         if (isEmpty(response.data) || response.data.Enabled === false) {
-          reject(new Error(`Not vehicle found by registration ${registration}`));
+          reject(new Error(`No vehicle found by registration ${registration}`));
         }
         resolve(response.data);
       }).catch((error) => {

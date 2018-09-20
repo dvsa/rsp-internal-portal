@@ -158,9 +158,20 @@
       {% if paid %}
         {{ components.button(text='Home', url='/') }}
       {% endif %}
-    {# ends components.columnTwoThirds #}
     {%- endcall %}
-  {# ends components.gridRow #}
+
+    {% if isCancellable %}
+      {% call components.columnOneThird() %}
+        <aside class="govuk-related-items" role="complementary">
+          {{ components.heading(text='Additional actions', tag='h3', size='medium') }}
+          <nav role="navigation" aria-labelledby="subsection-title">
+            <ul class="font-xsmall">
+              <li>{{ components.link(text='Cancel payment code', url='#') }}</li>
+            </ul>
+          </nav>
+        </aside>
+      {%- endcall %}
+    {% endif %}
   {%- endcall %}
   
 {% endblock %}
