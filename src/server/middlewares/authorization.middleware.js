@@ -62,13 +62,13 @@ export default (req, res, next) => {
         if (userInfo['custom:Role']) {
           if (!authorizedRoles.some(item => item === userInfo['custom:Role'].toLowerCase())) {
             // User doesn't have an authorized role, forbid access
-            return res.render('main/forbidden');
+            return res.render('main/forbidden', req.session);
           }
           return next();
         }
       }
       console.log('fallback forbidden render');
-      return res.render('main/forbidden');
+      return res.render('main/forbidden', req.session);
     });
   }
 };

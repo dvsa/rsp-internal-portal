@@ -12,7 +12,7 @@ export const renderReportFilters = async (req, res) => {
   } catch (error) {
     logger.error(error);
   }
-  res.render('reports/generateReport', { types: reportTypes });
+  res.render('reports/generateReport', { types: reportTypes, ...req.session });
 };
 
 export const generateReport = (req, res) => {
@@ -21,7 +21,7 @@ export const generateReport = (req, res) => {
   try {
     cpmsService.requestReport(filters.penaltyType, filters.reportCode, `${filters.dateFrom} 00:00:00`, `${filters.dateTo} 23:59:00`).then((response) => {
       if (response.code === '000') {
-        res.render('reports/generatingReport', { reportReference: response.reference, penaltyType: filters.penaltyType });
+        res.render('reports/generatingReport', { reportReference: response.reference, penaltyType: filters.penaltyType, ...req.session });
       }
     });
   } catch (error) {
@@ -67,6 +67,7 @@ export const showDetails = async (req, res) => {
         downloadUrl: `${config.urlRoot}/reports/${req.params.report_ref}/download?penalty_type=${req.query.penalty_type}&filename=${filename}`,
         penaltyType: req.params.penalty_type,
         filename,
+        ...req.session,
       });
     } else {
       res.redirect(`${config.urlRoot}/reports/${req.params.report_ref}/status?penalty_type=${req.query.penalty_type}`);

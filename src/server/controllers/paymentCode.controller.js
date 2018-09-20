@@ -40,10 +40,16 @@ export const getPenaltyDetails = [
 
       if (paymentCode.length === 16) {
         penaltyOrGroup = await penaltyService.getByPaymentCode(paymentCode);
-        res.render('penalty/penaltyDetails', penaltyOrGroup);
+        res.render('penalty/penaltyDetails', {
+          ...penaltyOrGroup,
+          ...req.session,
+        });
       } else {
         penaltyOrGroup = await penaltyGroupService.getByPaymentCode(paymentCode);
-        res.render('penalty/penaltyGroupSummary', penaltyOrGroup);
+        res.render('penalty/penaltyGroupSummary', {
+          ...penaltyOrGroup,
+          ...req.session,
+        });
       }
     } catch (error) {
       logger.error(error);
@@ -57,7 +63,7 @@ export const getPenaltyGroupBreakdownForType = [
     const paymentCode = req.params.payment_code;
     const { type } = req.params;
     penaltyGroupService.getPaymentsByCodeAndType(paymentCode, type).then((penaltiesForType) => {
-      res.render('payment/penaltyGroupTypeBreakdown', { paymentCode, ...penaltiesForType });
+      res.render('payment/penaltyGroupTypeBreakdown', { paymentCode, ...penaltiesForType, ...req.session });
     }).catch((error) => {
       logger.error(error);
       res.redirect('../payment-code?invalidPaymentCode');

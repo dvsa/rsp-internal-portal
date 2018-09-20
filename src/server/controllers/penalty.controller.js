@@ -21,7 +21,7 @@ export const getPenaltyDetails = [
       const penaltyId = req.params.penalty_id;
 
       penaltyService.getById(penaltyId).then((details) => {
-        res.render('penalty/penaltyDetails', details);
+        res.render('penalty/penaltyDetails', { ...details, ...req.session });
       }).catch(() => {
         res.redirect(`../?invalid${penaltyType}`);
       });

@@ -34,7 +34,10 @@ export const index = (req, res) => {
     input: invalidPaymentCode ? 'payment code' : 'fine reference',
   };
 
-  res.render('main/index', viewData);
+  res.render('main/index', {
+    ...viewData,
+    ...req.session,
+  );
 };
 
 const getSearchDetails = async (form) => {
@@ -87,7 +90,10 @@ export const searchVehicleReg = async (req, res) => {
     const searchResult = await penaltyService.searchByRegistration(reg);
     const { Penalties, PenaltyGroups } = searchResult;
     const viewData = generateSearchResultViewData(reg, Penalties, PenaltyGroups);
-    res.render('penalty/vehicleRegSearchResults', viewData);
+    res.render('penalty/vehicleRegSearchResults', {
+      ...viewData,
+      ...req.session,
+    ));
   } catch (error) {
     res.redirect(`${config.urlRoot}/?invalidReg`);
   }
