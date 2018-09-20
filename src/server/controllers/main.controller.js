@@ -93,7 +93,7 @@ export const searchVehicleReg = async (req, res) => {
     res.render('penalty/vehicleRegSearchResults', {
       ...viewData,
       ...req.session,
-    ));
+    });
   } catch (error) {
     res.redirect(`${config.urlRoot}/?invalidReg`);
   }
