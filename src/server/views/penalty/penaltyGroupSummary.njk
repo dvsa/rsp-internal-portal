@@ -100,7 +100,7 @@
                 {% if amountPaid == true %}
                   {{ components.link(text='Receipt', url='/payment-code/' + paymentCode + '/' + amount.type + '/receipt') }}
                 {% else %}
-                  {% if enabled %}
+                  {% if penaltyGroupDetails.enabled %}
                     {% if amount.type == 'FPN' %}
                       {% set paymentButtonTxt = 'Pay fixed penalties' %}
                     {% elif amount.type == 'CDN' %}
