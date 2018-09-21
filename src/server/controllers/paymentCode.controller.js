@@ -55,12 +55,12 @@ export const getPenaltyDetails = [
       res.redirect('../?invalidPaymentCode');
     }
 
-    const finalViewData = checkAndSetCancellationFailureFlag(req, viewData);
+    const finalViewData = tryAddCancellationFlag(req, viewData);
     res.render(view, finalViewData);
   },
 ];
 
-const checkAndSetCancellationFailureFlag = (req, viewData) => {
+const tryAddCancellationFlag = (req, viewData) => {
   if (has(req.query, 'cancellation') && req.query.cancellation === 'failed') {
     return { ...viewData, cancellationFailed: true };
   }
