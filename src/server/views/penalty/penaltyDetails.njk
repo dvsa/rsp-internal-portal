@@ -112,18 +112,18 @@
         {% endif %}
     {%- endcall %}
 
-    {% call components.columnOneThird() %}
-
-    <aside class="govuk-related-items" role="complementary">
-        Other actions
+    {% if status == 'UNPAID' %}
+      {% call components.columnOneThird() %}
+      <aside class="govuk-related-items" role="complementary">
+        {{ components.heading(text='Additional actions', tag='h3', size='medium') }}
         <nav role="navigation" aria-labelledby="subsection-title">
-          <ul class="font-xsmall">
-            <li> {{ components.link(text='Resend penalty details via SMS', url='#') }} </li>
-            <li> {{ components.link(text='Resend penalty details via email', url='#') }} </li>
-          </ul>
+          <form id="other-actions-form" action="{{paymentCode}}/cancel" method="POST">
+            <a href="#" onclick="document.getElementById('other-actions-form').submit();">Cancel payment code</a>
+        </form>
         </nav>
       </aside>
-    {%- endcall %}
+      {%- endcall %}
+    {% endif %}
 
   {%- endcall %}
   
