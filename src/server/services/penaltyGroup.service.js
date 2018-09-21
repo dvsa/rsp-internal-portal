@@ -24,6 +24,7 @@ export default class PenaltyGroupService {
         Location,
         Timestamp,
         TotalAmount,
+        Enabled,
       } = response.data;
       const {
         splitAmounts,
@@ -38,6 +39,7 @@ export default class PenaltyGroupService {
           location: Location,
           date: moment.unix(Timestamp).format('DD/MM/YYYY'),
           amount: TotalAmount,
+          enabled: Enabled,
           splitAmounts,
         },
         paymentCode: ID,

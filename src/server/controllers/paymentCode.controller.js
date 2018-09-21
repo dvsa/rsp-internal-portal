@@ -1,4 +1,6 @@
+/* eslint-disable no-use-before-define */
 import { validationResult } from 'express-validator/check';
+import { has } from 'lodash';
 import paymentCodeValidation from './../validation/paymentCode';
 import PenaltyService from './../services/penalty.service';
 import config from './../config';
@@ -34,23 +36,36 @@ export const validatePaymentCode = [
 export const getPenaltyDetails = [
   paymentCodeValidation,
   async (req, res) => {
+    let view;
+    let viewData;
     try {
       const paymentCode = req.params.payment_code;
-      let penaltyOrGroup;
 
       if (paymentCode.length === 16) {
-        penaltyOrGroup = await penaltyService.getByPaymentCode(paymentCode);
-        res.render('penalty/penaltyDetails', penaltyOrGroup);
+        const penalty = await penaltyService.getByPaymentCode(paymentCode);
+        view = 'penalty/penaltyDetails';
+        viewData = penalty;
       } else {
-        penaltyOrGroup = await penaltyGroupService.getByPaymentCode(paymentCode);
-        res.render('penalty/penaltyGroupSummary', penaltyOrGroup);
+        const penaltyGroup = await penaltyGroupService.getByPaymentCode(paymentCode);
+        view = 'penalty/penaltyGroupSummary';
+        viewData = penaltyGroup;
       }
     } catch (error) {
       logger.error(error);
       res.redirect('../?invalidPaymentCode');
     }
+
+    const finalViewData = checkAndSetCancellationFailureFlag(req, viewData);
+    res.render(view, finalViewData);
   },
 ];
+
+const checkAndSetCancellationFailureFlag = (req, viewData) => {
+  if (has(req.query, 'cancellation') && req.query.cancellation === 'failed') {
+    return { ...viewData, cancellationFailed: true };
+  }
+  return viewData;
+};
 
 export const getPenaltyGroupBreakdownForType = [
   (req, res) => {
@@ -69,7 +84,7 @@ export const cancelPaymentCode = async (req, res) => {
   const paymentCode = req.params.payment_code;
   try {
     await penaltyGroupService.cancel(paymentCode);
-    res.redirect(`/payment-code/${paymentCode}?cancellation=complete`);
+    res.redirect(`/payment-code/${paymentCode}`);
   } catch (error) {
     console.log(error);
     res.redirect(`/payment-code/${paymentCode}?cancellation=failed`);
