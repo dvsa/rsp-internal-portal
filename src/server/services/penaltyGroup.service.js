@@ -94,4 +94,8 @@ export default class PenaltyGroupService {
       throw new Error(error);
     });
   }
+
+  cancel(paymentCode) {
+    return this.httpClient.delete(`penaltyGroup/${paymentCode}`);
+  }
 }

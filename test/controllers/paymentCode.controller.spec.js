@@ -46,4 +46,46 @@ describe('Payment Code Controller', () => {
       });
     });
   });
+
+  describe('cancelPaymentCode', () => {
+    let paymentCode;
+    let request;
+    const redirectSpy = sinon.spy();
+    const response = { redirect: redirectSpy };
+    context('given the payment code is for a multi penalty', () => {
+      let penaltyGroupServiceStub;
+      beforeEach(() => {
+        paymentCode = '1234567890zz';
+        request = { params: { payment_code: paymentCode } };
+        penaltyGroupServiceStub = sinon.stub(PenaltyGroupService.prototype, 'cancel');
+      });
+      afterEach(() => {
+        PenaltyGroupService.prototype.cancel.restore();
+      });
+      context('and the penalty group service cancellation is successful', () => {
+        beforeEach(() => {
+          penaltyGroupServiceStub
+            .withArgs(paymentCode)
+            .resolves();
+        });
+        it('should redirect back to the payment code with a query param to confirm cancellation', async () => {
+          await PaymentCodeController.cancelPaymentCode(request, response);
+          sinon.assert.calledWith(redirectSpy, '/payment-code/1234567890zz?cancellation=complete');
+          sinon.assert.calledWith(penaltyGroupServiceStub, paymentCode);
+        });
+      });
+      context('and the penalty group service cancellation fails', () => {
+        beforeEach(() => {
+          penaltyGroupServiceStub
+            .withArgs(paymentCode)
+            .rejects();
+        });
+        it('should redirect back to the payment code with a query param to indicate the failure', async () => {
+          await PaymentCodeController.cancelPaymentCode(request, response);
+          sinon.assert.calledWith(redirectSpy, '/payment-code/1234567890zz?cancellation=failed');
+          sinon.assert.calledWith(penaltyGroupServiceStub, paymentCode);
+        });
+      });
+    });
+  });
 });

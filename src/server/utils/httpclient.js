@@ -62,4 +62,19 @@ export default class SignedHttpClient {
 
     return axios.post(`${this.baseUrlOb.href}${path}`, data, options);
   }
+
+  delete(path) {
+    const request = {
+      method: 'DELETE',
+      path: `${this.baseUrlOb.pathname}${path}`,
+      headers: {
+        Host: this.baseUrlOb.host,
+      },
+    };
+    aws4.sign(request, {
+      accessKeyId: this.credentials.clientId,
+      secretAccessKey: this.credentials.clientSecret,
+    });
+    return axios.delete(`${this.baseUrlOb.href}${path}`, request);
+  }
 }

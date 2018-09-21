@@ -64,3 +64,14 @@ export const getPenaltyGroupBreakdownForType = [
     });
   },
 ];
+
+export const cancelPaymentCode = async (req, res) => {
+  const paymentCode = req.params.payment_code;
+  try {
+    await penaltyGroupService.cancel(paymentCode);
+    res.redirect(`/payment-code/${paymentCode}?cancellation=complete`);
+  } catch (error) {
+    console.log(error);
+    res.redirect(`/payment-code/${paymentCode}?cancellation=failed`);
+  }
+};
