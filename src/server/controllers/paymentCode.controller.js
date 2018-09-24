@@ -55,7 +55,7 @@ export const getPenaltyDetails = [
       res.redirect('../?invalidPaymentCode');
     }
 
-    const finalViewData = tryAddCancellationFlag(req, viewData);
+    const finalViewData = { ...tryAddCancellationFlag(req, viewData), ...req.session };
     res.render(view, finalViewData);
   },
 ];
@@ -72,7 +72,7 @@ export const getPenaltyGroupBreakdownForType = [
     const paymentCode = req.params.payment_code;
     const { type } = req.params;
     penaltyGroupService.getPaymentsByCodeAndType(paymentCode, type).then((penaltiesForType) => {
-      res.render('payment/penaltyGroupTypeBreakdown', { paymentCode, ...penaltiesForType });
+      res.render('payment/penaltyGroupTypeBreakdown', { paymentCode, ...penaltiesForType, ...req.session });
     }).catch((error) => {
       logger.error(error);
       res.redirect('../payment-code?invalidPaymentCode');

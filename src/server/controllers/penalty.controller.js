@@ -24,7 +24,7 @@ export const getPenaltyDetails = [
 
       penaltyService.getById(penaltyId).then((penaltyDetails) => {
         const viewData = tryAddCancellationFlag(req, penaltyDetails);
-        res.render('penalty/penaltyDetails', viewData);
+        res.render('penalty/penaltyDetails', { ...viewData, ...req.session });
       }).catch(() => {
         res.redirect(`../?invalid${penaltyType}`);
       });
