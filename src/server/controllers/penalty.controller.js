@@ -43,9 +43,9 @@ export const cancelPenalty = async (req, res) => {
   const penaltyId = req.params.penalty_id;
   try {
     await penaltyService.cancel(penaltyId);
-    res.redirect(`/penalty/${penaltyId}`);
+    res.redirect(`${config.urlRoot}/penalty/${penaltyId}`);
   } catch (error) {
     console.log(error);
-    res.redirect(`/penalty/${penaltyId}?cancellation=failed`);
+    res.redirect(`${config.urlRoot}/penalty/${penaltyId}?cancellation=failed`);
   }
 };
