@@ -3,6 +3,7 @@ import axiosRetry from 'axios-retry';
 import aws4 from 'aws4';
 import { isNumber } from 'lodash';
 import URL from 'url-parse';
+import { isObject } from 'util';
 
 import config from '../config';
 
@@ -63,14 +64,20 @@ export default class SignedHttpClient {
     return axios.post(`${this.baseUrlOb.href}${path}`, data, options);
   }
 
-  delete(path) {
+  delete(path, body) {
     const request = {
       method: 'DELETE',
       path: `${this.baseUrlOb.pathname}${path}`,
-      headers: {
-        Host: this.baseUrlOb.host,
-      },
+      ...this.signingOptions,
     };
+
+    if (isObject(body)) {
+      const jsonBody = JSON.stringify(body);
+      // Both required in order for AWS request signing to work
+      request.data = jsonBody;
+      request.body = jsonBody;
+    }
+
     aws4.sign(request, {
       accessKeyId: this.credentials.clientId,
       secretAccessKey: this.credentials.clientSecret,

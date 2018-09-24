@@ -35,6 +35,7 @@ router.get('/payment-code/:payment_code/:type/receipt', receiptController);
 
 // Get Penalty details given a penalty reference
 router.get('/penalty/:penalty_id', penaltyController.getPenaltyDetails);
+router.post('/penalty/:penalty_id/cancel', penaltyController.cancelPenalty);
 router.get('/penalty/:penalty_id/payment', paymentController.renderPaymentPage);
 
 // Reports

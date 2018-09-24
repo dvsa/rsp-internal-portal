@@ -1,5 +1,7 @@
 import { isEmpty, has } from 'lodash';
 import moment from 'moment';
+import { isObject } from 'util';
+
 import SignedHttpClient from './../utils/httpclient';
 
 export default class PenaltyService {
@@ -63,7 +65,7 @@ export default class PenaltyService {
   getById(penaltyId) {
     const promise = new Promise((resolve, reject) => {
       this.httpClient.get(`documents/${penaltyId}`).then((response) => {
-        if (isEmpty(response.data) || response.data.Enabled === false) {
+        if (isEmpty(response.data)) {
           reject(new Error('Penalty reference not found'));
         }
         if (response.data.Value.inPenaltyGroup) {
@@ -89,5 +91,14 @@ export default class PenaltyService {
       });
     });
     return promise;
+  }
+
+  async cancel(penaltyId) {
+    const penaltyDocumentResp = await this.httpClient.get(`documents/${penaltyId}`);
+    if (!has(penaltyDocumentResp, 'data') || !isObject(penaltyDocumentResp.data)) {
+      throw new Error('Unexpected penalty penalty response prevented cancellation');
+    }
+    const penaltyDocument = penaltyDocumentResp.data;
+    return this.httpClient.delete(`documents/${penaltyId}`, penaltyDocument);
   }
 }
