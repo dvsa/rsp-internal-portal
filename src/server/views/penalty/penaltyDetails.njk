@@ -124,7 +124,7 @@
       <aside class="govuk-related-items" role="complementary">
         {{ components.heading(text='Additional actions', tag='h3', size='medium') }}
         <nav role="navigation" aria-labelledby="subsection-title">
-          <form id="other-actions-form" action="/penalty/{{reference}}_{{type}}/cancel" method="POST">
+          <form id="other-actions-form" action="{{urlroot}}/penalty/{{reference}}_{{type}}/cancel" method="POST">
             <a href="#" onclick="document.getElementById('other-actions-form').submit();">Cancel payment code</a>
         </form>
         </nav>
