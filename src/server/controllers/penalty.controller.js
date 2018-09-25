@@ -1,9 +1,9 @@
 /* eslint-disable no-use-before-define */
 import { validationResult } from 'express-validator/check';
-import { has } from 'lodash';
 import penaltyReferenceValidation from './../validation/penaltyReference';
 import PenaltyService from './../services/penalty.service';
 import config from '../config';
+import tryAddCancellationFlagToViewData from '../utils/tryAddCancellationFlagToViewData';
 
 const penaltyService = new PenaltyService(config.penaltyServiceUrl);
 
@@ -23,7 +23,7 @@ export const getPenaltyDetails = [
       const penaltyId = req.params.penalty_id;
 
       penaltyService.getById(penaltyId).then((penaltyDetails) => {
-        const viewData = tryAddCancellationFlag(req, penaltyDetails);
+        const viewData = tryAddCancellationFlagToViewData(req, penaltyDetails);
         res.render('penalty/penaltyDetails', { ...viewData, ...req.session });
       }).catch(() => {
         res.redirect(`../?invalid${penaltyType}`);
@@ -31,13 +31,6 @@ export const getPenaltyDetails = [
     }
   },
 ];
-
-const tryAddCancellationFlag = (req, viewData) => {
-  if (has(req.query, 'cancellation') && req.query.cancellation === 'failed') {
-    return { ...viewData, cancellationFailed: true };
-  }
-  return viewData;
-};
 
 export const cancelPenalty = async (req, res) => {
   const penaltyId = req.params.penalty_id;

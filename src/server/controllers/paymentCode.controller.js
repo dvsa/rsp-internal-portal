@@ -1,11 +1,11 @@
 /* eslint-disable no-use-before-define */
 import { validationResult } from 'express-validator/check';
-import { has } from 'lodash';
 import paymentCodeValidation from './../validation/paymentCode';
 import PenaltyService from './../services/penalty.service';
 import config from './../config';
 import logger from './../utils/logger';
 import PenaltyGroupService from '../services/penaltyGroup.service';
+import tryAddCancellationFlagToViewData from '../utils/tryAddCancellationFlagToViewData';
 
 const penaltyService = new PenaltyService(config.penaltyServiceUrl);
 const penaltyGroupService = new PenaltyGroupService(config.penaltyServiceUrl);
@@ -55,17 +55,13 @@ export const getPenaltyDetails = [
       res.redirect('../?invalidPaymentCode');
     }
 
-    const finalViewData = { ...tryAddCancellationFlag(req, viewData), ...req.session };
+    const finalViewData = {
+      ...tryAddCancellationFlagToViewData(req, viewData),
+      ...req.session,
+    };
     res.render(view, finalViewData);
   },
 ];
-
-const tryAddCancellationFlag = (req, viewData) => {
-  if (has(req.query, 'cancellation') && req.query.cancellation === 'failed') {
-    return { ...viewData, cancellationFailed: true };
-  }
-  return viewData;
-};
 
 export const getPenaltyGroupBreakdownForType = [
   (req, res) => {
