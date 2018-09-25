@@ -159,6 +159,14 @@ describe('MainController', () => {
       });
     });
 
+    context('when the user searches for a blank registration', () => {
+      it('should redirect back home with the invalid registration query param', async () => {
+        searchForm.vehicle_reg = '   ';
+        await MainController.searchPenalty(request, response);
+        sinon.assert.calledWith(redirectSpy, '/?invalidReg');
+      });
+    });
+
     context('given document service rejects search by registration', () => {
       beforeEach(() => {
         mockDocumentSvc
