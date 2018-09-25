@@ -1,9 +1,11 @@
+/* eslint-disable no-use-before-define */
 import { validationResult } from 'express-validator/check';
 import paymentCodeValidation from './../validation/paymentCode';
 import PenaltyService from './../services/penalty.service';
 import config from './../config';
 import logger from './../utils/logger';
 import PenaltyGroupService from '../services/penaltyGroup.service';
+import tryAddCancellationFlagToViewData from '../utils/tryAddCancellationFlagToViewData';
 
 const penaltyService = new PenaltyService(config.penaltyServiceUrl);
 const penaltyGroupService = new PenaltyGroupService(config.penaltyServiceUrl);
@@ -34,27 +36,30 @@ export const validatePaymentCode = [
 export const getPenaltyDetails = [
   paymentCodeValidation,
   async (req, res) => {
+    let view;
+    let viewData;
     try {
       const paymentCode = req.params.payment_code;
-      let penaltyOrGroup;
 
       if (paymentCode.length === 16) {
-        penaltyOrGroup = await penaltyService.getByPaymentCode(paymentCode);
-        res.render('penalty/penaltyDetails', {
-          ...penaltyOrGroup,
-          ...req.session,
-        });
+        const penalty = await penaltyService.getByPaymentCode(paymentCode);
+        view = 'penalty/penaltyDetails';
+        viewData = penalty;
       } else {
-        penaltyOrGroup = await penaltyGroupService.getByPaymentCode(paymentCode);
-        res.render('penalty/penaltyGroupSummary', {
-          ...penaltyOrGroup,
-          ...req.session,
-        });
+        const penaltyGroup = await penaltyGroupService.getByPaymentCode(paymentCode);
+        view = 'penalty/penaltyGroupSummary';
+        viewData = penaltyGroup;
       }
     } catch (error) {
       logger.error(error);
       res.redirect('../?invalidPaymentCode');
     }
+
+    const finalViewData = {
+      ...tryAddCancellationFlagToViewData(req, viewData),
+      ...req.session,
+    };
+    res.render(view, finalViewData);
   },
 ];
 
@@ -70,3 +75,14 @@ export const getPenaltyGroupBreakdownForType = [
     });
   },
 ];
+
+export const cancelPaymentCode = async (req, res) => {
+  const paymentCode = req.params.payment_code;
+  try {
+    await penaltyGroupService.cancel(paymentCode);
+    res.redirect(`${config.urlRoot}/payment-code/${paymentCode}`);
+  } catch (error) {
+    console.log(error);
+    res.redirect(`${config.urlRoot}/payment-code/${paymentCode}?cancellation=failed`);
+  }
+};
