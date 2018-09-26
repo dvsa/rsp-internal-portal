@@ -28,7 +28,7 @@ export default async (req, res) => {
       paymentDetails: enrichedPaymentDetails,
       ...penaltyGroup,
     };
-    return res.render('payment/multiPaymentReceipt', resp);
+    return res.render('payment/multiPaymentReceipt', { ...resp, ...req.session });
   } catch (error) {
     logger.error(error);
     return res.redirect(`${config.urlRoot}/?invalidPaymentCode`);

@@ -24,6 +24,7 @@ export default class PenaltyGroupService {
         Location,
         Timestamp,
         TotalAmount,
+        Enabled,
       } = response.data;
       const {
         splitAmounts,
@@ -32,11 +33,13 @@ export default class PenaltyGroupService {
       } = PenaltyGroupService.parsePayments(Payments);
       return {
         isPenaltyGroup: true,
+        isCancellable: splitAmounts.every(a => a.status === 'UNPAID') && Enabled !== false,
         penaltyGroupDetails: {
           registrationNumber: VehicleRegistration,
           location: Location,
           date: moment.unix(Timestamp).format('DD/MM/YYYY'),
           amount: TotalAmount,
+          enabled: Enabled,
           splitAmounts,
         },
         paymentCode: ID,
@@ -92,5 +95,9 @@ export default class PenaltyGroupService {
     }).catch((error) => {
       throw new Error(error);
     });
+  }
+
+  cancel(paymentCode) {
+    return this.httpClient.delete(`penaltyGroup/${paymentCode}`);
   }
 }

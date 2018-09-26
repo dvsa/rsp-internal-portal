@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-import * as _ from 'lodash';
+import { flatten, groupBy, isEmpty, isString, omitBy, padStart, trim } from 'lodash';
 import moment from 'moment-timezone';
 
 import AuthService from '../services/auth.service';
@@ -34,12 +34,15 @@ export const index = (req, res) => {
     input: invalidPaymentCode ? 'payment code' : 'fine reference',
   };
 
-  res.render('main/index', viewData);
+  res.render('main/index', {
+    ...viewData,
+    ...req.session,
+  });
 };
 
 const getSearchDetails = async (form) => {
   // Clean up empty properties
-  const search = _.omitBy(form, _.isEmpty);
+  const search = omitBy(form, isEmpty);
 
   const isSearchByCode = search['search-by'] === 'code';
   let value;
@@ -58,7 +61,7 @@ const getSearchDetails = async (form) => {
     // contain separators and use padding (with zeros) instead
     if (penaltyType === 'IM') {
       const sections = search[key] ? search[key].split('-') : null;
-      value = sections ? `${_.padStart(sections[0], 6, 0)}${sections[1]}${_.padStart(sections[2], 6, 0)}_${penaltyType}` : '_IM';
+      value = sections ? `${padStart(sections[0], 6, 0)}${sections[1]}${padStart(sections[2], 6, 0)}_${penaltyType}` : '_IM';
     } else {
       value = `${search[key]}_${penaltyType}`;
     }
@@ -70,8 +73,7 @@ const getSearchDetails = async (form) => {
 // Search by payment code or penalty reference
 export const searchPenalty = async (req, res) => {
   if (req.body['search-by'] === 'vehicle-reg') {
-    const vehicleReg = req.body.vehicle_reg;
-    return res.redirect(`${config.urlRoot}/vehicle-reg-search-results/${vehicleReg}`);
+    return handleRegSearchForm(req, res);
   }
   const searchDetails = await getSearchDetails(req.body);
   const { value } = searchDetails;
@@ -81,14 +83,26 @@ export const searchPenalty = async (req, res) => {
   return res.redirect(`penalty/${value}`);
 };
 
+const handleRegSearchForm = (req, res) => {
+  const vehicleReg = req.body.vehicle_reg;
+  if (isString(vehicleReg) && isEmpty(trim(vehicleReg))) {
+    return res.redirect(`${config.urlRoot}/?invalidReg`);
+  }
+  return res.redirect(`${config.urlRoot}/vehicle-reg-search-results/${vehicleReg}`);
+};
+
 export const searchVehicleReg = async (req, res) => {
   try {
     const reg = req.params.vehicle_reg;
     const searchResult = await penaltyService.searchByRegistration(reg);
     const { Penalties, PenaltyGroups } = searchResult;
     const viewData = generateSearchResultViewData(reg, Penalties, PenaltyGroups);
-    res.render('penalty/vehicleRegSearchResults', viewData);
+    res.render('penalty/vehicleRegSearchResults', {
+      ...viewData,
+      ...req.session,
+    });
   } catch (error) {
+    console.log(error);
     res.redirect(`${config.urlRoot}/?invalidReg`);
   }
 };
@@ -111,7 +125,7 @@ const generateSearchResultViewData = (vehicleReg, penalties, penaltyGroups) => {
     date: penalty.Value.dateTime,
     formattedDate: moment.tz(penalty.Value.dateTime * 1000, tzLocation).format(dateFormat),
   }));
-  const results = _.flatten([penaltyGroupsMapping, penaltyMapping]);
+  const results = flatten([penaltyGroupsMapping, penaltyMapping]);
 
   return {
     vehicleReg,
@@ -120,7 +134,7 @@ const generateSearchResultViewData = (vehicleReg, penalties, penaltyGroups) => {
 };
 
 const summarisePenaltyGroup = (penaltyGroup) => {
-  const grouping = _.groupBy(penaltyGroup.PenaltyDocumentIds, (id) => {
+  const grouping = groupBy(penaltyGroup.PenaltyDocumentIds, (id) => {
     const type = id.split('_')[1];
     return type === 'IM' ? 'immobilisation' : 'penalty';
   });
@@ -141,7 +155,7 @@ const summarisePenalty = (penalty) => {
 };
 
 export const normaliseRegistration = (req, res, next) => {
-  if (_.isString(req.params.vehicle_reg)) {
+  if (isString(req.params.vehicle_reg)) {
     const regIn = req.params.vehicle_reg;
     const regOut = regIn.replace(/[^0-9a-z]/gi, '').toUpperCase();
     req.params.vehicle_reg = regOut;
@@ -178,6 +192,7 @@ export const login = (req, res) => {
 };
 
 export const logout = (req, res) => {
+  req.session = null;
   res.clearCookie('rsp_access');
   res.clearCookie('rsp_refresh');
   res.redirect(`${config.cognitoUrl}/logout?client_id=${config.clientId}&logout_uri=${encodeURIComponent(config.redirectUri)}`);

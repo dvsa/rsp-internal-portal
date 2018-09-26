@@ -47,7 +47,7 @@ jQuery(document).ready(function($) {
     $.get(baseUrl + 'reports/'+reportReference+'/status?penalty_type='+penaltyType, function(response) {
       if(response.completed) {
         complete = true;
-        window.location = baseUrl+'/reports/'+reportReference+'?penalty_type='+penaltyType;
+        window.location = baseUrl+'reports/'+reportReference+'?penalty_type='+penaltyType;
       }
     });
     if(!complete) {

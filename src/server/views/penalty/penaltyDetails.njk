@@ -20,11 +20,27 @@
       {% if paid == false %}
         {{ components.heading(text='Pay a DVSA Penalty', tag='h1', size='xlarge') }}
         {{ components.paragraph(text='We found the following details in our records') }}
+        <br />
       {% else %}
         {{ components.heading(text='Penalty payment confirmation', tag='h1', size='xlarge') }}
         <p>You paid a penalty for the payment code:&nbsp;<b>{{ paymentCode }}</b>
         {{ components.paragraph(text='A confirmation has been sent to the DVSA location where the penalty has been issued.') }}
       {% endif %}
+
+      {% if cancellationFailed %}
+        <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-cancellation-failed" tabindex="-1">
+          <h2 class="heading-medium error-summary-heading">
+            The payment code cancellation failed
+          </h2>
+        </div>
+      {% endif %}
+
+      {% if enabled == false %}
+        <p>
+          {{ components.notice(text='This payment code has been cancelled') }} 
+        </p>
+      {% endif %}
+
         <table class="details">
           <caption class="heading-medium">Penalty Details</caption>
           <tbody>
@@ -89,7 +105,7 @@
         {% call components.form(action='/payment-code/'+paymentCode+'/reversePayment', method='POST', class='right')  %}
           {{ components.button(text='Reverse payment', type='submit', secondary='true') }}
         {%- endcall %}
-        {% else %}
+        {% elif enabled == true %}
           {% call components.form(action='/payment-code/'+paymentCode+'/payment', method='GET')  %}
             {% call components.formGroup() %}
               {{ components.heading(text='Payment by', tag='h3', size='medium') }}
@@ -103,18 +119,18 @@
         {% endif %}
     {%- endcall %}
 
-    {% call components.columnOneThird() %}
-
-    <aside class="govuk-related-items" role="complementary">
-        Other actions
+    {% if status == 'UNPAID' and enabled == true %}
+      {% call components.columnOneThird() %}
+      <aside class="govuk-related-items" role="complementary">
+        {{ components.heading(text='Additional actions', tag='h3', size='medium') }}
         <nav role="navigation" aria-labelledby="subsection-title">
-          <ul class="font-xsmall">
-            <li> {{ components.link(text='Resend penalty details via SMS', url='#') }} </li>
-            <li> {{ components.link(text='Resend penalty details via email', url='#') }} </li>
-          </ul>
+          <form id="other-actions-form" action="{{urlroot}}/penalty/{{reference}}_{{type}}/cancel" method="POST">
+            <a href="#" onclick="document.getElementById('other-actions-form').submit();">Cancel payment code</a>
+        </form>
         </nav>
       </aside>
-    {%- endcall %}
+      {%- endcall %}
+    {% endif %}
 
   {%- endcall %}
   

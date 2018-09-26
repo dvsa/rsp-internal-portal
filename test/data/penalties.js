@@ -54,4 +54,28 @@ export default [
     paymentDate: 1519135329,
     paymentAuthCode: '1234TBD',
   },
+  {
+    Offset: 1537774542,
+    Enabled: true,
+    VehicleRegistration: '16AAA',
+    ID: '326598784512_FPN',
+    Value: {
+      paymentToken: 'b4802a2e8cbf87da',
+      dateTime: 1537747200,
+      inPenaltyGroup: false,
+      siteCode: 2,
+      vehicleDetails: {
+        regNo: '16AAA',
+      },
+      referenceNo: '326598784512',
+      nonEndorsableOffence: [],
+      penaltyType: 'FPN',
+      placeWhereIssued: 'Ainley Top (M62 J24 - NW of Huddersfield)',
+      officerName: 'Joe Bloggs',
+      penaltyAmount: 180,
+      officerID: 'abcd',
+      paymentStatus: 'UNPAID',
+    },
+    Hash: 'af9e8b68cac8d055cc61f58df5a0cf2e222911586514cddd74dc9e28b0c05783',
+  },
 ];

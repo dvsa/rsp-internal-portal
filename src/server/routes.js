@@ -22,6 +22,7 @@ router.get('/logout', mainController.logout);
 
 // Get Penalty details given a payment code
 router.get('/payment-code/:payment_code', paymentCodeController.getPenaltyDetails);
+router.post('/payment-code/:payment_code/cancel', paymentCodeController.cancelPaymentCode);
 router.get('/payment-code/:payment_code/payment', paymentCodeController.validatePaymentCode, paymentController.renderPaymentPage);
 router.get('/payment-code/:payment_code/:type/payment', paymentCodeController.validatePaymentCode, paymentController.renderGroupPaymentPage);
 router.post('/payment-code/:payment_code/payment', paymentCodeController.validatePaymentCode, paymentController.makePayment);
@@ -34,6 +35,7 @@ router.get('/payment-code/:payment_code/:type/receipt', receiptController);
 
 // Get Penalty details given a penalty reference
 router.get('/penalty/:penalty_id', penaltyController.getPenaltyDetails);
+router.post('/penalty/:penalty_id/cancel', penaltyController.cancelPenalty);
 router.get('/penalty/:penalty_id/payment', paymentController.renderPaymentPage);
 
 // Reports
