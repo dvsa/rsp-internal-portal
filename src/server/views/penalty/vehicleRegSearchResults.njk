@@ -21,13 +21,7 @@
       <tbody>
         {% for result in results|sort(attribute='date', reverse=true) %}
           <tr>
-            <td>
-              {% if result.paymentStatus != 'CANCELLED' %}
-                {{ components.link(text=result.paymentCode, url='/payment-code/' + result.paymentCode) }}
-              {% else %}
-                {{ result.paymentCode }}
-              {% endif %}
-            </td>
+            <td>{{ components.link(text=result.paymentCode, url='/payment-code/' + result.paymentCode) }}</td>
             <td>{{ result.formattedDate }}</td>
               {% set statusClass = 'confirmed' if result.paymentStatus == 'PAID' else 'unconfirmed' %}
               <td><span class='{{statusClass}}'><strong>{{ result.paymentStatus }}</strong></span></td>
