@@ -102,6 +102,7 @@ export const searchVehicleReg = async (req, res) => {
       ...req.session,
     });
   } catch (error) {
+    console.log(error);
     res.redirect(`${config.urlRoot}/?invalidReg`);
   }
 };
