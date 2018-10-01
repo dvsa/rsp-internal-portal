@@ -169,6 +169,18 @@ describe('PaymentController', () => {
       });
     });
 
+    context('given CPMS service confirmation response has code 807 indicating cancel was clicked', () => {
+      beforeEach(() => {
+        cpmsServiceStub
+          .withArgs('FB02-18-20180816-154021-D8245D1F', 'FPN')
+          .resolves({ data: { code: 807, auth_code: '1234' } });
+      });
+      it('should return to the payment code', async () => {
+        await PaymentController.confirmGroupPayment(request, response);
+        sinon.assert.calledWith(redirectSpy, '/payment-code/5624r2wupfs');
+      });
+    });
+
     context('given CPMS Service confirmation response has a code different from 801', () => {
       beforeEach(() => {
         cpmsServiceStub

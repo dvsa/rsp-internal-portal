@@ -352,7 +352,8 @@ export const confirmGroupPayment = async (req, res) => {
     const penaltyGroup = await penaltyGroupService.getByPaymentCode(paymentCode);
     const confirmResp = await cpmsService.confirmPayment(receiptReference, penaltyType);
 
-    if (confirmResp.data.code === 801) {
+    const cpmsCode = confirmResp.data.code;
+    if (cpmsCode === 801) {
       const payload = buildGroupPaymentPayload(
         paymentCode,
         receiptReference,
@@ -362,6 +363,8 @@ export const confirmGroupPayment = async (req, res) => {
       );
       await paymentService.recordGroupPayment(payload);
       return res.redirect(`${config.urlRoot}/payment-code/${paymentCode}/${penaltyType}/receipt`);
+    } else if (cpmsCode === 807) {
+      return res.redirect(`${config.urlRoot}/payment-code/${paymentCode}`);
     }
     return res.render('payment/confirmError', req.session);
   } catch (error) {
