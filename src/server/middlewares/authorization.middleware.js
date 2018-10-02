@@ -4,7 +4,7 @@ import config from '../config';
 import AuthService from '../services/auth.service';
 
 const authService = new AuthService(config.cognitoUrl);
-const authorizedRoles = ['user', 'admin'];
+const authorizedRoles = ['ContactCentre', 'BankingFinance', 'FrontLine'];
 const cognitoExpress = new CognitoExpress({
   region: config.region,
   cognitoUserPoolId: config.userPoolId,
@@ -51,13 +51,8 @@ export default (req, res, next) => {
       } else {
         // Get user information from the ID token
         const userInfo = jwtDecode(req.cookies.rsp_access.idToken);
-
         // Ensure that user information is available through the application (including views)
         req.session.rsp_user = userInfo;
-        console.log('userInfo');
-        console.log(userInfo);
-        // No roles in Azure AD production
-        if (config.env === 'production') return next();
 
         if (userInfo['custom:Role']) {
           if (!authorizedRoles.some(item => item === userInfo['custom:Role'].toLowerCase())) {
