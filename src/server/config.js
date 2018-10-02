@@ -63,10 +63,6 @@ function ensureRelativeUrl(url) {
   return url;
 }
 
-function assets() {
-  return configuration[configMetadata.assets] || path.resolve(__dirname, '..', 'public');
-}
-
 function clientId() {
   return configuration[configMetadata.clientId] || 'client';
 }
@@ -124,6 +120,10 @@ function postPaymentRedirectBaseUrl() {
   return configuration[configMetadata.postPaymentRedirectBaseUrl];
 }
 
+function publicAssets() {
+  return configuration[configMetadata.publicAssets] || path.resolve(__dirname, '..', 'public');
+}
+
 function redirectUri() {
   return configuration[configMetadata.redirectUri];
 }
@@ -141,7 +141,6 @@ function views() {
 }
 
 const config = {
-  assets,
   bootstrap,
   clientId,
   clientSecret,
@@ -157,6 +156,7 @@ const config = {
   penaltyServiceUrl,
   port,
   postPaymentRedirectBaseUrl,
+  publicAssets,
   redirectUri,
   region,
   urlRoot,

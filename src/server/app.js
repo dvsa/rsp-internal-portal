@@ -39,7 +39,7 @@ export default async () => {
     .map(file => resolvePath(marcosPath, file));
 
   env.addGlobal('macroFilePaths', macros);
-  env.addGlobal('assets', config.isDevelopment() ? '' : config.assets());
+  env.addGlobal('assets', config.isDevelopment() ? '' : config.publicAssets());
   env.addGlobal('urlroot', config.urlRoot());
 
   // Add lodash as a global for view templates

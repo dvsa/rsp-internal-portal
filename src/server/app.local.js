@@ -6,7 +6,7 @@ import config from './config';
 appCreation()
   .then((app) => {
     const port = config.port();
-    const assets = config.assets();
+    const assets = config.publicAssets();
     const views = config.views();
 
     app.use(express.static(assets));
