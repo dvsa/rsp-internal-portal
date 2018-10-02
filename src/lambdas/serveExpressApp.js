@@ -1,5 +1,6 @@
 import awsServerlessExpress from 'aws-serverless-express';
 import app from '../server/app';
+import config from '../server/config';
 import modifyPath from '../server/utils/modifyPath';
 
 // NOTE: If you get ERR_CONTENT_DECODING_FAILED in your browser, this is likely
@@ -26,11 +27,15 @@ const binaryMimeTypes = [
   'text/xml',
 ];
 
+function isProd() {
+  const envVar = config.env();
+  return typeof envVar !== 'undefined' && envVar === 'production';
+}
+
 const server = awsServerlessExpress.createServer(app, null, binaryMimeTypes);
-const isProd = typeof process.env.NODE_ENV !== 'undefined' && process.env.NODE_ENV === 'production';
 
 export default (event, context) => {
-  if (isProd) {
+  if (isProd()) {
     event.path = modifyPath(event.path); // eslint-disable-line
   }
   return awsServerlessExpress.proxy(server, event, context);

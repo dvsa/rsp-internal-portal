@@ -64,13 +64,13 @@ export const showDetails = async (req, res) => {
     if (status.completed === true) {
       const filename = `${status.report_type.replace(/\s/g, '_')}_${new Date().toISOString().split('T')[0]}.${status.file_extension}`;
       res.render('reports/downloadReport', {
-        downloadUrl: `${config.urlRoot}/reports/${req.params.report_ref}/download?penalty_type=${req.query.penalty_type}&filename=${filename}`,
+        downloadUrl: `${config.urlRoot()}/reports/${req.params.report_ref}/download?penalty_type=${req.query.penalty_type}&filename=${filename}`,
         penaltyType: req.params.penalty_type,
         filename,
         ...req.session,
       });
     } else {
-      res.redirect(`${config.urlRoot}/reports/${req.params.report_ref}/status?penalty_type=${req.query.penalty_type}`);
+      res.redirect(`${config.urlRoot()}/reports/${req.params.report_ref}/status?penalty_type=${req.query.penalty_type}`);
     }
   } catch (error) {
     logger.error(error);

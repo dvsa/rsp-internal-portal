@@ -8,7 +8,7 @@ const configMetadata = {
   clientId: 'CLIENT_ID',
   clientSecret: 'CLIENT_SECRET',
   cognitoUrl: 'COGNITO_URL',
-  cognitoUserpoolId: 'COGNITO_USERPOOL_ID',
+  cognitoUserPoolId: 'COGNITO_USERPOOL_ID',
   cpmsServiceUrl: 'CPMS_SERVICE_URL',
   iamClientId: 'IAM_CLIENT_ID',
   iamClientSecret: 'IAM_CLIENT_SECRET',
@@ -16,11 +16,13 @@ const configMetadata = {
   nodeEnv: 'NODE_ENV',
   paymentServiceUrl: 'PAYMENT_SERVICE_URL',
   penaltyServiceUrl: 'PENALTY_SERVICE_URL',
+  port: 'PORT',
   postPaymentRedirectBaseUrl: 'POST_PAYMENT_REDIRECT_BASE_URL',
   publicAssets: 'PUBLIC_ASSETS',
   redirectUri: 'REDIRECT_URI',
   region: 'REGION',
   urlRoot: 'URL_ROOT',
+  views: 'VIEWS',
 };
 
 let configuration = {};
@@ -61,12 +63,32 @@ function ensureRelativeUrl(url) {
   return url;
 }
 
+function assets() {
+  return configuration[configMetadata.assets] || path.resolve(__dirname, '..', 'public');
+}
+
+function clientId() {
+  return configuration[configMetadata.clientId] || 'client';
+}
+
+function clientSecret() {
+  return configuration[configMetadata.clientSecret] || 'secret';
+}
+
+function cognitoUserPoolId() {
+  return configuration[configMetadata.cognitoUserPoolId];
+}
+
 function cognitoUrl() {
   return configuration[configMetadata.cognitoUrl];
 }
 
 function cpmsServiceUrl() {
   return configuration[configMetadata.cpmsServiceUrl];
+}
+
+function env() {
+  return configuration[configMetadata.nodeEnv] || 'development';
 }
 
 function iamClientId() {
@@ -81,12 +103,21 @@ function identityProvider() {
   return configuration[configMetadata.identityProvider];
 }
 
+function isDevelopment() {
+  return env() === 'development';
+}
+
 function paymentServiceUrl() {
   return configuration[configMetadata.paymentServiceUrl];
 }
 
 function penaltyServiceUrl() {
   return configuration[configMetadata.penaltyServiceUrl];
+}
+
+function port() {
+  const portVar = configuration[configMetadata.port];
+  return portVar ? Number(portVar) : 3000;
 }
 
 function postPaymentRedirectBaseUrl() {
@@ -101,37 +132,35 @@ function region() {
   return configuration[configMetadata.region];
 }
 
-const env = process.env.NODE_ENV || 'development';
-const port = process.env.PORT ? Number(process.env.PORT) : 3000;
-const isDevelopment = env === 'development';
-const urlRoot = ensureRelativeUrl(process.env.URL_ROOT);
-const assets = process.env.PUBLIC_ASSETS || path.resolve(__dirname, '..', 'public');
-const views = process.env.VIEWS || path.resolve(__dirname, 'views');
-const clientId = process.env.CLIENT_ID || 'client';
-const clientSecret = process.env.CLIENT_SECRET || 'secret';
-const userPoolId = process.env.COGNITO_USERPOOL_ID;
+function urlRoot() {
+  return ensureRelativeUrl(configuration[configMetadata.urlRoot]);
+}
+
+function views() {
+  return configuration[configMetadata.views] || path.resolve(__dirname, 'views');
+}
 
 const config = {
-  bootstrap,
-  env,
-  port,
-  isDevelopment,
   assets,
-  views,
+  bootstrap,
   clientId,
   clientSecret,
-  urlRoot,
-  penaltyServiceUrl,
-  paymentServiceUrl,
   cognitoUrl,
-  identityProvider,
-  redirectUri,
-  region,
-  userPoolId,
+  cognitoUserPoolId,
   cpmsServiceUrl,
+  env,
   iamClientId,
   iamClientSecret,
+  identityProvider,
+  isDevelopment,
+  paymentServiceUrl,
+  penaltyServiceUrl,
+  port,
   postPaymentRedirectBaseUrl,
+  redirectUri,
+  region,
+  urlRoot,
+  views,
 };
 
 export default config;

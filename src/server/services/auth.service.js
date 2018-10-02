@@ -5,7 +5,7 @@ import config from '../config';
 
 export default class AuthService {
   constructor(serviceUrl) {
-    const secret = encode(`${config.clientId}:${config.clientSecret}`);
+    const secret = encode(`${config.clientId()}:${config.clientSecret()}`);
 
     const defaults = {
       headers: {
@@ -19,8 +19,8 @@ export default class AuthService {
   requestAccessToken(code) {
     const payload = {
       grant_type: 'authorization_code',
-      client_id: config.clientId,
-      client_secret: config.clientSecret,
+      client_id: config.clientId(),
+      client_secret: config.clientSecret(),
       redirect_uri: config.redirectUri(),
       code,
     };
@@ -36,8 +36,8 @@ export default class AuthService {
   refreshAccessToken(refreshToken) {
     const payload = {
       grant_type: 'refresh_token',
-      client_id: config.clientId,
-      client_secret: config.clientSecret,
+      client_id: config.clientId(),
+      client_secret: config.clientSecret(),
       refresh_token: refreshToken,
     };
 

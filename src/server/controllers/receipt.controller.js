@@ -16,7 +16,7 @@ export default async (req, res) => {
     const { type } = req.params;
 
     if (!isValidPaymentPaymentType(type)) {
-      return res.redirect(`${config.urlRoot}/?invalidPaymentCode`);
+      return res.redirect(`${config.urlRoot()}/?invalidPaymentCode`);
     }
 
     const penaltyGroup = await penaltyGroupService.getByPaymentCode(paymentCode);
@@ -31,7 +31,7 @@ export default async (req, res) => {
     return res.render('payment/multiPaymentReceipt', { ...resp, ...req.session });
   } catch (error) {
     logger.error(error);
-    return res.redirect(`${config.urlRoot}/?invalidPaymentCode`);
+    return res.redirect(`${config.urlRoot()}/?invalidPaymentCode`);
   }
 };
 

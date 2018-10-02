@@ -21,7 +21,7 @@ export default async () => {
   await config.bootstrap();
 
   // Create nunjucks fileloader instance for the views folder
-  const nunjucksFileLoader = new nunjucks.FileSystemLoader(config.views, {
+  const nunjucksFileLoader = new nunjucks.FileSystemLoader(config.views(), {
     noCache: true,
   });
 
@@ -32,15 +32,15 @@ export default async () => {
     },
   });
 
-  const marcosPath = path.resolve(config.views, 'macros');
+  const marcosPath = path.resolve(config.views(), 'macros');
 
   // Gets absolute path of each macro file
   const macros = walkSync(marcosPath, { directories: false })
     .map(file => resolvePath(marcosPath, file));
 
   env.addGlobal('macroFilePaths', macros);
-  env.addGlobal('assets', config.isDevelopment ? '' : config.assets);
-  env.addGlobal('urlroot', config.urlRoot);
+  env.addGlobal('assets', config.isDevelopment() ? '' : config.assets());
+  env.addGlobal('urlroot', config.urlRoot());
 
   // Add lodash as a global for view templates
   env.addGlobal('_', _);
@@ -56,7 +56,7 @@ export default async () => {
     maxAge: 1000 * 60 * 60 * 4, // 4 hours
     name: 'rsp_internal_portal_user',
     // TODO: clientSecret will be removed eventually, will need to use a different app secret
-    secret: config.clientSecret,
+    secret: config.clientSecret(),
   }));
 
   // Create a view engine from nunjucks enviroment variable
