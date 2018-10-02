@@ -2,7 +2,7 @@ import CpmsService from '../services/cpms.service';
 import config from '../config';
 import logger from './../utils/logger';
 
-const cpmsService = new CpmsService(config.cpmsServiceUrl);
+const cpmsService = new CpmsService(config.cpmsServiceUrl());
 
 export const renderReportFilters = async (req, res) => {
   let reportTypes;

@@ -61,8 +61,44 @@ function ensureRelativeUrl(url) {
   return url;
 }
 
+function cognitoUrl() {
+  return configuration[configMetadata.cognitoUrl];
+}
+
+function cpmsServiceUrl() {
+  return configuration[configMetadata.cpmsServiceUrl];
+}
+
+function iamClientId() {
+  return configuration[configMetadata.iamClientId];
+}
+
+function iamClientSecret() {
+  return configuration[configMetadata.iamClientSecret];
+}
+
+function identityProvider() {
+  return configuration[configMetadata.identityProvider];
+}
+
+function paymentServiceUrl() {
+  return configuration[configMetadata.paymentServiceUrl];
+}
+
 function penaltyServiceUrl() {
   return configuration[configMetadata.penaltyServiceUrl];
+}
+
+function postPaymentRedirectBaseUrl() {
+  return configuration[configMetadata.postPaymentRedirectBaseUrl];
+}
+
+function redirectUri() {
+  return configuration[configMetadata.redirectUri];
+}
+
+function region() {
+  return configuration[configMetadata.region];
 }
 
 const env = process.env.NODE_ENV || 'development';
@@ -73,16 +109,7 @@ const assets = process.env.PUBLIC_ASSETS || path.resolve(__dirname, '..', 'publi
 const views = process.env.VIEWS || path.resolve(__dirname, 'views');
 const clientId = process.env.CLIENT_ID || 'client';
 const clientSecret = process.env.CLIENT_SECRET || 'secret';
-const paymentServiceUrl = process.env.PAYMENT_SERVICE_URL;
-const identityProvider = process.env.IDENTITY_PROVIDER;
-const redirectUri = process.env.REDIRECT_URI;
-const region = process.env.REGION;
 const userPoolId = process.env.COGNITO_USERPOOL_ID;
-const cognitoUrl = process.env.COGNITO_URL;
-const cpmsServiceUrl = process.env.CPMS_SERVICE_URL;
-const iamClientId = process.env.IAM_CLIENT_ID;
-const iamClientSecret = process.env.IAM_CLIENT_SECRET;
-const postPaymentRedirectBaseUrl = process.env.POST_PAYMENT_REDIRECT_BASE_URL;
 
 const config = {
   bootstrap,

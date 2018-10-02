@@ -3,10 +3,10 @@ import jwtDecode from 'jwt-decode';
 import config from '../config';
 import AuthService from '../services/auth.service';
 
-const authService = new AuthService(config.cognitoUrl);
+const authService = new AuthService(config.cognitoUrl());
 const authorizedRoles = ['user', 'admin'];
 const cognitoExpress = new CognitoExpress({
-  region: config.region,
+  region: config.region(),
   cognitoUserPoolId: config.userPoolId,
   tokenUse: 'access',
   tokenExpiration: 3600000,

@@ -6,10 +6,10 @@ import config from './../config';
 import logger from './../utils/logger';
 import PenaltyGroupService from '../services/penaltyGroup.service';
 
-const paymentService = new PaymentService(config.paymentServiceUrl);
+const paymentService = new PaymentService(config.paymentServiceUrl());
 const penaltyService = new PenaltyService(config.penaltyServiceUrl());
 const penaltyGroupService = new PenaltyGroupService(config.penaltyServiceUrl());
-const cpmsService = new CpmsService(config.cpmsServiceUrl);
+const cpmsService = new CpmsService(config.cpmsServiceUrl());
 
 const getPenaltyDetails = (req) => {
   if (req.params.payment_code) {
@@ -142,7 +142,7 @@ export const makeGroupPayment = async (req, res) => {
     const penaltiesOfType = penaltyGroup.penaltyDetails.find(p => p.type === penaltyType).penalties;
     const amountPaidForType = penaltyGroup.penaltyGroupDetails.splitAmounts
       .find(s => s.type === penaltyType).amount;
-    const redirectUrl = `${config.postPaymentRedirectBaseUrl}/payment-code/${paymentCode}/${penaltyType}/receipt`;
+    const redirectUrl = `${config.postPaymentRedirectBaseUrl()}/payment-code/${paymentCode}/${penaltyType}/receipt`;
 
     const paymentMethodMappings = {
       cash: { transactionCreationFunction: cpmsService.createGroupCashTransaction, paymentRecordMethod: 'CASH' },
@@ -223,7 +223,7 @@ export const renderPaymentPage = async (req, res) => {
     // Payment Type is expected to come from the query string, otherwise the default is used
     const paymentType = req.query.paymentType ? req.query.paymentType : 'card';
     const { paymentCode } = penaltyDetails;
-    const redirectUrl = `${config.postPaymentRedirectBaseUrl}/payment-code/${paymentCode}/confirmPayment`;
+    const redirectUrl = `${config.postPaymentRedirectBaseUrl()}/payment-code/${paymentCode}/confirmPayment`;
 
     switch (paymentType) {
       case 'cash':
@@ -274,7 +274,7 @@ export const renderGroupPaymentPage = async (req, res) => {
     if (paymentType === 'card') {
       const penaltyDetails = penaltyGroup.penaltyDetails
         .find(typeGrp => typeGrp.type === penaltyType).penalties;
-      const redirectUrl = `${config.postPaymentRedirectBaseUrl}/payment-code/${paymentCode}/${penaltyType}/confirmGroupPayment`;
+      const redirectUrl = `${config.postPaymentRedirectBaseUrl()}/payment-code/${paymentCode}/${penaltyType}/confirmGroupPayment`;
       const cpmsResp = await cpmsService.createCardNotPresentGroupTransaction(
         penaltyGroup.paymentCode,
         penaltyGroup.penaltyGroupDetails,

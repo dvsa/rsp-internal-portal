@@ -6,7 +6,7 @@ import AuthService from '../services/auth.service';
 import config from '../config';
 import PenaltyService from '../services/penalty.service';
 
-const authService = new AuthService(config.cognitoUrl);
+const authService = new AuthService(config.cognitoUrl());
 const penaltyService = new PenaltyService(config.penaltyServiceUrl());
 
 // Robots
@@ -164,16 +164,14 @@ export const normaliseRegistration = (req, res, next) => {
 };
 
 export const authenticate = (req, res) => {
-  const {
-    identityProvider,
-    redirectUri,
-    clientId,
-    clientSecret,
-  } = config;
+  const identityProvider = config.identityProvider();
+  const redirectUri = config.redirectUri();
+  const clientId = config.clientId;
+  const clientSecret = config.clientSecret;
 
   const responseType = 'code';
 
-  res.redirect(`${config.cognitoUrl}/oauth2/authorize?identity_provider=${identityProvider}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=${responseType}&client_id=${clientId}&client_secret=${clientSecret}`);
+  res.redirect(`${config.cognitoUrl()}/oauth2/authorize?identity_provider=${identityProvider}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=${responseType}&client_id=${clientId}&client_secret=${clientSecret}`);
 };
 
 export const login = (req, res) => {
@@ -195,5 +193,5 @@ export const logout = (req, res) => {
   req.session = null;
   res.clearCookie('rsp_access');
   res.clearCookie('rsp_refresh');
-  res.redirect(`${config.cognitoUrl}/logout?client_id=${config.clientId}&logout_uri=${encodeURIComponent(config.redirectUri)}`);
+  res.redirect(`${config.cognitoUrl()}/logout?client_id=${config.clientId}&logout_uri=${encodeURIComponent(config.redirectUri())}`);
 };

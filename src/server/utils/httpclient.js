@@ -17,12 +17,12 @@ export default class SignedHttpClient {
     this.baseUrlOb = new URL(baseURL);
     this.headers = headers;
     this.credentials = {
-      clientId: config.iamClientId,
-      clientSecret: config.iamClientSecret,
+      clientId: config.iamClientId(),
+      clientSecret: config.iamClientSecret(),
     };
     this.signingOptions = {
       host: this.baseUrlOb.host,
-      region: config.region,
+      region: config.region(),
     };
     axiosRetry(axios);
   }

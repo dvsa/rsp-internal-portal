@@ -21,7 +21,7 @@ export default class AuthService {
       grant_type: 'authorization_code',
       client_id: config.clientId,
       client_secret: config.clientSecret,
-      redirect_uri: config.redirectUri,
+      redirect_uri: config.redirectUri(),
       code,
     };
 
