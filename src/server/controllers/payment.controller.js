@@ -7,8 +7,8 @@ import logger from './../utils/logger';
 import PenaltyGroupService from '../services/penaltyGroup.service';
 
 const paymentService = new PaymentService(config.paymentServiceUrl);
-const penaltyService = new PenaltyService(config.penaltyServiceUrl);
-const penaltyGroupService = new PenaltyGroupService(config.penaltyServiceUrl);
+const penaltyService = new PenaltyService(config.penaltyServiceUrl());
+const penaltyGroupService = new PenaltyGroupService(config.penaltyServiceUrl());
 const cpmsService = new CpmsService(config.cpmsServiceUrl);
 
 const getPenaltyDetails = (req) => {

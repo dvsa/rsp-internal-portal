@@ -5,7 +5,7 @@ import PenaltyService from './../services/penalty.service';
 import config from '../config';
 import tryAddCancellationFlagToViewData from '../utils/tryAddCancellationFlagToViewData';
 
-const penaltyService = new PenaltyService(config.penaltyServiceUrl);
+const penaltyService = new PenaltyService(config.penaltyServiceUrl());
 
 export const validatePenaltyReference = [
   penaltyReferenceValidation,

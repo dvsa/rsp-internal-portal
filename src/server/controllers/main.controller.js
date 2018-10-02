@@ -7,7 +7,7 @@ import config from '../config';
 import PenaltyService from '../services/penalty.service';
 
 const authService = new AuthService(config.cognitoUrl);
-const penaltyService = new PenaltyService(config.penaltyServiceUrl);
+const penaltyService = new PenaltyService(config.penaltyServiceUrl());
 
 // Robots
 export const robots = (req, res) => {
