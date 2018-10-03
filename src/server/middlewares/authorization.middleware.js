@@ -52,9 +52,11 @@ export default (req, res, next) => {
       } else {
         // Get user information from the ID token
         const userInfo = jwtDecode(req.cookies.rsp_access.idToken);
-        const userRole = userInfo['custom:Role'];
+        // Extract and clean up roles
+        const userRole = userInfo['custom:Role'].slice(1, -1).replace(/\s/g, '').split(',');
         // Ensure that user information is available through the application (including views)
         req.session.rsp_user = userInfo;
+        req.session.rsp_user_role = userRole;
         console.log('userRole');
         console.log(userRole);
         if (userRole) {
