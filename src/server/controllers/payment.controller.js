@@ -1,4 +1,6 @@
 /* eslint-disable no-use-before-define */
+import { intersection } from 'lodash';
+
 import PaymentService from './../services/payment.service';
 import PenaltyService from './../services/penalty.service';
 import CpmsService from './../services/cpms.service';
@@ -64,9 +66,14 @@ export const makePayment = async (req, res) => {
           res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
         });
       case 'cheque':
-        if (!chequeAuthorizedRoles.some(item => item === userRole.toLowerCase())) {
-          // User doesn't have an authorized role, forbid access
-          return res.render('main/forbidden', req.session);
+        if (typeof userRole === 'string') {
+          if (!chequeAuthorizedRoles.includes(userRole)) {
+            // User doesn't have an authorized role, forbid access
+            return res.render('main/forbidden', req.session);
+          }
+        } else {
+          const matchedRoles = intersection(chequeAuthorizedRoles, userRole);
+          if (!matchedRoles.length) return res.render('main/forbidden', req.session);
         }
         return cpmsService.createChequeTransaction(
           paymentCode,
