@@ -58,8 +58,6 @@ export default (req, res, next) => {
         // Ensure that user information is available through the application (including views)
         req.session.rsp_user = userInfo;
         req.session.rsp_user_role = userRole;
-        console.log('rsp_user');
-        console.log(userInfo);
         console.log('userInfo[\'custom:Role\']');
         console.log(userInfo['custom:Role']);
         if (userRole) {
