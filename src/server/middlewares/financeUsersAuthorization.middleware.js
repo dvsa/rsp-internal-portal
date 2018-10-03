@@ -3,7 +3,7 @@ import { intersection } from 'lodash';
 const authorizedRoles = ['BankingFinance'];
 
 export default (req, res, next) => {
-  const userRole = req.session.rsp_user['custom:Role'];
+  const userRole = req.session.rsp_user_role;
   if (userRole) {
     if (typeof userRole === 'string') {
       if (authorizedRoles.includes(userRole)) return next();

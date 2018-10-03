@@ -22,7 +22,7 @@ const getPenaltyDetails = (req) => {
 
 export const makePayment = async (req, res) => {
   const paymentCode = req.params.payment_code;
-  const userRole = req.session.rsp_user['custom:Role'];
+  const userRole = req.session.rsp_user_role;
   const chequeAuthorizedRoles = ['BankingFinance', 'ContactCentre'];
   if (!req.body.paymentType) {
     logger.warn('Missing payment type');
