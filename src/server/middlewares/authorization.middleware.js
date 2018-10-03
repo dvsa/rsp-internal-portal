@@ -1,5 +1,6 @@
 import CognitoExpress from 'cognito-express';
 import jwtDecode from 'jwt-decode';
+import { intersection } from 'lodash';
 import config from '../config';
 import AuthService from '../services/auth.service';
 
@@ -51,16 +52,22 @@ export default (req, res, next) => {
       } else {
         // Get user information from the ID token
         const userInfo = jwtDecode(req.cookies.rsp_access.idToken);
+        const userRole = userInfo['custom:Role'];
         // Ensure that user information is available through the application (including views)
         req.session.rsp_user = userInfo;
-        console.log('userInfo');
-        console.log(userInfo);
-        if (userInfo['custom:Role']) {
-          if (!authorizedRoles.some(item => item === userInfo['custom:Role'].toLowerCase())) {
-            // User doesn't have an authorized role, forbid access
-            return res.render('main/forbidden', req.session);
+        console.log('userRole');
+        console.log(userRole);
+        if (userRole) {
+          // Allow for userRole to be a single string
+          if (typeof userRole === 'string') {
+            if (authorizedRoles.includes(userRole)) return next();
+          // Otherwise, treat as an array of strings
+          } else {
+            const matchedRoles = intersection(authorizedRoles, userRole);
+            if (matchedRoles.length) return next();
           }
-          return next();
+          // User doesn't have an authorized role, forbid access
+          return res.render('main/forbidden', req.session);
         }
       }
       console.log('fallback forbidden render');
