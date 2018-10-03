@@ -3,6 +3,7 @@ import jwtDecode from 'jwt-decode';
 import { intersection } from 'lodash';
 import config from '../config';
 import AuthService from '../services/auth.service';
+import formatUserRole from '../utils/formatUserRole';
 
 const authService = new AuthService(config.cognitoUrl());
 const authorizedRoles = ['ContactCentre', 'BankingFinance', 'FrontLine'];
@@ -53,7 +54,7 @@ export default (req, res, next) => {
         // Get user information from the ID token
         const userInfo = jwtDecode(req.cookies.rsp_access.idToken);
         // Extract and clean up roles
-        const userRole = userInfo['custom:Role'].slice(1, -1).replace(/\s/g, '').split(',');
+        const userRole = formatUserRole(userInfo['custom:Role']);
         // Ensure that user information is available through the application (including views)
         req.session.rsp_user = userInfo;
         req.session.rsp_user_role = userRole;
