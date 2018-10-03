@@ -6,8 +6,8 @@ import AuthService from '../services/auth.service';
 import config from '../config';
 import PenaltyService from '../services/penalty.service';
 
-const authService = new AuthService(config.cognitoUrl);
-const penaltyService = new PenaltyService(config.penaltyServiceUrl);
+const authService = new AuthService(config.cognitoUrl());
+const penaltyService = new PenaltyService(config.penaltyServiceUrl());
 
 // Robots
 export const robots = (req, res) => {
@@ -78,7 +78,7 @@ export const searchPenalty = async (req, res) => {
   const searchDetails = await getSearchDetails(req.body);
   const { value } = searchDetails;
   if (searchDetails.isSearchByCode) {
-    return res.redirect(`${config.urlRoot}/payment-code/${value}`);
+    return res.redirect(`${config.urlRoot()}/payment-code/${value}`);
   }
   return res.redirect(`penalty/${value}`);
 };
@@ -86,9 +86,9 @@ export const searchPenalty = async (req, res) => {
 const handleRegSearchForm = (req, res) => {
   const vehicleReg = req.body.vehicle_reg;
   if (isString(vehicleReg) && isEmpty(trim(vehicleReg))) {
-    return res.redirect(`${config.urlRoot}/?invalidReg`);
+    return res.redirect(`${config.urlRoot()}/?invalidReg`);
   }
-  return res.redirect(`${config.urlRoot}/vehicle-reg-search-results/${vehicleReg}`);
+  return res.redirect(`${config.urlRoot()}/vehicle-reg-search-results/${vehicleReg}`);
 };
 
 export const searchVehicleReg = async (req, res) => {
@@ -103,7 +103,7 @@ export const searchVehicleReg = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.redirect(`${config.urlRoot}/?invalidReg`);
+    res.redirect(`${config.urlRoot()}/?invalidReg`);
   }
 };
 
@@ -164,16 +164,14 @@ export const normaliseRegistration = (req, res, next) => {
 };
 
 export const authenticate = (req, res) => {
-  const {
-    identityProvider,
-    redirectUri,
-    clientId,
-    clientSecret,
-  } = config;
+  const identityProvider = config.identityProvider();
+  const redirectUri = config.redirectUri();
+  const clientId = config.clientId();
+  const clientSecret = config.clientSecret();
 
   const responseType = 'code';
 
-  res.redirect(`${config.cognitoUrl}/oauth2/authorize?identity_provider=${identityProvider}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=${responseType}&client_id=${clientId}&client_secret=${clientSecret}`);
+  res.redirect(`${config.cognitoUrl()}/oauth2/authorize?identity_provider=${identityProvider}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=${responseType}&client_id=${clientId}&client_secret=${clientSecret}`);
 };
 
 export const login = (req, res) => {
@@ -181,7 +179,7 @@ export const login = (req, res) => {
     authService.requestAccessToken(req.query.code).then((token) => {
       res.cookie('rsp_access', { accessToken: token.access_token, idToken: token.id_token }, { maxAge: token.expires_in * 1000, httpOnly: true });
       res.cookie('rsp_refresh', { refreshToken: token.refresh_token }, { maxAge: 2592000000, httpOnly: true });
-      res.redirect(`${config.urlRoot}/`);
+      res.redirect(`${config.urlRoot()}/`);
     }).catch(() => {
       // Failed to get an access token - Get a new authorization code and try again
       authenticate(req, res);
@@ -195,5 +193,5 @@ export const logout = (req, res) => {
   req.session = null;
   res.clearCookie('rsp_access');
   res.clearCookie('rsp_refresh');
-  res.redirect(`${config.cognitoUrl}/logout?client_id=${config.clientId}&logout_uri=${encodeURIComponent(config.redirectUri)}`);
+  res.redirect(`${config.cognitoUrl()}/logout?client_id=${config.clientId()}&logout_uri=${encodeURIComponent(config.redirectUri())}`);
 };

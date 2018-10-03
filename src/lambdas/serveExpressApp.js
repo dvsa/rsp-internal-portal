@@ -1,5 +1,6 @@
 import awsServerlessExpress from 'aws-serverless-express';
 import app from '../server/app';
+import config from '../server/config';
 import modifyPath from '../server/utils/modifyPath';
 
 // NOTE: If you get ERR_CONTENT_DECODING_FAILED in your browser, this is likely
@@ -26,12 +27,20 @@ const binaryMimeTypes = [
   'text/xml',
 ];
 
-const server = awsServerlessExpress.createServer(app, null, binaryMimeTypes);
-const isProd = typeof process.env.NODE_ENV !== 'undefined' && process.env.NODE_ENV === 'production';
+function isProd() {
+  const envVar = config.env();
+  return typeof envVar !== 'undefined' && envVar === 'production';
+}
 
-export default (event, context) => {
-  if (isProd) {
+let lambdaExpressServer;
+export default async (event, context) => {
+  if (!lambdaExpressServer) {
+    console.log('Creating new Express server');
+    const expressApp = await app();
+    lambdaExpressServer = awsServerlessExpress.createServer(expressApp, null, binaryMimeTypes);
+  }
+  if (isProd()) {
     event.path = modifyPath(event.path); // eslint-disable-line
   }
-  return awsServerlessExpress.proxy(server, event, context);
+  return awsServerlessExpress.proxy(lambdaExpressServer, event, context);
 };
