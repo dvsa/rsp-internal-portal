@@ -6,10 +6,10 @@ import config from './../config';
 import logger from './../utils/logger';
 import PenaltyGroupService from '../services/penaltyGroup.service';
 
-const paymentService = new PaymentService(config.paymentServiceUrl);
-const penaltyService = new PenaltyService(config.penaltyServiceUrl);
-const penaltyGroupService = new PenaltyGroupService(config.penaltyServiceUrl);
-const cpmsService = new CpmsService(config.cpmsServiceUrl);
+const paymentService = new PaymentService(config.paymentServiceUrl());
+const penaltyService = new PenaltyService(config.penaltyServiceUrl());
+const penaltyGroupService = new PenaltyGroupService(config.penaltyServiceUrl());
+const cpmsService = new CpmsService(config.cpmsServiceUrl());
 
 const getPenaltyDetails = (req) => {
   if (req.params.payment_code) {
@@ -24,7 +24,7 @@ export const makePayment = async (req, res) => {
   const chequeAuthorizedRoles = ['BankingFinance', 'ContactCentre'];
   if (!req.body.paymentType) {
     logger.warn('Missing payment type');
-    return res.redirect(`${config.urlRoot}/payment-code/${paymentCode}`);
+    return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
   }
   const details = { ...req.body };
   logger.info(details);
@@ -54,14 +54,14 @@ export const makePayment = async (req, res) => {
             },
           };
           paymentService.makePayment(paymentDetails)
-            .then(() => res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`))
+            .then(() => res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`))
             .catch((error) => {
               logger.error(error);
-              return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+              return res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
             });
         }).catch((error) => {
           logger.error(error);
-          res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+          res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
         });
       case 'cheque':
         if (!chequeAuthorizedRoles.some(item => item === userRole.toLowerCase())) {
@@ -91,14 +91,14 @@ export const makePayment = async (req, res) => {
             },
           };
           paymentService.makePayment(paymentDetails)
-            .then(() => res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`))
+            .then(() => res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`))
             .catch((error) => {
               logger.error(error);
-              return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+              return res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
             });
         }).catch((error) => {
           logger.error(error);
-          res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+          res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
         });
       case 'postal':
         return cpmsService.createPostalOrderTransaction(
@@ -122,20 +122,20 @@ export const makePayment = async (req, res) => {
             },
           };
           paymentService.makePayment(paymentDetails)
-            .then(() => res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`))
+            .then(() => res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`))
             .catch((error) => {
               logger.error(error);
-              return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+              return res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
             });
         }).catch((error) => {
           logger.error(error);
-          res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+          res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
         });
-      default: return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+      default: return res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
     }
   } catch (error) {
     logger.error(error);
-    return res.redirect(`${config.urlRoot}/?invalidPaymentCode`);
+    return res.redirect(`${config.urlRoot()}/?invalidPaymentCode`);
   }
 };
 
@@ -148,7 +148,7 @@ export const makeGroupPayment = async (req, res) => {
     const penaltiesOfType = penaltyGroup.penaltyDetails.find(p => p.type === penaltyType).penalties;
     const amountPaidForType = penaltyGroup.penaltyGroupDetails.splitAmounts
       .find(s => s.type === penaltyType).amount;
-    const redirectUrl = `${config.postPaymentRedirectBaseUrl}/payment-code/${paymentCode}/${penaltyType}/receipt`;
+    const redirectUrl = `${config.postPaymentRedirectBaseUrl()}/payment-code/${paymentCode}/${penaltyType}/receipt`;
 
     const paymentMethodMappings = {
       cash: { transactionCreationFunction: cpmsService.createGroupCashTransaction, paymentRecordMethod: 'CASH' },
@@ -191,10 +191,10 @@ export const makeGroupPayment = async (req, res) => {
       PenaltyIds: penaltiesOfType.map(p => `${p.reference}_${penaltyType}`),
     });
 
-    return res.redirect(`${config.urlRoot}/payment-code/${paymentCode}/${penaltyType}/receipt`);
+    return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}/${penaltyType}/receipt`);
   } catch (error) {
     logger.error(error);
-    return res.redirect(`${config.urlRoot}/payment-code/${paymentCode}`);
+    return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
   }
 };
 
@@ -224,12 +224,12 @@ export const renderPaymentPage = async (req, res) => {
     penaltyDetails = await getPenaltyDetails(req);
 
     if (penaltyDetails.status === 'PAID') {
-      return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+      return res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
     }
     // Payment Type is expected to come from the query string, otherwise the default is used
     const paymentType = req.query.paymentType ? req.query.paymentType : 'card';
     const { paymentCode } = penaltyDetails;
-    const redirectUrl = `${config.postPaymentRedirectBaseUrl}/payment-code/${paymentCode}/confirmPayment`;
+    const redirectUrl = `${config.postPaymentRedirectBaseUrl()}/payment-code/${paymentCode}/confirmPayment`;
 
     switch (paymentType) {
       case 'cash':
@@ -258,11 +258,11 @@ export const renderPaymentPage = async (req, res) => {
         ).then(response => res.redirect(response.data.gateway_url))
           .catch((error) => {
             logger.error(error);
-            res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+            res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
           });
     }
   } catch (error) {
-    return res.redirect(`${config.urlRoot}/?invalidPaymentCode`);
+    return res.redirect(`${config.urlRoot()}/?invalidPaymentCode`);
   }
 };
 
@@ -274,13 +274,13 @@ export const renderGroupPaymentPage = async (req, res) => {
     const penaltyGroup = await penaltyGroupService.getByPaymentCode(paymentCode);
 
     if (penaltyGroup.paymentStatus === 'PAID') {
-      return res.redirect(`${config.urlRoot}/payment-code/${paymentCode}`);
+      return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
     }
 
     if (paymentType === 'card') {
       const penaltyDetails = penaltyGroup.penaltyDetails
         .find(typeGrp => typeGrp.type === penaltyType).penalties;
-      const redirectUrl = `${config.postPaymentRedirectBaseUrl}/payment-code/${paymentCode}/${penaltyType}/confirmGroupPayment`;
+      const redirectUrl = `${config.postPaymentRedirectBaseUrl()}/payment-code/${paymentCode}/${penaltyType}/confirmGroupPayment`;
       const cpmsResp = await cpmsService.createCardNotPresentGroupTransaction(
         penaltyGroup.paymentCode,
         penaltyGroup.penaltyGroupDetails,
@@ -309,11 +309,11 @@ export const renderGroupPaymentPage = async (req, res) => {
           ...req.session,
         });
       default:
-        return res.redirect(`${config.urlRoot}/?invalidPaymentCode`);
+        return res.redirect(`${config.urlRoot()}/?invalidPaymentCode`);
     }
   } catch (err) {
     logger.error(err);
-    return res.redirect(`${config.urlRoot}/payment-code/${paymentCode}`);
+    return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
   }
 };
 
@@ -338,15 +338,15 @@ export const confirmPayment = async (req, res) => {
             PaymentDate: Math.round((new Date()).getTime() / 1000),
           },
         };
-        paymentService.makePayment(details).then(() => res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`))
-          .catch(() => res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`));
+        paymentService.makePayment(details).then(() => res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`))
+          .catch(() => res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`));
       } else {
         logger.warn(response.data);
         res.render('payment/failedPayment', req.session);
       }
     }).catch(() => res.render('payment/failedPayment', req.session));
   } catch (error) {
-    res.redirect(`${config.urlRoot}/?invalidPaymentCode`);
+    res.redirect(`${config.urlRoot()}/?invalidPaymentCode`);
   }
 };
 
@@ -368,9 +368,9 @@ export const confirmGroupPayment = async (req, res) => {
         confirmResp,
       );
       await paymentService.recordGroupPayment(payload);
-      return res.redirect(`${config.urlRoot}/payment-code/${paymentCode}/${penaltyType}/receipt`);
+      return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}/${penaltyType}/receipt`);
     } else if (cpmsCode === 807) {
-      return res.redirect(`${config.urlRoot}/payment-code/${paymentCode}`);
+      return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
     }
     return res.render('payment/confirmError', req.session);
   } catch (error) {
@@ -385,7 +385,7 @@ export const reversePayment = async (req, res) => {
     const penaltyDetails = await getPenaltyDetails(req);
 
     if (penaltyDetails.status === 'UNPAID') {
-      return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+      return res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
     }
 
     const penaltyId = `${penaltyDetails.reference}_${penaltyDetails.type}`;
@@ -397,14 +397,14 @@ export const reversePayment = async (req, res) => {
           .then(() => {
             paymentService.reversePayment(penaltyId).then((response) => {
               logger.info(response);
-              return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+              return res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
             }).catch((error) => {
               logger.error(error);
-              return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+              return res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
             });
           }).catch((error) => {
             logger.error(error);
-            return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+            return res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
           });
         break;
       case 'CHEQUE':
@@ -412,14 +412,14 @@ export const reversePayment = async (req, res) => {
           .then(() => {
             paymentService.reversePayment(penaltyId).then((response) => {
               logger.info(response);
-              return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+              return res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
             }).catch((error) => {
               logger.error(error);
-              return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+              return res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
             });
           }).catch((error) => {
             logger.error(error);
-            return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+            return res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
           });
         break;
       // Postal orders and cash reversals are not handled by CPMS
@@ -427,19 +427,19 @@ export const reversePayment = async (req, res) => {
       case 'CASH':
         paymentService.reversePayment(penaltyId).then((response) => {
           logger.info(response);
-          return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+          return res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
         }).catch((error) => {
           logger.error(error);
-          return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+          return res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
         });
         break;
       default:
         // If we don't know the payment method we can't reverse it
-        return res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
+        return res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
     }
   } catch (error) {
     logger.warn(error);
-    return res.redirect(`${config.urlRoot}/?invalidPaymentCode`);
+    return res.redirect(`${config.urlRoot()}/?invalidPaymentCode`);
   }
   return true;
 };

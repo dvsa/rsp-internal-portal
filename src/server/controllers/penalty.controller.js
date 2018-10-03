@@ -5,7 +5,7 @@ import PenaltyService from './../services/penalty.service';
 import config from '../config';
 import tryAddCancellationFlagToViewData from '../utils/tryAddCancellationFlagToViewData';
 
-const penaltyService = new PenaltyService(config.penaltyServiceUrl);
+const penaltyService = new PenaltyService(config.penaltyServiceUrl());
 
 export const validatePenaltyReference = [
   penaltyReferenceValidation,
@@ -36,9 +36,9 @@ export const cancelPenalty = async (req, res) => {
   const penaltyId = req.params.penalty_id;
   try {
     await penaltyService.cancel(penaltyId);
-    res.redirect(`${config.urlRoot}/penalty/${penaltyId}`);
+    res.redirect(`${config.urlRoot()}/penalty/${penaltyId}`);
   } catch (error) {
     console.log(error);
-    res.redirect(`${config.urlRoot}/penalty/${penaltyId}?cancellation=failed`);
+    res.redirect(`${config.urlRoot()}/penalty/${penaltyId}?cancellation=failed`);
   }
 };

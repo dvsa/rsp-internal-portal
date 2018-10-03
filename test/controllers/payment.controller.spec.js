@@ -1,6 +1,7 @@
 import sinon from 'sinon';
 
 import * as PaymentController from '../../src/server/controllers/payment.controller';
+import config from '../../src/server/config';
 import CpmsService from '../../src/server/services/cpms.service';
 import PenaltyGroupService from '../../src/server/services/penaltyGroup.service';
 import getPenaltyGroupFake from '../data/penaltyGroup/enchrichedPenaltyGroupFake';
@@ -31,10 +32,14 @@ describe('PaymentController', () => {
 
   describe('renderGroupPaymentPage', () => {
     beforeEach(() => {
+      sinon.stub(config, 'postPaymentRedirectBaseUrl').returns('http://localhost:3000');
       request = {
         params: { payment_code: '5624r2wupfs', type: 'FPN' },
         query: { paymentType: 'card' },
       };
+    });
+    afterEach(() => {
+      config.postPaymentRedirectBaseUrl.restore();
     });
 
     context('when the penalties of that type are already paid', () => {
@@ -207,15 +212,22 @@ describe('PaymentController', () => {
 
   describe('makeGroupPayment', () => {
     let cpmsSvcMock;
+    beforeEach(() => {
+      sinon.stub(config, 'postPaymentRedirectBaseUrl').returns('http://localhost:3000');
+    });
+    afterEach(() => {
+      config.postPaymentRedirectBaseUrl.restore();
+    });
     const standardTransactionPayloadWithExtraArgsResolvesSuccess = (...rest) => { // eslint-disable-line
-      return cpmsSvcMock.withArgs(
-        '5624r2wupfs',
-        penaltyGroup.penaltyGroupDetails,
-        'FPN',
-        penaltyGroup.penaltyDetails,
-        'http://localhost:3000/payment-code/5624r2wupfs/FPN/receipt',
-        ...rest,
-      )
+      return cpmsSvcMock
+        .withArgs(
+          '5624r2wupfs',
+          penaltyGroup.penaltyGroupDetails,
+          'FPN',
+          penaltyGroup.penaltyDetails,
+          'http://localhost:3000/payment-code/5624r2wupfs/FPN/receipt',
+          ...rest,
+        )
         .resolves({
           data: {
             receipt_reference: 'receipt-ref',
