@@ -21,7 +21,7 @@ const getPenaltyDetails = (req) => {
 export const makePayment = async (req, res) => {
   const paymentCode = req.params.payment_code;
   const userRole = req.session.rsp_user['custom:Role'];
-  const authorizedRoles = ['BankingFinance'];
+  const chequeAuthorizedRoles = ['BankingFinance', 'ContactCentre'];
   if (!req.body.paymentType) {
     logger.warn('Missing payment type');
     return res.redirect(`${config.urlRoot}/payment-code/${paymentCode}`);
@@ -64,7 +64,7 @@ export const makePayment = async (req, res) => {
           res.redirect(`${config.urlRoot}/payment-code/${penaltyDetails.paymentCode}`);
         });
       case 'cheque':
-        if (!authorizedRoles.some(item => item === userRole.toLowerCase())) {
+        if (!chequeAuthorizedRoles.some(item => item === userRole.toLowerCase())) {
           // User doesn't have an authorized role, forbid access
           return res.render('main/forbidden', req.session);
         }
