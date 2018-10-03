@@ -53,7 +53,8 @@ export default (req, res, next) => {
         const userInfo = jwtDecode(req.cookies.rsp_access.idToken);
         // Ensure that user information is available through the application (including views)
         req.session.rsp_user = userInfo;
-
+        console.log('userInfo');
+        console.log(userInfo);
         if (userInfo['custom:Role']) {
           if (!authorizedRoles.some(item => item === userInfo['custom:Role'].toLowerCase())) {
             // User doesn't have an authorized role, forbid access
