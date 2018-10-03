@@ -7,7 +7,7 @@ export default createLogger({
   transports: [
     // Console logs are shown on CloudWatch so this should be enough for time being
     new transports.Console({
-      level: config.isDevelopment ? 'debug' : 'error',
+      level: config.isDevelopment() ? 'debug' : 'error',
     }),
   ],
 });

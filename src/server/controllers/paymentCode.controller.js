@@ -7,8 +7,8 @@ import logger from './../utils/logger';
 import PenaltyGroupService from '../services/penaltyGroup.service';
 import tryAddCancellationFlagToViewData from '../utils/tryAddCancellationFlagToViewData';
 
-const penaltyService = new PenaltyService(config.penaltyServiceUrl);
-const penaltyGroupService = new PenaltyGroupService(config.penaltyServiceUrl);
+const penaltyService = new PenaltyService(config.penaltyServiceUrl());
+const penaltyGroupService = new PenaltyGroupService(config.penaltyServiceUrl());
 
 // Removes all non-alphanumeric characters and converts to lowercase
 export const normalizePaymentcode = (req, res, next) => {
@@ -80,9 +80,9 @@ export const cancelPaymentCode = async (req, res) => {
   const paymentCode = req.params.payment_code;
   try {
     await penaltyGroupService.cancel(paymentCode);
-    res.redirect(`${config.urlRoot}/payment-code/${paymentCode}`);
+    res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
   } catch (error) {
     console.log(error);
-    res.redirect(`${config.urlRoot}/payment-code/${paymentCode}?cancellation=failed`);
+    res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}?cancellation=failed`);
   }
 };
