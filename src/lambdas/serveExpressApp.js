@@ -32,11 +32,15 @@ function isProd() {
   return typeof envVar !== 'undefined' && envVar === 'production';
 }
 
-const server = awsServerlessExpress.createServer(app, null, binaryMimeTypes);
-
-export default (event, context) => {
+let lambdaExpressServer;
+export default async (event, context) => {
+  if (!lambdaExpressServer) {
+    console.log('Creating new Express server');
+    const expressApp = await app();
+    lambdaExpressServer = awsServerlessExpress.createServer(expressApp, null, binaryMimeTypes);
+  }
   if (isProd()) {
     event.path = modifyPath(event.path); // eslint-disable-line
   }
-  return awsServerlessExpress.proxy(server, event, context);
+  return awsServerlessExpress.proxy(lambdaExpressServer, event, context);
 };
