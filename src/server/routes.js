@@ -6,6 +6,7 @@ import * as paymentController from './controllers/payment.controller';
 import * as penaltyController from './controllers/penalty.controller';
 import * as reportController from './controllers/report.controller';
 import receiptController from './controllers/receipt.controller';
+import financeUsersAuthorizationMiddleware from './middlewares/financeUsersAuthorization.middleware';
 
 const router = Router();
 
@@ -29,7 +30,7 @@ router.post('/payment-code/:payment_code/payment', paymentCodeController.validat
 router.post('/payment-code/:payment_code/:type/payment', paymentController.makeGroupPayment);
 router.get('/payment-code/:payment_code/confirmPayment', paymentController.confirmPayment);
 router.get('/payment-code/:payment_code/:type/confirmGroupPayment', paymentController.confirmGroupPayment);
-router.post('/payment-code/:payment_code/reversePayment', paymentController.reversePayment);
+router.post('/payment-code/:payment_code/reversePayment', financeUsersAuthorizationMiddleware, paymentController.reversePayment);
 router.get('/payment-code/:payment_code/:type/details', paymentCodeController.getPenaltyGroupBreakdownForType);
 router.get('/payment-code/:payment_code/:type/receipt', receiptController);
 
@@ -39,10 +40,10 @@ router.post('/penalty/:penalty_id/cancel', penaltyController.cancelPenalty);
 router.get('/penalty/:penalty_id/payment', paymentController.renderPaymentPage);
 
 // Reports
-router.get('/reports', authorizationMiddleware, reportController.renderReportFilters);
-router.post('/reports', reportController.generateReport);
-router.get('/reports/:report_ref/', reportController.showDetails);
-router.get('/reports/:report_ref/status', reportController.checkReportStatus);
-router.get('/reports/:report_ref/download', reportController.downloadReport);
+router.get('/reports', authorizationMiddleware, financeUsersAuthorizationMiddleware, reportController.renderReportFilters);
+router.post('/reports', financeUsersAuthorizationMiddleware, reportController.generateReport);
+router.get('/reports/:report_ref/', financeUsersAuthorizationMiddleware, reportController.showDetails);
+router.get('/reports/:report_ref/status', financeUsersAuthorizationMiddleware, reportController.checkReportStatus);
+router.get('/reports/:report_ref/download', financeUsersAuthorizationMiddleware, reportController.downloadReport);
 
 export default router;
