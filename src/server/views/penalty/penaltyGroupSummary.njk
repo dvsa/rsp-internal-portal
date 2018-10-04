@@ -99,7 +99,7 @@
               <td>
                 {% if amountPaid == true %}
                   {{ components.link(text='Receipt', url='/payment-code/' + paymentCode + '/' + amount.type + '/receipt') }}
-                  {% call components.form(action='/payment-code/' + paymentCode + '/' + amount.type + '/reverseMultiPayment', method='POST', class='right')  %}
+                  {% call components.form(action='/payment-code/' + paymentCode + '/' + amount.type + '/reverseGroupPayment', method='POST', class='right')  %}
                     {{ components.button(text='Reverse payment', type='submit', secondary='true') }}
                   {%- endcall %}
                 {% else %}
