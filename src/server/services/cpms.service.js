@@ -28,7 +28,7 @@ export default class PaymentService {
       PenaltyType: type,
       RedirectUrl: redirectUrl,
       Penalties: penalties.map(p => ({
-        PenaltyReference: p.reference,
+        PenaltyReference: p.formattedReference,
         PenaltyAmount: p.amount,
         VehicleRegistration: p.vehicleReg,
       })),
@@ -65,7 +65,7 @@ export default class PaymentService {
       ReceiptDate: new Date().toISOString().split('T')[0],
       BatchNumber: slipNumber,
       Penalties: penaltiesOfType.map(p => ({
-        PenaltyReference: p.reference,
+        PenaltyReference: p.formattedReference,
         PenaltyAmount: p.amount,
         VehicleRegistration: p.vehicleReg,
       })),
@@ -120,7 +120,7 @@ export default class PaymentService {
       ChequeDate: chequeDate,
       NameOnCheque: nameOnCheque,
       Penalties: penaltiesOfType.map(p => ({
-        PenaltyReference: p.reference,
+        PenaltyReference: p.formattedReference,
         PenaltyAmount: p.amount,
         VehicleRegistration: p.vehicleReg,
       })),
@@ -169,7 +169,7 @@ export default class PaymentService {
       PostalOrderNumber: postalOrderNumber,
       BatchNumber: slipNumber,
       Penalties: penaltiesOfType.map(p => ({
-        PenaltyReference: p.reference,
+        PenaltyReference: p.formattedReference,
         PenaltyAmount: p.amount,
         VehicleRegistration: p.vehicleReg,
       })),
