@@ -451,6 +451,21 @@ export const reversePayment = async (req, res) => {
   return true;
 };
 
+export const reverseGroupPayment = async (req, res) => {
+  const paymentCode = req.params.payment_code;
+  const penaltyType = req.params.type;
+  console.log('#### payment code, type #########', paymentCode, penaltyType);
+  try {
+    const paymentDetails = (await paymentService.getGroupPayment(paymentCode)).data;
+    console.log('######## paymentDetails ############');
+    console.log(paymentDetails);
+  } catch (error) {
+    logger.warn(error);
+    return res.redirect(`${config.urlRoot()}/?invalidPaymentCode`);
+  }
+  return true;
+};
+
 function buildGroupPaymentPayload(paymentCode, receiptReference, type, penaltyGroup, confirmResp) {
   const amountForType = penaltyGroup.penaltyGroupDetails.splitAmounts
     .find(a => a.type === type).amount;
