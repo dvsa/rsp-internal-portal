@@ -260,7 +260,7 @@ export const renderPaymentPage = async (req, res) => {
         return cpmsService.createCardNotPresentTransaction(
           paymentCode,
           penaltyDetails.vehicleReg,
-          penaltyDetails.reference,
+          penaltyDetails.formattedReference,
           penaltyDetails.type,
           penaltyDetails.amount,
           redirectUrl,
