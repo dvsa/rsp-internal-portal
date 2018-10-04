@@ -31,6 +31,7 @@ router.post('/payment-code/:payment_code/:type/payment', paymentController.makeG
 router.get('/payment-code/:payment_code/confirmPayment', paymentController.confirmPayment);
 router.get('/payment-code/:payment_code/:type/confirmGroupPayment', paymentController.confirmGroupPayment);
 router.post('/payment-code/:payment_code/reversePayment', financeUsersAuthorizationMiddleware, paymentController.reversePayment);
+router.post('/payment-code/:payment_code/:type/reverseGroupPayment', financeUsersAuthorizationMiddleware, paymentController.reverseGroupPayment);
 router.get('/payment-code/:payment_code/:type/details', paymentCodeController.getPenaltyGroupBreakdownForType);
 router.get('/payment-code/:payment_code/:type/receipt', receiptController);
 
