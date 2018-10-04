@@ -39,7 +39,7 @@ export const makePayment = async (req, res) => {
         return cpmsService.createCashTransaction(
           paymentCode,
           penaltyDetails.vehicleReg,
-          penaltyDetails.reference,
+          penaltyDetails.formattedReference,
           penaltyDetails.type,
           penaltyDetails.amount,
           details.slipNumber,
@@ -47,7 +47,7 @@ export const makePayment = async (req, res) => {
           const paymentDetails = {
             PenaltyStatus: 'PAID',
             PenaltyType: penaltyDetails.type,
-            PenaltyReference: penaltyDetails.reference,
+            PenaltyReference: penaltyDetails.formattedReference,
             PaymentDetail: {
               PaymentMethod: req.body.paymentType.toUpperCase(),
               PaymentRef: response.data.receipt_reference,
@@ -73,12 +73,14 @@ export const makePayment = async (req, res) => {
           }
         } else {
           const matchedRoles = intersection(chequeAuthorizedRoles, userRole);
-          if (!matchedRoles.length) return res.render('main/forbidden', req.session);
+          if (!matchedRoles.length) {
+            return res.render('main/forbidden', req.session);
+          }
         }
         return cpmsService.createChequeTransaction(
           paymentCode,
           penaltyDetails.vehicleReg,
-          penaltyDetails.reference,
+          penaltyDetails.formattedReference,
           penaltyDetails.type,
           penaltyDetails.amount,
           details.slipNumber,
@@ -89,7 +91,7 @@ export const makePayment = async (req, res) => {
           const paymentDetails = {
             PenaltyStatus: 'PAID',
             PenaltyType: penaltyDetails.type,
-            PenaltyReference: penaltyDetails.reference,
+            PenaltyReference: penaltyDetails.formattedReference,
             PaymentDetail: {
               PaymentMethod: req.body.paymentType.toUpperCase(),
               PaymentRef: response.data.receipt_reference,
@@ -111,7 +113,7 @@ export const makePayment = async (req, res) => {
         return cpmsService.createPostalOrderTransaction(
           paymentCode,
           penaltyDetails.vehicleReg,
-          penaltyDetails.reference,
+          penaltyDetails.formattedReference,
           penaltyDetails.type,
           penaltyDetails.amount,
           details.slipNumber,
@@ -120,7 +122,7 @@ export const makePayment = async (req, res) => {
           const paymentDetails = {
             PenaltyStatus: 'PAID',
             PenaltyType: penaltyDetails.type,
-            PenaltyReference: penaltyDetails.reference,
+            PenaltyReference: penaltyDetails.formattedReference,
             PaymentDetail: {
               PaymentMethod: req.body.paymentType.toUpperCase(),
               PaymentRef: response.data.receipt_reference,
@@ -258,7 +260,7 @@ export const renderPaymentPage = async (req, res) => {
         return cpmsService.createCardNotPresentTransaction(
           paymentCode,
           penaltyDetails.vehicleReg,
-          penaltyDetails.reference,
+          penaltyDetails.formattedReference,
           penaltyDetails.type,
           penaltyDetails.amount,
           redirectUrl,
