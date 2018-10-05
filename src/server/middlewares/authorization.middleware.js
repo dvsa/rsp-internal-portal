@@ -57,20 +57,24 @@ export default (req, res, next) => {
         const userRole = formatUserRole(userInfo['custom:Role']);
         // Ensure that user information is available through the application (including views)
         req.session.rsp_user = userInfo;
-        req.session.rsp_user_role = userRole;
-        console.log('userInfo[\'custom:Role\']');
-        console.log(userInfo['custom:Role']);
-        if (userRole) {
-          // Allow for userRole to be a single string
-          if (typeof userRole === 'string') {
-            if (authorizedRoles.includes(userRole)) return next();
-          // Otherwise, treat as an array of strings
-          } else {
-            const matchedRoles = intersection(authorizedRoles, userRole);
-            if (matchedRoles.length) return next();
+        if (config.doRoleChecks()) {
+          req.session.rsp_user_role = userRole;
+          console.log('userInfo[\'custom:Role\']');
+          console.log(userInfo['custom:Role']);
+          if (userRole) {
+            // Allow for userRole to be a single string
+            if (typeof userRole === 'string') {
+              if (authorizedRoles.includes(userRole)) return next();
+            // Otherwise, treat as an array of strings
+            } else {
+              const matchedRoles = intersection(authorizedRoles, userRole);
+              if (matchedRoles.length) return next();
+            }
+            // User doesn't have an authorized role, forbid access
+            return res.render('main/forbidden', req.session);
           }
-          // User doesn't have an authorized role, forbid access
-          return res.render('main/forbidden', req.session);
+        } else {
+          return next();
         }
       }
       console.log('fallback forbidden render');

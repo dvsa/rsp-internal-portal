@@ -10,6 +10,7 @@ const configMetadata = {
   cognitoUrl: 'COGNITO_URL',
   cognitoUserPoolId: 'COGNITO_USERPOOL_ID',
   cpmsServiceUrl: 'CPMS_SERVICE_URL',
+  doRoleChecks: 'DO_ROLE_CHECKS',
   iamClientId: 'IAM_CLIENT_ID',
   iamClientSecret: 'IAM_CLIENT_SECRET',
   identityProvider: 'IDENTITY_PROVIDER',
@@ -83,6 +84,11 @@ function cpmsServiceUrl() {
   return configuration[configMetadata.cpmsServiceUrl];
 }
 
+function doRoleChecks() {
+  const configVal = configuration[configMetadata.doRoleChecks];
+  return configVal !== 'false';
+}
+
 function env() {
   return configuration[configMetadata.nodeEnv] || 'development';
 }
@@ -147,6 +153,7 @@ const config = {
   cognitoUrl,
   cognitoUserPoolId,
   cpmsServiceUrl,
+  doRoleChecks,
   env,
   iamClientId,
   iamClientSecret,
