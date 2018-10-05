@@ -47,7 +47,7 @@ export const makePayment = async (req, res) => {
           const paymentDetails = {
             PenaltyStatus: 'PAID',
             PenaltyType: penaltyDetails.type,
-            PenaltyReference: penaltyDetails.formattedReference,
+            PenaltyReference: penaltyDetails.reference,
             PaymentDetail: {
               PaymentMethod: req.body.paymentType.toUpperCase(),
               PaymentRef: response.data.receipt_reference,
@@ -66,15 +66,17 @@ export const makePayment = async (req, res) => {
           res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
         });
       case 'cheque':
-        if (typeof userRole === 'string') {
-          if (!chequeAuthorizedRoles.includes(userRole)) {
-            // User doesn't have an authorized role, forbid access
-            return res.render('main/forbidden', req.session);
-          }
-        } else {
-          const matchedRoles = intersection(chequeAuthorizedRoles, userRole);
-          if (!matchedRoles.length) {
-            return res.render('main/forbidden', req.session);
+        if (config.doRoleChecks()) {
+          if (typeof userRole === 'string') {
+            if (!chequeAuthorizedRoles.includes(userRole)) {
+              // User doesn't have an authorized role, forbid access
+              return res.render('main/forbidden', req.session);
+            }
+          } else {
+            const matchedRoles = intersection(chequeAuthorizedRoles, userRole);
+            if (!matchedRoles.length) {
+              return res.render('main/forbidden', req.session);
+            }
           }
         }
         return cpmsService.createChequeTransaction(
@@ -91,7 +93,7 @@ export const makePayment = async (req, res) => {
           const paymentDetails = {
             PenaltyStatus: 'PAID',
             PenaltyType: penaltyDetails.type,
-            PenaltyReference: penaltyDetails.formattedReference,
+            PenaltyReference: penaltyDetails.reference,
             PaymentDetail: {
               PaymentMethod: req.body.paymentType.toUpperCase(),
               PaymentRef: response.data.receipt_reference,
@@ -122,7 +124,7 @@ export const makePayment = async (req, res) => {
           const paymentDetails = {
             PenaltyStatus: 'PAID',
             PenaltyType: penaltyDetails.type,
-            PenaltyReference: penaltyDetails.formattedReference,
+            PenaltyReference: penaltyDetails.reference,
             PaymentDetail: {
               PaymentMethod: req.body.paymentType.toUpperCase(),
               PaymentRef: response.data.receipt_reference,
