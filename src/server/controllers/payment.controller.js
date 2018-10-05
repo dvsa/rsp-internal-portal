@@ -47,7 +47,7 @@ export const makePayment = async (req, res) => {
           const paymentDetails = {
             PenaltyStatus: 'PAID',
             PenaltyType: penaltyDetails.type,
-            PenaltyReference: penaltyDetails.formattedReference,
+            PenaltyReference: penaltyDetails.reference,
             PaymentDetail: {
               PaymentMethod: req.body.paymentType.toUpperCase(),
               PaymentRef: response.data.receipt_reference,
@@ -93,7 +93,7 @@ export const makePayment = async (req, res) => {
           const paymentDetails = {
             PenaltyStatus: 'PAID',
             PenaltyType: penaltyDetails.type,
-            PenaltyReference: penaltyDetails.formattedReference,
+            PenaltyReference: penaltyDetails.reference,
             PaymentDetail: {
               PaymentMethod: req.body.paymentType.toUpperCase(),
               PaymentRef: response.data.receipt_reference,
@@ -124,7 +124,7 @@ export const makePayment = async (req, res) => {
           const paymentDetails = {
             PenaltyStatus: 'PAID',
             PenaltyType: penaltyDetails.type,
-            PenaltyReference: penaltyDetails.formattedReference,
+            PenaltyReference: penaltyDetails.reference,
             PaymentDetail: {
               PaymentMethod: req.body.paymentType.toUpperCase(),
               PaymentRef: response.data.receipt_reference,

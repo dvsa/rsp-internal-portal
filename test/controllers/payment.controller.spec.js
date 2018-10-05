@@ -335,6 +335,7 @@ describe('PaymentController', () => {
     const paymentCode = '5260825bbe245e1a';
     const cpmsReceiptRef = 'FB02-01-20180816-091027-B9AA05B9';
     const imReference = '945872-0-776-IM';
+    const paddedImRefNumber = '9458720000776';
     const vehicleReg = '17EEE';
     const slipNumber = 2468;
     const requestParams = { payment_code: paymentCode };
@@ -343,7 +344,7 @@ describe('PaymentController', () => {
     const expectedPaymentSvcPayloadForPaymentType = type => ({
       PenaltyStatus: 'PAID',
       PenaltyType: 'IM',
-      PenaltyReference: imReference,
+      PenaltyReference: paddedImRefNumber,
       PaymentDetail: {
         PaymentMethod: type,
         PaymentRef: cpmsReceiptRef,
