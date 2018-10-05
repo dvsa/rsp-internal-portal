@@ -458,11 +458,56 @@ export const reversePayment = async (req, res) => {
 export const reverseGroupPayment = async (req, res) => {
   const paymentCode = req.params.payment_code;
   const penaltyType = req.params.type;
-  console.log('#### payment code, type #########', paymentCode, penaltyType);
   try {
-    const paymentDetails = (await paymentService.getGroupPayment(paymentCode)).data;
-    console.log('######## paymentDetails ############');
-    console.log(paymentDetails);
+    const paymentDetails = (await paymentService.getGroupPayment(paymentCode)).data.Payments;
+    const { PaymentMethod, PaymentRef } = paymentDetails[penaltyType];
+    // Check payment method
+    switch (PaymentMethod) {
+      case 'CARD':
+        cpmsService.reverseCardPayment(PaymentRef, penaltyType, paymentCode)
+          .then(() => {
+            paymentService.reversePayment(paymentCode).then((response) => {
+              logger.info(response);
+              return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
+            }).catch((error) => {
+              logger.error(error);
+              return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
+            });
+          }).catch((error) => {
+            logger.error(error);
+            return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
+          });
+        break;
+      case 'CHEQUE':
+        cpmsService.reverseChequePayment(PaymentRef, penaltyType, paymentCode)
+          .then(() => {
+            paymentService.reversePayment(paymentCode).then((response) => {
+              logger.info(response);
+              return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
+            }).catch((error) => {
+              logger.error(error);
+              return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
+            });
+          }).catch((error) => {
+            logger.error(error);
+            return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
+          });
+        break;
+      // Postal orders and cash reversals are not handled by CPMS
+      case 'POSTAL':
+      case 'CASH':
+        paymentService.reversePayment(paymentCode).then((response) => {
+          logger.info(response);
+          return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
+        }).catch((error) => {
+          logger.error(error);
+          return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
+        });
+        break;
+      default:
+        // If we don't know the payment method we can't reverse it
+        return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
+    }
   } catch (error) {
     logger.warn(error);
     return res.redirect(`${config.urlRoot()}/?invalidPaymentCode`);
