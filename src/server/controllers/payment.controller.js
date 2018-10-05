@@ -466,7 +466,7 @@ export const reverseGroupPayment = async (req, res) => {
       case 'CARD':
         cpmsService.reverseCardPayment(PaymentRef, penaltyType, paymentCode)
           .then(() => {
-            paymentService.reversePayment(paymentCode).then((response) => {
+            paymentService.reverseGroupPayment(paymentCode).then((response) => {
               logger.info(response);
               return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
             }).catch((error) => {
@@ -481,7 +481,7 @@ export const reverseGroupPayment = async (req, res) => {
       case 'CHEQUE':
         cpmsService.reverseChequePayment(PaymentRef, penaltyType, paymentCode)
           .then(() => {
-            paymentService.reversePayment(paymentCode).then((response) => {
+            paymentService.reverseGroupPayment(paymentCode).then((response) => {
               logger.info(response);
               return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
             }).catch((error) => {
@@ -496,7 +496,7 @@ export const reverseGroupPayment = async (req, res) => {
       // Postal orders and cash reversals are not handled by CPMS
       case 'POSTAL':
       case 'CASH':
-        paymentService.reversePayment(paymentCode).then((response) => {
+        paymentService.reverseGroupPayment(paymentCode).then((response) => {
           logger.info(response);
           return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
         }).catch((error) => {
