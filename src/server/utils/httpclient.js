@@ -30,12 +30,14 @@ export default class SignedHttpClient {
   get(path) {
     const options = {
       path: `${this.baseUrlOb.pathname}${path}`,
-      ...this.signingOptions,
+      ...(config.doSignedRequests() ? this.signingOptions : {}),
     };
-    aws4.sign(options, {
-      accessKeyId: this.credentials.clientId,
-      secretAccessKey: this.credentials.clientSecret,
-    });
+    if (config.doSignedRequests()) {
+      aws4.sign(options, {
+        accessKeyId: this.credentials.clientId,
+        secretAccessKey: this.credentials.clientSecret,
+      });
+    }
     const fullPath = `${this.baseUrlOb.href}${path}`;
     return axios.get(fullPath, options);
   }
@@ -47,12 +49,14 @@ export default class SignedHttpClient {
       headers: {
         'Content-Type': 'application/json',
       },
-      ...this.signingOptions,
+      ...(config.doSignedRequests() ? this.signingOptions : {}),
     };
-    aws4.sign(options, {
-      accessKeyId: this.credentials.clientId,
-      secretAccessKey: this.credentials.clientSecret,
-    });
+    if (config.doSignedRequests()) {
+      aws4.sign(options, {
+        accessKeyId: this.credentials.clientId,
+        secretAccessKey: this.credentials.clientSecret,
+      });
+    }
 
     if (isNumber(retryAttempts)) {
       options['axios-retry'] = {
@@ -68,7 +72,7 @@ export default class SignedHttpClient {
     const request = {
       method: 'DELETE',
       path: `${this.baseUrlOb.pathname}${path}`,
-      ...this.signingOptions,
+      ...(config.doSignedRequests() ? this.signingOptions : {}),
     };
 
     if (isObject(body)) {
@@ -78,10 +82,12 @@ export default class SignedHttpClient {
       request.body = jsonBody;
     }
 
-    aws4.sign(request, {
-      accessKeyId: this.credentials.clientId,
-      secretAccessKey: this.credentials.clientSecret,
-    });
+    if (config.doSignedRequests()) {
+      aws4.sign(request, {
+        accessKeyId: this.credentials.clientId,
+        secretAccessKey: this.credentials.clientSecret,
+      });
+    }
     return axios.delete(`${this.baseUrlOb.href}${path}`, request);
   }
 }
