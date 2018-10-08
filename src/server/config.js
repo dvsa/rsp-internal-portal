@@ -10,6 +10,8 @@ const configMetadata = {
   cognitoUrl: 'COGNITO_URL',
   cognitoUserPoolId: 'COGNITO_USERPOOL_ID',
   cpmsServiceUrl: 'CPMS_SERVICE_URL',
+  doSignedRequests: 'DO_SIGNED_REQUESTS',
+  doRoleChecks: 'DO_ROLE_CHECKS',
   iamClientId: 'IAM_CLIENT_ID',
   iamClientSecret: 'IAM_CLIENT_SECRET',
   identityProvider: 'IDENTITY_PROVIDER',
@@ -83,6 +85,15 @@ function cpmsServiceUrl() {
   return configuration[configMetadata.cpmsServiceUrl];
 }
 
+function doSignedRequests() {
+  return configuration[configMetadata.doSignedRequests] === 'true';
+}
+
+function doRoleChecks() {
+  const configVal = configuration[configMetadata.doRoleChecks];
+  return configVal !== 'false';
+}
+
 function env() {
   return configuration[configMetadata.nodeEnv] || 'development';
 }
@@ -147,6 +158,8 @@ const config = {
   cognitoUrl,
   cognitoUserPoolId,
   cpmsServiceUrl,
+  doSignedRequests,
+  doRoleChecks,
   env,
   iamClientId,
   iamClientSecret,
