@@ -56,6 +56,7 @@ export default class PenaltyService {
         }
         resolve(PenaltyService.parsePenalty(response.data));
       }).catch((error) => {
+        console.log(error);
         reject(new Error(error));
       });
     });

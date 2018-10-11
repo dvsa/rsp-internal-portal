@@ -17,6 +17,10 @@ export default class PaymentService {
     return this.httpClient.get(`groupPayments/${paymentCode}`);
   }
 
+  reverseGroupPayment(paymentId, penaltyType) {
+    return this.httpClient.delete(`groupPayments/${paymentId}/${penaltyType}`);
+  }
+
   reversePayment(paymentId) {
     return this.httpClient.delete(`payments/${paymentId}`);
   }
