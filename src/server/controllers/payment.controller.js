@@ -414,27 +414,9 @@ export const reversePayment = async (req, res) => {
     console.log(paymentMethod, paymentRef, type, penaltyId);
     // Check payment method
     switch (penaltyDetails.paymentMethod) {
-      case 'CARD':
-        console.log('reversing single penalty card payment');
-        console.log(paymentRef, type, penaltyId);
-        cpmsService.reverseCardPayment(paymentRef, type, paymentCode)
-          .then(() => {
-            paymentService.reversePayment(penaltyId).then((response) => {
-              logger.info(response);
-              return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
-            }).catch((error) => {
-              logger.error(error);
-              return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
-            });
-          }).catch((error) => {
-            // logger.error(error);
-            console.log('error reversing single pen card payment');
-            console.log(error);
-            return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
-          });
-        break;
       case 'CNP':
-        console.log('reversing single penalty cardholder not present payment');
+      case 'CARD':
+        console.log(`reversing single penalty ${paymentMethod} payment`);
         console.log(paymentRef, type, penaltyId);
         cpmsService.reverseCardPayment(paymentRef, type, paymentCode)
           .then(() => {
@@ -446,8 +428,8 @@ export const reversePayment = async (req, res) => {
               return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
             });
           }).catch((error) => {
-            // logger.error(error);
-            console.log('error reversing single pen card payment');
+            logger.error(error);
+            console.log(`error reversing single penalty ${paymentMethod} payment`);
             console.log(error);
             return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
           });
@@ -500,48 +482,26 @@ export const reverseGroupPayment = async (req, res) => {
     const { PaymentMethod, PaymentRef } = paymentDetails[penaltyType];
     // Check payment method
     switch (PaymentMethod) {
-      case 'CARD':
-        console.log('reversing card payment');
-        cpmsService.reverseCardPayment(PaymentRef, penaltyType, paymentCode)
-          .then(() => {
-            console.log('removing group payment from payments table');
-            paymentService.reverseGroupPayment(paymentCode).then((response) => {
-              console.log('success: removing group payment from payments table');
-              console.log(response);
-              // logger.info(response);
-              return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
-            }).catch((error) => {
-              console.log('error: removing group payment from payments table');
-              console.log(error);
-              // logger.error(error);
-              return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
-            });
-          }).catch((error) => {
-            // logger.error(error);
-            console.log('error reversing card payment');
-            console.log(error);
-            return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
-          });
-        break;
       case 'CNP':
-        console.log('reversing cardholder not present payment');
+      case 'CARD':
+        console.log(`reversing ${PaymentMethod} payment`);
         cpmsService.reverseCardPayment(PaymentRef, penaltyType, paymentCode)
           .then(() => {
             console.log('removing group payment from payments table');
             paymentService.reverseGroupPayment(paymentCode).then((response) => {
               console.log('success: removing group payment from payments table');
               console.log(response);
-              // logger.info(response);
+              logger.info(response);
               return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
             }).catch((error) => {
               console.log('error: removing group payment from payments table');
               console.log(error);
-              // logger.error(error);
+              logger.error(error);
               return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
             });
           }).catch((error) => {
-            // logger.error(error);
-            console.log('error reversing card payment');
+            logger.error(error);
+            console.log(`error reversing ${PaymentMethod} payment`);
             console.log(error);
             return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
           });
