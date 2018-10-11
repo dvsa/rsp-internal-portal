@@ -557,6 +557,8 @@ export const reverseGroupPayment = async (req, res) => {
               return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
             });
           }).catch((error) => {
+            console.log('error reversing cheque payment');
+            console.log(error);
             logger.error(error);
             return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
           });
@@ -577,7 +579,9 @@ export const reverseGroupPayment = async (req, res) => {
         return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
     }
   } catch (error) {
-    logger.warn(error);
+    console.log('paymentDetails error');
+    console.log(error);
+    logger.error(error);
     return res.redirect(`${config.urlRoot()}/?invalidPaymentCode`);
   }
   return true;
