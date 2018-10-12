@@ -159,6 +159,52 @@ describe('MainController', () => {
       });
     });
 
+    context('when we search for a reg in a penalty group with only one FPN', () => {
+      it('should render correctly', async () => {
+        searchForm.vehicle_reg = '11EEE';
+        await MainController.searchPenalty(request, response);
+        await MainController.searchVehicleReg({ params: { vehicle_reg: '11EEE' } }, response);
+
+        const expectedViewData = {
+          vehicleReg: '11EEE',
+          results: [
+            {
+              paymentCode: 'abc123',
+              paymentStatus: 'UNPAID',
+              summary: '1 penalty',
+              date: 1535546734.879,
+              formattedDate: '29/08/2018 13:45',
+            },
+          ],
+        };
+        sinon.assert.calledWith(redirectSpy, '/vehicle-reg-search-results/11EEE');
+        sinon.assert.calledWith(renderSpy, 'penalty/vehicleRegSearchResults', expectedViewData);
+      });
+    });
+
+    context('when we search for a reg in a penalty group with only one IM', () => {
+      it('should render correctly', async () => {
+        searchForm.vehicle_reg = '11FFF';
+        await MainController.searchPenalty(request, response);
+        await MainController.searchVehicleReg({ params: { vehicle_reg: '11FFF' } }, response);
+
+        const expectedViewData = {
+          vehicleReg: '11FFF',
+          results: [
+            {
+              paymentCode: 'abc123',
+              paymentStatus: 'UNPAID',
+              summary: '1 immobilisation',
+              date: 1535546734.879,
+              formattedDate: '29/08/2018 13:45',
+            },
+          ],
+        };
+        sinon.assert.calledWith(redirectSpy, '/vehicle-reg-search-results/11FFF');
+        sinon.assert.calledWith(renderSpy, 'penalty/vehicleRegSearchResults', expectedViewData);
+      });
+    });
+
     context('when the user searches for a blank registration', () => {
       it('should redirect back home with the invalid registration query param', async () => {
         searchForm.vehicle_reg = '   ';

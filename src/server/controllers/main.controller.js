@@ -138,10 +138,19 @@ const summarisePenaltyGroup = (penaltyGroup) => {
     const type = id.split('_')[1];
     return type === 'IM' ? 'immobilisation' : 'penalty';
   });
-  const penaltyLabel = grouping.penalty.length === 1 ? 'penalty' : 'penalties';
-  const penaltyDesc = `${grouping.penalty.length} ${penaltyLabel}`;
-  const afterPenaltyDesc = grouping.immobilisation !== undefined ? ' + immobilisation' : '';
-  return `${penaltyDesc}${afterPenaltyDesc}`;
+  const bothTypesPresent = grouping.immobilisation && grouping.penalty;
+  let penaltyDesc = '';
+  if (grouping.penalty) {
+    const numPenalties = grouping.penalty.length;
+    penaltyDesc = `${numPenalties} ${grouping.penalty.length === 1 ? 'penalty' : 'penalties'}`;
+  }
+  let immobDesc = '';
+  if (grouping.immobilisation) {
+    const imNumberingMaybeApplied = bothTypesPresent ? 'immobilisation' : '1 immobilisation';
+    immobDesc = grouping.immobilisation ? imNumberingMaybeApplied : '';
+  }
+  const separator = bothTypesPresent ? ' + ' : '';
+  return `${penaltyDesc}${separator}${immobDesc}`;
 };
 
 const summarisePenalty = (penalty) => {
