@@ -168,4 +168,44 @@ export default {
       },
     ],
   },
+  '11EEE': {
+    PenaltyGroups: [
+      {
+        ID: 'abc123',
+        Enabled: true,
+        SiteCode: 19,
+        TotalAmount: 888,
+        PaymentStatus: 'UNPAID',
+        Offset: 1533562273.803,
+        Location: 'Dalar Hir (A55 near Holyhead)',
+        VehicleRegistration: '11EEE',
+        Origin: 'APP',
+        Timestamp: 1535546734.879,
+        PenaltyDocumentIds: [
+          '123_FPN',
+        ],
+      },
+    ],
+    Penalties: [],
+  },
+  '11FFF': {
+    PenaltyGroups: [
+      {
+        ID: 'abc123',
+        Enabled: true,
+        SiteCode: 19,
+        TotalAmount: 80,
+        PaymentStatus: 'UNPAID',
+        Offset: 1533562273.803,
+        Location: 'Dalar Hir (A55 near Holyhead)',
+        VehicleRegistration: '11FFF',
+        Origin: 'APP',
+        Timestamp: 1535546734.879,
+        PenaltyDocumentIds: [
+          '123_IM',
+        ],
+      },
+    ],
+    Penalties: [],
+  },
 };
