@@ -6,7 +6,7 @@ import * as paymentController from './controllers/payment.controller';
 import * as penaltyController from './controllers/penalty.controller';
 import * as reportController from './controllers/report.controller';
 import receiptController from './controllers/receipt.controller';
-import financeUsersAuthorizationMiddleware from './middlewares/financeUsersAuthorization.middleware';
+import { reportsAuthorizer, reversePaymentAuthorizer } from './middlewares/financeUsersAuthorization.middleware';
 
 const router = Router();
 
@@ -30,8 +30,8 @@ router.post('/payment-code/:payment_code/payment', paymentCodeController.validat
 router.post('/payment-code/:payment_code/:type/payment', paymentController.makeGroupPayment);
 router.get('/payment-code/:payment_code/confirmPayment', paymentController.confirmPayment);
 router.get('/payment-code/:payment_code/:type/confirmGroupPayment', paymentController.confirmGroupPayment);
-router.post('/payment-code/:payment_code/reversePayment', financeUsersAuthorizationMiddleware, paymentController.reversePayment);
-router.post('/payment-code/:payment_code/:type/reverseGroupPayment', financeUsersAuthorizationMiddleware, paymentController.reverseGroupPayment);
+router.post('/payment-code/:payment_code/reversePayment', reversePaymentAuthorizer, paymentController.reversePayment);
+router.post('/payment-code/:payment_code/:type/reverseGroupPayment', reversePaymentAuthorizer, paymentController.reverseGroupPayment);
 router.get('/payment-code/:payment_code/:type/details', paymentCodeController.getPenaltyGroupBreakdownForType);
 router.get('/payment-code/:payment_code/:type/receipt', receiptController);
 
@@ -41,10 +41,10 @@ router.post('/penalty/:penalty_id/cancel', penaltyController.cancelPenalty);
 router.get('/penalty/:penalty_id/payment', paymentController.renderPaymentPage);
 
 // Reports
-router.get('/reports', authorizationMiddleware, financeUsersAuthorizationMiddleware, reportController.renderReportFilters);
-router.post('/reports', financeUsersAuthorizationMiddleware, reportController.generateReport);
-router.get('/reports/:report_ref/', financeUsersAuthorizationMiddleware, reportController.showDetails);
-router.get('/reports/:report_ref/status', financeUsersAuthorizationMiddleware, reportController.checkReportStatus);
-router.get('/reports/:report_ref/download', financeUsersAuthorizationMiddleware, reportController.downloadReport);
+router.get('/reports', authorizationMiddleware, reportsAuthorizer, reportController.renderReportFilters);
+router.post('/reports', reportsAuthorizer, reportController.generateReport);
+router.get('/reports/:report_ref/', reportsAuthorizer, reportController.showDetails);
+router.get('/reports/:report_ref/status', reportsAuthorizer, reportController.checkReportStatus);
+router.get('/reports/:report_ref/download', reportsAuthorizer, reportController.downloadReport);
 
 export default router;
