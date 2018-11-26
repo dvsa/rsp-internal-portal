@@ -167,6 +167,11 @@ export const makeGroupPayment = async (req, res) => {
   try {
     const penaltyType = req.params.type;
     const { paymentType } = req.body;
+
+    if (!validPaymentTypeForPenaltyType(paymentType, penaltyType)) {
+      return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
+    }
+
     const penaltyGroup = await penaltyGroupService.getByPaymentCode(paymentCode);
     const penaltiesOfType = penaltyGroup.penaltyDetails.find(p => p.type === penaltyType).penalties;
     const amountPaidForType = penaltyGroup.penaltyGroupDetails.splitAmounts
@@ -302,6 +307,10 @@ export const renderGroupPaymentPage = async (req, res) => {
 
     if (penaltyGroup.paymentStatus === 'PAID') {
       return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
+    }
+
+    if (!validPaymentTypeForPenaltyType(paymentType, penaltyType)) {
+      return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}/${penaltyType}/details`);
     }
 
     if (paymentType === 'card') {
