@@ -20,6 +20,13 @@ const getPenaltyDetails = (req) => {
   return penaltyService.getById(req.params.penalty_id);
 };
 
+function validPaymentTypeForPenaltyType(paymentType, penaltyType) {
+  if (penaltyType === 'IM') {
+    return !(paymentType === 'cheque' || paymentType === 'postal');
+  }
+  return true;
+}
+
 export const makePayment = async (req, res) => {
   const paymentCode = req.params.payment_code;
   const userRole = req.session.rsp_user_role;
@@ -33,6 +40,11 @@ export const makePayment = async (req, res) => {
 
   try {
     const penaltyDetails = await getPenaltyDetails(req);
+
+    if (!validPaymentTypeForPenaltyType(req.body.paymentType, penaltyDetails.type)) {
+      // Cheque payment not allowed for IM
+      return res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
+    }
 
     switch (req.body.paymentType) {
       case 'cash':
@@ -241,6 +253,10 @@ export const renderPaymentPage = async (req, res) => {
     const paymentType = req.query.paymentType ? req.query.paymentType : 'card';
     const { paymentCode } = penaltyDetails;
     const redirectUrl = `${config.postPaymentRedirectBaseUrl()}/payment-code/${paymentCode}/confirmPayment`;
+
+    if (!validPaymentTypeForPenaltyType(paymentType, penaltyDetails.type)) {
+      return res.redirect('./');
+    }
 
     switch (paymentType) {
       case 'cash':
