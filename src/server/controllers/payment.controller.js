@@ -255,7 +255,7 @@ export const renderPaymentPage = async (req, res) => {
     const redirectUrl = `${config.postPaymentRedirectBaseUrl()}/payment-code/${paymentCode}/confirmPayment`;
 
     if (!validPaymentTypeForPenaltyType(paymentType, penaltyDetails.type)) {
-      return res.redirect('./');
+      return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
     }
 
     switch (paymentType) {
