@@ -331,7 +331,7 @@ describe('PaymentController', () => {
     });
   });
 
-  describe('makePayment', () => {
+  describe('makePayment for immobilisation', () => {
     const paymentCode = '5260825bbe245e1a';
     const cpmsReceiptRef = 'FB02-01-20180816-091027-B9AA05B9';
     const imReference = '945872-0-776-IM';
@@ -408,6 +408,94 @@ describe('PaymentController', () => {
       afterEach(() => {
         CpmsService.prototype.createChequeTransaction.restore();
       });
+      it('attempts to create a cheque transaction, fails, and returns to the payment code summary', async () => {
+        await PaymentController.makePayment(request, response);
+        // Test the payment hasn't gone through
+        sinon.assert.notCalled(paymentServiceStub);
+        sinon.assert.calledWith(redirectSpy, `/payment-code/${paymentCode}`);
+      });
+    });
+
+    context('when a postal payment is made', () => {
+      const postalOrderNumber = 5555;
+      beforeEach(() => {
+        request.body = { paymentType: 'postal', slipNumber, postalOrderNumber };
+        cpmsServiceStub = sinon.stub(CpmsService.prototype, 'createPostalOrderTransaction');
+        cpmsServiceStub
+          .withArgs(paymentCode, vehicleReg, imReference, 'IM', 80, slipNumber, postalOrderNumber)
+          .resolves({ data: { receipt_reference: cpmsReceiptRef } });
+        paymentServiceStub.resolves();
+      });
+      afterEach(() => {
+        CpmsService.prototype.createPostalOrderTransaction.restore();
+      });
+      it('attempts to create a postal transaction, fails, and returns to the payment code summary', async () => {
+        await PaymentController.makePayment(request, response);
+        sinon.assert.notCalled(paymentServiceStub);
+        sinon.assert.calledWith(redirectSpy, `/payment-code/${paymentCode}`);
+      });
+    });
+  });
+
+  describe('makePayment for fixed penalty notices', () => {
+    const paymentCode = '3cc571fbf9459417';
+    const cpmsReceiptRef = 'FB02-01-20180816-091027-B9AA05B9';
+    const vehicleReg = 'TESTER4';
+    const fpnReference = '379468752548';
+    const slipNumber = 2468;
+    const requestParams = { payment_code: paymentCode };
+    const penaltyType = 'FPN';
+    const paymentAmount = 120;
+    let penaltySvcStub;
+    let cpmsServiceStub;
+    const expectedPaymentSvcPayloadForPaymentType = type => ({
+      PenaltyStatus: 'PAID',
+      PenaltyType: penaltyType,
+      PaymentDetail: {
+        PaymentMethod: type,
+        PaymentRef: cpmsReceiptRef,
+        PaymentAmount: paymentAmount,
+        PaymentDate: sinon.match.number,
+      },
+      PenaltyReference: fpnReference,
+    });
+
+    beforeEach(() => {
+      penaltySvcStub = sinon.stub(PenaltyService.prototype, 'getByPaymentCode');
+      penaltySvcStub
+        .callsFake(c => Promise.resolve(penaltyServiceGetResponses.find(p => p.paymentCode === c)));
+      paymentServiceStub = sinon.stub(PaymentService.prototype, 'makePayment');
+      request = { params: requestParams, session: { rsp_user_role: 'BankingFinance' } };
+    });
+    afterEach(() => {
+      PenaltyService.prototype.getByPaymentCode.restore();
+      PaymentService.prototype.makePayment.restore();
+    });
+
+    context('when a cheque payment is made', () => {
+      const chequeDate = '04/10/2018';
+      const chequeNumber = '9876';
+      const nameOnCheque = 'Joe Bloggs';
+      beforeEach(() => {
+        request.body = {
+          paymentType: 'cheque',
+          slipNumber,
+          chequeDate,
+          chequeNumber,
+          nameOnCheque,
+        };
+        cpmsServiceStub = sinon.stub(CpmsService.prototype, 'createChequeTransaction');
+        cpmsServiceStub
+          .withArgs(
+            paymentCode, vehicleReg, fpnReference, penaltyType, paymentAmount, slipNumber,
+            chequeDate, chequeNumber, nameOnCheque,
+          )
+          .resolves({ data: { receipt_reference: cpmsReceiptRef } });
+        paymentServiceStub.resolves();
+      });
+      afterEach(() => {
+        CpmsService.prototype.createChequeTransaction.restore();
+      });
       it('create a cheque transaction, persist it and return to payment code summary', async () => {
         await PaymentController.makePayment(request, response);
         sinon.assert.calledWith(paymentServiceStub, expectedPaymentSvcPayloadForPaymentType('CHEQUE'));
@@ -421,7 +509,10 @@ describe('PaymentController', () => {
         request.body = { paymentType: 'postal', slipNumber, postalOrderNumber };
         cpmsServiceStub = sinon.stub(CpmsService.prototype, 'createPostalOrderTransaction');
         cpmsServiceStub
-          .withArgs(paymentCode, vehicleReg, imReference, 'IM', 80, slipNumber, postalOrderNumber)
+          .withArgs(
+            paymentCode, vehicleReg, fpnReference, penaltyType, paymentAmount, slipNumber,
+            postalOrderNumber,
+          )
           .resolves({ data: { receipt_reference: cpmsReceiptRef } });
         paymentServiceStub.resolves();
       });
