@@ -19,25 +19,25 @@
             {{ components.heading(text='Select report type', tag='h3', size='medium') }}
               {% for item in types  %}
               <div class="multiple-choice">
-                <input id="report-{{ item.code }}" type="radio" name="reportCode" value='{{ item.code }}'>
+                <input id="report-{{ item.code }}" type="radio" name="reportCode" value='{{ item.code }}' required>
                 <label for="report-{{ item.code }}"><strong>{{ item.name }}</strong></label>
-              </div>            
-              {% endfor %}       
+              </div>
+              {% endfor %}
           </fieldset>
         </div>
         <div class="form-group">
           {{ components.heading(text='Select penalty type', tag='h3', size='medium') }}
           <fieldset>
               <div class="multiple-choice">
-                <input id="penalty-type" type="radio" name="penaltyType" value='FPN'>
+                <input id="penalty-type" type="radio" name="penaltyType" value='FPN' required>
                 <label for="penalty-type"><strong>Fixed penalty</strong></label>
               </div>
               <div class="multiple-choice">
-                <input id="penalty-type" type="radio" name="penaltyType" value='CDN'>
+                <input id="penalty-type" type="radio" name="penaltyType" value='CDN' required>
                 <label for="penalty-type"><strong>Court deposit</strong></label>
               </div> 
               <div class="multiple-choice">
-                <input id="penalty-type" type="radio" name="penaltyType" value='IM'>
+                <input id="penalty-type" type="radio" name="penaltyType" value='IM' required>
                 <label for="penalty-type"><strong>Immobilisation</strong></label>
               </div>             
           </fieldset>
