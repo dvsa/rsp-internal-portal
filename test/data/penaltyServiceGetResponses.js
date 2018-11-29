@@ -13,4 +13,18 @@ export default [
     typeDescription: 'immobilisation',
     enabled: true,
   },
+  {
+    complete: true,
+    reference: '379468752548',
+    paymentCode: '3cc571fbf9459417',
+    issueDate: '04/10/2018',
+    vehicleReg: 'TESTER4',
+    formattedReference: '379468752548',
+    location: 'Sandbach (Sandbach Services M6 just South of J17)',
+    amount: 120,
+    status: 'UNPAID',
+    type: 'FPN',
+    typeDescription: 'Fixed Penalty Notice',
+    enabled: true,
+  },
 ];

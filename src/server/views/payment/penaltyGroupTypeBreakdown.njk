@@ -60,8 +60,10 @@
             {{ components.heading(text='Payment by', tag='h3', size='medium') }}
             {{ components.radio(text='Card (external website)', value='card', id='pay-by-card', name='paymentType', checked="true") }}
             {{ components.radio(text='Cash', value='cash', id='pay-by-cash', name='paymentType') }}
-            {{ components.radio(text='Cheque', value='cheque', id='pay-by-cheque', name='paymentType') }}
-            {{ components.radio(text='Postal Order', value='postal', id='pay-by-postal', name='paymentType') }}
+            {% if penaltyType !== 'IM' %}
+              {{ components.radio(text='Cheque', value='cheque', id='pay-by-cheque', name='paymentType') }}
+              {{ components.radio(text='Postal Order', value='postal', id='pay-by-postal', name='paymentType') }}
+            {% endif %}
           {%- endcall %}
           {{ components.button(text=submitButtonText, type='submit') }}
         {%- endcall %}
