@@ -13,6 +13,14 @@
     {% call components.columnTwoThirds() %}
       {% if types|length %}
         {{ components.heading(text='Generate reports', tag='h1', size='xlarge') }}
+        {% if invalidDateRange %}
+          <div class="error-summary" role="alert" aria-labelledby="error-summary-generate-report" tabindex="-1">
+            <h2 class="heading-medium error-summary-heading" id="error-summary-generate-report">
+              There was a problem
+            </h2>
+            The date range you entered was invalid.
+          </div>
+        {% endif %}
         {% call components.form(action='', method='POST')  %}
         <div class="form-group">
           <fieldset>
@@ -42,8 +50,13 @@
               </div>             
           </fieldset>
         </div>
-        <div class="form-group">
+        <div class="form-group {{'form-group-error' if invalidDateRange}}">
           {{ components.heading(text='Select date range', tag='h3', size='medium') }}
+          {% if invalidDateRange %}
+            <div>
+              <span class="error-message">Enter a valid date range</span>
+            </div>
+          {% endif %}
           <fieldset class="inline">
             <div class="inline-block">
             {{ components.field(id="dateFrom", type="date", label="From date", required=true) }}
@@ -53,7 +66,7 @@
             </div>
           </fieldset>
         </div>
-          {{ components.button(text='Generate report', type='submit') }}
+        {{ components.button(text='Generate report', type='submit') }}
       {%- endcall%}
     {% else %}
       {{ components.heading(text='Reports service unavailable', tag='h1', size='xlarge') }}
