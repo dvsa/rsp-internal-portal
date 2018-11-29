@@ -21,7 +21,7 @@
             The date range you entered was invalid.
           </div>
         {% endif %}
-        {% call components.form(action='', method='POST')  %}
+        {% call components.form(action='', method='POST') %}
         <div class="form-group">
           <fieldset>
             {{ components.heading(text='Select report type', tag='h3', size='medium') }}
@@ -37,17 +37,17 @@
           {{ components.heading(text='Select penalty type', tag='h3', size='medium') }}
           <fieldset>
               <div class="multiple-choice">
-                <input id="penalty-type" type="radio" name="penaltyType" value='FPN' required>
-                <label for="penalty-type"><strong>Fixed penalty</strong></label>
+                <input id="fixed-penalty" type="radio" name="penaltyType" value='FPN' required>
+                <label for="fixed-penalty"><strong>Fixed penalty</strong></label>
               </div>
               <div class="multiple-choice">
-                <input id="penalty-type" type="radio" name="penaltyType" value='CDN' required>
-                <label for="penalty-type"><strong>Court deposit</strong></label>
+                <input id="court-deposit" type="radio" name="penaltyType" value='CDN' required>
+                <label for="court-deposit"><strong>Court deposit</strong></label>
               </div> 
               <div class="multiple-choice">
-                <input id="penalty-type" type="radio" name="penaltyType" value='IM' required>
-                <label for="penalty-type"><strong>Immobilisation</strong></label>
-              </div>             
+                <input id="immobilisation" type="radio" name="penaltyType" value='IM' required>
+                <label for="immobilisation"><strong>Immobilisation</strong></label>
+              </div>
           </fieldset>
         </div>
         <div class="form-group {{'form-group-error' if invalidDateRange}}">
