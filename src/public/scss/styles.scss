@@ -60,6 +60,10 @@ table#receipt-breakdown {
   color: $error-colour;
 }
 
+.cancelled {
+  color: $cancelled-colour;
+}
+
 .confirmed {
   color: #00823B;
 }
