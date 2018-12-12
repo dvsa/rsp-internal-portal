@@ -71,7 +71,7 @@
 
           {{ components.heading(text="Payment details ", tag="h3", size="medium") }}
           <p>{{ components.field(id="postalOrderNumber", type="number", label= "Postal order number", required=true) }}</p>
-          <p>{{ components.field(id="slipNumber", type="number", label="Paying in slip number", required=true) }}</p>
+          <p>{{ components.field(id="slipNumber", type="number", label="Reference number", required=true) }}</p>
           {{ components.button(text="Confirm payment", type="submit") }}
         {%- endcall %}
     {%- endcall %}

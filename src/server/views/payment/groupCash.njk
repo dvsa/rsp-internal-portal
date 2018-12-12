@@ -66,7 +66,7 @@
           <input type="hidden" name="paymentType" value="cash">
           {{ components.heading(text="Payment details ", tag="h3", size="medium") }}
           <p>
-            {{ components.field(id="slipNumber", type="number", label="Paying in slip number", required=true) }}
+            {{ components.field(id="slipNumber", type="number", label="Reference number", required=true) }}
           </p>
           {{ components.button(text="Confirm cash payment", type="submit") }}
         {%- endcall %}
