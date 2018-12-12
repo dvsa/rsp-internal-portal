@@ -124,53 +124,45 @@
 
       {% for penaltyType in penaltyDetails %}
         {% if penaltyType.type == 'FPN' %}
-          <p>
-            <details>
-              <summary><span class="summary">See fixed penalty details</span></summary>
-              <div class="panel panel-border-narrow">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Reference</th>
-                      <th>Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for penalty in penaltyType.penalties %}
-                      <tr>
-                        <td>{{ penalty.formattedReference }}</td>
-                        <td>&pound;{{ penalty.amount }}</td>
-                      </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-            </details>    
-          </p>
+          <div>
+            {{ components.heading(text='Fixed penalty details', tag='h3', size='medium') }}
+            <table>
+              <thead>
+                <tr>
+                  <th>Reference</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for penalty in penaltyType.penalties %}
+                  <tr>
+                    <td>{{ penalty.formattedReference }}</td>
+                    <td>&pound;{{ penalty.amount }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
         {% elif penaltyType.type == 'CDN' %}
-          <p>
-            <details>
-              <summary><span class="summary">See court deposit details</span></summary>
-              <div class="panel panel-border-narrow">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Reference</th>
-                      <th>Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for penalty in penaltyType.penalties %}
-                      <tr>
-                        <td>{{ penalty.formattedReference }}</td>
-                        <td>&pound;{{ penalty.amount }}</td>
-                      </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-            </details>    
-          </p>
+          <div>
+            {{ components.heading(text='Court deposity details', tag='h3', size='medium') }}
+            <table>
+              <thead>
+                <tr>
+                  <th>Reference</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for penalty in penaltyType.penalties %}
+                  <tr>
+                    <td>{{ penalty.formattedReference }}</td>
+                    <td>&pound;{{ penalty.amount }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
         {% endif %}
       {% endfor %}
     {%- endcall %}
