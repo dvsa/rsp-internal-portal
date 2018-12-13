@@ -11,7 +11,7 @@
 
     {% call components.columnTwoThirds() %}
 
-      {{ components.heading(text='Take payments for DVSA roadside fines', tag='h1', size='xlarge') }}
+      {{ components.heading(text='Search DVSA roadside fines', tag='h1', size='xlarge') }}
 
       {% if invalid %}
         <div class="error-summary" role="alert" aria-labelledby="error-summary-payment-code" tabindex="-1">
@@ -23,7 +23,8 @@
       {% endif %}
 
       <form action="{{ urlroot }}/" method="POST">
-      <div class="form-group">
+      <h3 class="search-form-header" id="search-by-header">Search by:</h3>
+      <div class="form-group" aria-labelledby="search-by-header">
         <fieldset>
         <!-- Fixed Penalty -->
           <div class="visuallyhidden">
@@ -113,10 +114,9 @@
     {%- endcall %}
 
     {% call components.columnOneThird() %}
-
-    <aside class="govuk-related-items" role="complementary">
-        Other actions
-        <nav role="navigation" aria-labelledby="subsection-title">
+      <aside class="govuk-related-items" role="complementary">
+        {{ components.heading(text='Other actions', tag='h3', size='medium', id="other-actions-header") }}
+        <nav role="navigation" aria-labelledby="other-actions-header">
           <ul class="font-xsmall">
             <li> {{ components.link(text='Generate report', url='/reports') }} </li>
           </ul>
