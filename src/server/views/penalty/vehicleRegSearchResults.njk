@@ -23,7 +23,15 @@
           <tr>
             <td>{{ components.link(text=result.paymentCode, url='/payment-code/' + result.paymentCode) }}</td>
             <td>{{ result.formattedDate }}</td>
-              {% set statusClass = 'confirmed' if result.paymentStatus == 'PAID' else 'unconfirmed' %}
+
+              {% if result.paymentStatus == 'PAID' %}
+                {% set statusClass = 'confirmed' %}
+              {% elif result.paymentStatus == 'CANCELLED' %}
+                {% set statusClass = 'cancelled' %}
+              {% else %}
+                {% set statusClass = 'unconfirmed' %}
+              {% endif %}
+
               <td><span class='{{statusClass}}'><strong>{{ result.paymentStatus }}</strong></span></td>
             <td>{{ result.summary }}</td>
           </tr>
