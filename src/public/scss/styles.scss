@@ -118,3 +118,7 @@ table#receipt-breakdown {
 .search-form-header {
   margin-bottom: 16px;
 }
+
+details summary {
+  display: list-item;
+}
