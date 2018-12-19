@@ -4,6 +4,8 @@ import * as PaymentCodeController from '../../src/server/controllers/paymentCode
 import PenaltyService from '../../src/server/services/penalty.service';
 import PenaltyGroupService from '../../src/server/services/penaltyGroup.service';
 
+import fakePenaltyGroups from '../data/penaltyGroup/fake-penalty-groups-enriched.json';
+
 describe('Payment Code Controller', () => {
   describe('getPenaltyDetails', () => {
     let penaltyService;
@@ -12,18 +14,18 @@ describe('Payment Code Controller', () => {
     const redirectSpy = sinon.spy();
     const response = { render: renderSpy, redirect: redirectSpy };
 
-    const fakePenaltyDetails = { paymentCode: '1234567890123456' };
-    const fakePenaltyGroup = { isPenaltyGroup: true };
+    const fakePenaltyGroup = fakePenaltyGroups[0];
+    const fakePenaltyDetails = fakePenaltyGroup.penaltyDetails[0].penalties[0];
 
     beforeEach(() => {
       penaltyService = sinon.stub(PenaltyService.prototype, 'getByPaymentCode');
       penaltyService
-        .withArgs('1234567890123456')
+        .withArgs(fakePenaltyDetails.paymentCode)
         .resolves(fakePenaltyDetails);
 
       penaltyGroupService = sinon.stub(PenaltyGroupService.prototype, 'getByPaymentCode');
       penaltyGroupService
-        .withArgs('notlength16')
+        .withArgs(fakePenaltyGroup.paymentCode)
         .resolves(fakePenaltyGroup);
     });
     afterEach(() => {
@@ -34,22 +36,35 @@ describe('Payment Code Controller', () => {
 
     describe('when called with payment code of length 16', () => {
       it('should return the individual penalty returned from penalty service', async () => {
-        await PaymentCodeController.getPenaltyDetails[1]({ params: { payment_code: '1234567890123456' } }, response);
+        await PaymentCodeController.getPenaltyDetails[1]({
+          params: { payment_code: fakePenaltyDetails.paymentCode },
+        }, response);
         sinon.assert.calledWith(renderSpy, 'penalty/penaltyDetails', fakePenaltyDetails);
       });
     });
 
     describe('when called with payment code less than 16 characters', () => {
       it('should return the penalty group from penalty group service', async () => {
-        await PaymentCodeController.getPenaltyDetails[1]({ params: { payment_code: 'notlength16' } }, response);
-        sinon.assert.calledWith(renderSpy, 'penalty/penaltyGroupSummary', fakePenaltyGroup);
+        await PaymentCodeController.getPenaltyDetails[1]({
+          params: { payment_code: fakePenaltyGroup.paymentCode },
+        }, response);
+        sinon.assert.calledWith(renderSpy, 'penalty/penaltyGroupSummary', {
+          ...fakePenaltyGroup,
+          location: fakePenaltyDetails.location,
+        });
       });
     });
 
     describe('when called with a query parameter indicating cancellation failed', () => {
       it('should render the response with a flag to show the error', async () => {
-        await PaymentCodeController.getPenaltyDetails[1]({ params: { payment_code: 'notlength16' }, query: { cancellation: 'failed' } }, response);
-        sinon.assert.calledWith(renderSpy, 'penalty/penaltyGroupSummary', { ...fakePenaltyGroup, cancellationFailed: true });
+        await PaymentCodeController.getPenaltyDetails[1]({
+          params: { payment_code: fakePenaltyGroup.paymentCode }, query: { cancellation: 'failed' },
+        }, response);
+        sinon.assert.calledWith(renderSpy, 'penalty/penaltyGroupSummary', {
+          ...fakePenaltyGroup,
+          cancellationFailed: true,
+          location: fakePenaltyDetails.location,
+        });
       });
     });
   });
