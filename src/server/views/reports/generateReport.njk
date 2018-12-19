@@ -13,37 +13,50 @@
     {% call components.columnTwoThirds() %}
       {% if types|length %}
         {{ components.heading(text='Generate reports', tag='h1', size='xlarge') }}
-        {% call components.form(action='', method='POST')  %}
+        {% if invalidDateRange %}
+          <div class="error-summary" role="alert" aria-labelledby="error-summary-generate-report" tabindex="-1">
+            <h2 class="heading-medium error-summary-heading" id="error-summary-generate-report">
+              There was a problem
+            </h2>
+            The date range you entered was invalid.
+          </div>
+        {% endif %}
+        {% call components.form(action='', method='POST') %}
         <div class="form-group">
           <fieldset>
             {{ components.heading(text='Select report type', tag='h3', size='medium') }}
               {% for item in types  %}
               <div class="multiple-choice">
-                <input id="report-{{ item.code }}" type="radio" name="reportCode" value='{{ item.code }}'>
+                <input id="report-{{ item.code }}" type="radio" name="reportCode" value='{{ item.code }}' required>
                 <label for="report-{{ item.code }}"><strong>{{ item.name }}</strong></label>
-              </div>            
-              {% endfor %}       
+              </div>
+              {% endfor %}
           </fieldset>
         </div>
         <div class="form-group">
           {{ components.heading(text='Select penalty type', tag='h3', size='medium') }}
           <fieldset>
               <div class="multiple-choice">
-                <input id="penalty-type" type="radio" name="penaltyType" value='FPN'>
-                <label for="penalty-type"><strong>Fixed penalty</strong></label>
+                <input id="fixed-penalty" type="radio" name="penaltyType" value='FPN' required>
+                <label for="fixed-penalty"><strong>Fixed penalty</strong></label>
               </div>
               <div class="multiple-choice">
-                <input id="penalty-type" type="radio" name="penaltyType" value='CDN'>
-                <label for="penalty-type"><strong>Court deposit</strong></label>
+                <input id="court-deposit" type="radio" name="penaltyType" value='CDN' required>
+                <label for="court-deposit"><strong>Court deposit</strong></label>
               </div> 
               <div class="multiple-choice">
-                <input id="penalty-type" type="radio" name="penaltyType" value='IM'>
-                <label for="penalty-type"><strong>Immobilisation</strong></label>
-              </div>             
+                <input id="immobilisation" type="radio" name="penaltyType" value='IM' required>
+                <label for="immobilisation"><strong>Immobilisation</strong></label>
+              </div>
           </fieldset>
         </div>
-        <div class="form-group">
+        <div class="form-group {{'form-group-error' if invalidDateRange}}">
           {{ components.heading(text='Select date range', tag='h3', size='medium') }}
+          {% if invalidDateRange %}
+            <div>
+              <span class="error-message">Enter a valid date range</span>
+            </div>
+          {% endif %}
           <fieldset class="inline">
             <div class="inline-block">
             {{ components.field(id="dateFrom", type="date", label="From date", required=true) }}
@@ -53,7 +66,7 @@
             </div>
           </fieldset>
         </div>
-          {{ components.button(text='Generate report', type='submit') }}
+        {{ components.button(text='Generate report', type='submit') }}
       {%- endcall%}
     {% else %}
       {{ components.heading(text='Reports service unavailable', tag='h1', size='xlarge') }}

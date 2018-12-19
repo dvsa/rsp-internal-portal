@@ -60,6 +60,10 @@ table#receipt-breakdown {
   color: $error-colour;
 }
 
+.cancelled {
+  color: $cancelled-colour;
+}
+
 .confirmed {
   color: #00823B;
 }
@@ -115,7 +119,10 @@ table#receipt-breakdown {
   }
 }
 
+.search-form-header {
+  margin-bottom: 16px;
+}
 
-
-
-
+details summary {
+  display: list-item;
+}
