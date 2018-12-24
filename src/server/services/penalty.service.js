@@ -44,6 +44,7 @@ export default class PenaltyService {
       paymentRef: rawPenalty.paymentRef,
       paymentMethod: rawPenalty.paymentMethod,
       enabled: data.Enabled,
+      paymentCodeIssuedDate: rawPenalty.issuedDateTime ? moment.unix(rawPenalty.issuedDateTime).format('DD/MM/YYYY HH:mm') : undefined,
     };
     return penaltyDetails;
   }
