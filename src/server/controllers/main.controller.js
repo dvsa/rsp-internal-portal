@@ -9,6 +9,8 @@ import PenaltyService from '../services/penalty.service';
 const authService = new AuthService(config.cognitoUrl());
 const penaltyService = new PenaltyService(config.penaltyServiceUrl());
 
+const dateTimeFormat = 'DD/MM/YYYY HH:mm';
+
 // Robots
 export const robots = (req, res) => {
   res.type('text/plain');
@@ -109,21 +111,23 @@ export const searchVehicleReg = async (req, res) => {
 
 const generateSearchResultViewData = (vehicleReg, penalties, penaltyGroups) => {
   const tzLocation = 'Europe/London';
-  const dateFormat = 'DD/MM/YYYY HH:mm';
 
   const penaltyGroupsMapping = penaltyGroups.map(penaltyGroup => ({
     paymentCode: penaltyGroup.ID,
     paymentStatus: penaltyGroup.Enabled ? penaltyGroup.PaymentStatus : 'CANCELLED',
     summary: summarisePenaltyGroup(penaltyGroup),
     date: penaltyGroup.Timestamp,
-    formattedDate: moment.tz(penaltyGroup.Timestamp * 1000, tzLocation).format(dateFormat),
+    formattedDate: moment.tz(penaltyGroup.Timestamp * 1000, tzLocation).format(dateTimeFormat),
   }));
   const penaltyMapping = penalties.map(penalty => ({
     paymentCode: penalty.Value.paymentToken,
     paymentStatus: penalty.Enabled ? penalty.Value.paymentStatus || 'UNPAID' : 'CANCELLED',
     summary: summarisePenalty(penalty),
     date: penalty.Value.dateTime,
-    formattedDate: moment.tz(penalty.Value.dateTime * 1000, tzLocation).format(dateFormat),
+    formattedDate: moment.tz(
+      penalty.Value.issuedDateTime * 1000,
+      tzLocation,
+    ).format(dateTimeFormat),
   }));
   const results = flatten([penaltyGroupsMapping, penaltyMapping]);
 
