@@ -3,6 +3,7 @@ import { find, isEmpty, uniq } from 'lodash';
 
 import PenaltyService from './penalty.service';
 import SignedHttpClient from '../utils/httpclient';
+import { MOMENT_DATE_TIME_FORMAT } from '../utils/dateTimeFormat';
 
 export default class PenaltyGroupService {
   constructor(serviceUrl) {
@@ -37,7 +38,7 @@ export default class PenaltyGroupService {
         penaltyGroupDetails: {
           registrationNumber: VehicleRegistration,
           location: Location,
-          date: moment.unix(Timestamp).format('DD/MM/YYYY'),
+          dateTime: moment.unix(Timestamp).format(MOMENT_DATE_TIME_FORMAT),
           amount: TotalAmount,
           enabled: Enabled,
           splitAmounts,

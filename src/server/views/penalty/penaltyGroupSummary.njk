@@ -51,11 +51,11 @@
             {% endif %}
           </tr>
           <tr>
-            <td>Penalty issued on</td>
+            <td>Penalty issued at</td>
             {% if isPenaltyGroup == false %}
-              <td colspan=2>{{ penaltyDetails.issueDate if penaltyDetails.complete else 'Not available' }}</td>
+              <td colspan=2>{{ penaltyDetails.penaltyIssueDate if penaltyDetails.complete else 'Not available' }}</td>
             {% else %}
-              <td colspan=2>{{ penaltyGroupDetails.date }}</td>
+              <td colspan=2>{{ penaltyGroupDetails.dateTime }}</td>
             {% endif %}
           </tr>
           <tr>
