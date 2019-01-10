@@ -57,6 +57,7 @@ export default async () => {
     name: 'rsp_internal_portal_user',
     // TODO: clientSecret will be removed eventually, will need to use a different app secret
     secret: config.clientSecret(),
+    secure: !config.isDevelopment(),
   }));
 
   // Create a view engine from nunjucks enviroment variable
