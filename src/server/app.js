@@ -17,6 +17,8 @@ import cookieParser from 'cookie-parser';
 import session from 'cookie-session';
 import config from './config';
 
+const SIXTY_DAYS_IN_SECONDS = 5184000;
+
 export default async () => {
   await config.bootstrap();
 
@@ -48,6 +50,10 @@ export default async () => {
   const app = express();
 
   app.use(helmet());
+
+  app.use(helmet.hsts({
+    maxAge: SIXTY_DAYS_IN_SECONDS,
+  }));
 
   // Add express to the nunjucks enviroment instance
   env.express(app);
