@@ -52,6 +52,9 @@ export default async () => {
   // Add express to the nunjucks enviroment instance
   env.express(app);
 
+  // Trust API Gateway proxy - required for secure cookie-session
+  app.set('trust proxy', true);
+
   app.use(session({
     maxAge: 1000 * 60 * 60 * 4, // 4 hours
     name: 'rsp_internal_portal_user',
