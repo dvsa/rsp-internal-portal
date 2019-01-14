@@ -49,7 +49,7 @@ export default async () => {
 
   app.use(helmet());
 
-  const assetsUrl = config.isDevelopment() ? 'http://localhost:3000/' : `${config.assets()}/`;
+  const assetsUrl = config.isDevelopment() ? 'http://localhost:3000/' : `${config.publicAssets()}/`;
 
   app.use(helmet.contentSecurityPolicy({
     directives: {
