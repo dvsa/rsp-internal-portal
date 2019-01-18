@@ -50,6 +50,27 @@ export default async () => {
 
   app.use(helmet());
 
+  const assetsUrl = config.isDevelopment() ? 'http://localhost:3000/' : `${config.publicAssets()}/`;
+
+  app.use(helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'", assetsUrl],
+      scriptSrc: [
+        assetsUrl,
+        'https://www.googletagmanager.com/',
+        'https://www.google-analytics.com/',
+        'https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/',
+      ],
+      fontSrc: ['data:'],
+      imgSrc: [
+        assetsUrl,
+        'https://www.google-analytics.com/',
+        'https://stats.g.doubleclick.net/',
+        'https://www.google.co.uk/ads/',
+        'https://www.google.com/ads/',
+      ],
+    },
+  }));
   app.use(helmet.hsts({
     maxAge: SIXTY_DAYS_IN_SECONDS,
   }));
