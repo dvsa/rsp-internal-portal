@@ -63,7 +63,7 @@
             {% if isPenaltyGroup == false %}
               <td colspan=2>{{ penaltyDetails.location if penaltyDetails.complete else 'Not available' }}</td> 
             {% else %}
-              <td colspan=2>{{ penaltyGroupDetails.location }}</td>
+              <td colspan=2>{{ location }}</td>
             {% endif %}
           </tr>
           {% for amount in penaltyGroupDetails.splitAmounts|sort(attribute='type', reverse=true) %}
