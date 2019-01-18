@@ -2,7 +2,6 @@
 import 'babel-polyfill';
 import express from 'express';
 import bodyParser from 'body-parser';
-import cors from 'cors';
 import compression from 'compression';
 import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
 import nunjucks from 'nunjucks';
@@ -70,7 +69,6 @@ export default async () => {
   app.set('x-powered-by', false);
 
   app.use(compression());
-  app.use(cors());
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(validator());
