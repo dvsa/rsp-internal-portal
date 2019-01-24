@@ -5,6 +5,7 @@ import moment from 'moment-timezone';
 import AuthService from '../services/auth.service';
 import config from '../config';
 import PenaltyService from '../services/penalty.service';
+import { MOMENT_DATE_TIME_FORMAT, MOMENT_TIMEZONE } from '../utils/dateTimeFormat';
 
 const authService = new AuthService(config.cognitoUrl());
 const penaltyService = new PenaltyService(config.penaltyServiceUrl());
@@ -108,22 +109,25 @@ export const searchVehicleReg = async (req, res) => {
 };
 
 const generateSearchResultViewData = (vehicleReg, penalties, penaltyGroups) => {
-  const tzLocation = 'Europe/London';
-  const dateFormat = 'DD/MM/YYYY HH:mm';
-
   const penaltyGroupsMapping = penaltyGroups.map(penaltyGroup => ({
     paymentCode: penaltyGroup.ID,
     paymentStatus: penaltyGroup.Enabled ? penaltyGroup.PaymentStatus : 'CANCELLED',
     summary: summarisePenaltyGroup(penaltyGroup),
     date: penaltyGroup.Timestamp,
-    formattedDate: moment.tz(penaltyGroup.Timestamp * 1000, tzLocation).format(dateFormat),
+    formattedDate: moment.tz(
+      penaltyGroup.Timestamp * 1000,
+      MOMENT_TIMEZONE,
+    ).format(MOMENT_DATE_TIME_FORMAT),
   }));
   const penaltyMapping = penalties.map(penalty => ({
     paymentCode: penalty.Value.paymentToken,
     paymentStatus: penalty.Enabled ? penalty.Value.paymentStatus || 'UNPAID' : 'CANCELLED',
     summary: summarisePenalty(penalty),
     date: penalty.Value.dateTime,
-    formattedDate: moment.tz(penalty.Value.dateTime * 1000, tzLocation).format(dateFormat),
+    formattedDate: moment.tz(
+      penalty.Value.paymentCodeDateTime * 1000,
+      MOMENT_TIMEZONE,
+    ).format(MOMENT_DATE_TIME_FORMAT),
   }));
   const results = flatten([penaltyGroupsMapping, penaltyMapping]);
 
@@ -187,7 +191,7 @@ export const login = (req, res) => {
   if (req.query.code) {
     authService.requestAccessToken(req.query.code).then((token) => {
       res.cookie('rsp_access', { accessToken: token.access_token, idToken: token.id_token }, { maxAge: token.expires_in * 1000, httpOnly: true });
-      res.cookie('rsp_refresh', { refreshToken: token.refresh_token }, { maxAge: 2592000000, httpOnly: true });
+      res.cookie('rsp_refresh', { refreshToken: token.refresh_token }, { maxAge: 14400000, httpOnly: true });
       res.redirect(`${config.urlRoot()}/`);
     }).catch(() => {
       // Failed to get an access token - Get a new authorization code and try again

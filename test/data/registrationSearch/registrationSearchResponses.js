@@ -31,6 +31,7 @@ export default {
         Origin: 'APP',
         Value: {
           dateTime: 1519776000,
+          paymentCodeDateTime: 1545652800,
           nonEndorsableOffence: [],
           officerID: 'Z7F6yxnw--6DJf4sLsxjg_S-3Gvrl5MxV-1iY7RRNiA',
           officerName: 'dvsa.officerfpns@bjss.com',
@@ -129,6 +130,7 @@ export default {
         Origin: 'APP',
         Value: {
           dateTime: 1519776000,
+          paymentCodeDateTime: 1545652800,
           nonEndorsableOffence: [],
           officerID: 'Z7F6yxnw--6DJf4sLsxjg_S-3Gvrl5MxV-1iY7RRNiA',
           officerName: 'dvsa.officerfpns@bjss.com',
@@ -151,6 +153,7 @@ export default {
         Origin: 'APP',
         Value: {
           dateTime: 1519776000,
+          paymentCodeDateTime: 1545652800,
           nonEndorsableOffence: [],
           officerID: 'Z7F6yxnw--6DJf4sLsxjg_S-3Gvrl5MxV-1iY7RRNiA',
           officerName: 'dvsa.officerfpns@bjss.com',

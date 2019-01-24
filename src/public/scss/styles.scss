@@ -40,6 +40,9 @@ table.grey-table {
 }
 
 table.details {
+  td:first-child {
+    width: 35%;
+  }
   td:nth-child(2) {
     font-weight: bold;
   }
