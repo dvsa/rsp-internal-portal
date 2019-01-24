@@ -1,6 +1,7 @@
 import CpmsService from '../services/cpms.service';
 import config from '../config';
 import logger from './../utils/logger';
+import validDateRange from '../utils/validDateRange';
 
 const cpmsService = new CpmsService(config.cpmsServiceUrl());
 const INVALID_DATE_RANGE = 'invalidDateRange';
@@ -17,27 +18,11 @@ export const renderReportFilters = async (req, res) => {
   res.render('reports/generateReport', { types: reportTypes, ...req.session, invalidDateRange });
 };
 
-/**
- * Validate the submitted dates are no later than today and the endDate
- * is not earlier than the start date.
- * @param {string} dateFromText End date in the format yyyy-mm-dd
- * @param {string} dateToText Start date in the format yyyy-mm-dd
- */
-function validDate(dateFromText, dateToText) {
-  const dateToday = new Date().setHours(0, 0, 0, 0).valueOf();
-  const dateFrom = new Date(dateFromText).valueOf();
-  const dateTo = new Date(dateToText).valueOf();
-  const startDateBeforeEnd = dateFrom > dateTo;
-  const dateNotInFuture = dateToday >= dateTo && dateToday <= dateFrom;
-
-  return dateNotInFuture && !startDateBeforeEnd;
-}
-
 export const generateReport = (req, res) => {
   logger.info(req.body);
   const filters = { ...req.body };
 
-  if (!validDate(filters.dateFrom, filters.dateTo)) {
+  if (!validDateRange(filters.dateFrom, filters.dateTo)) {
     res.redirect(`reports?${INVALID_DATE_RANGE}`);
     return;
   }
