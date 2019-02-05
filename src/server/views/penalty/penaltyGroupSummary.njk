@@ -60,9 +60,9 @@
           <tr>
             <td>Location</td>
             {% if isPenaltyGroup == false %}
-              <td colspan=2>{{ penaltyDetails.location if penaltyDetails.complete else 'Not available' }}</td> 
+              <td colspan=2>{{ penaltyDetails.location | escape if penaltyDetails.complete else 'Not available' }}</td> 
             {% else %}
-              <td colspan=2>{{ location }}</td>
+              <td colspan=2>{{ location | escape }}</td>
             {% endif %}
           </tr>
           {% for amount in penaltyGroupDetails.splitAmounts|sort(attribute='type', reverse=true) %}
