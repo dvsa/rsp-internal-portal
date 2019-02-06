@@ -15,36 +15,36 @@ router.get('/robots.txt', mainController.robots);
 // Search Page
 router.get('/', authorizationMiddleware, mainController.index);
 router.post('/', authorizationMiddleware, mainController.searchPenalty);
-router.get('/vehicle-reg-search-results/:vehicle_reg', mainController.normaliseRegistration, mainController.searchVehicleReg);
+router.get('/vehicle-reg-search-results/:vehicle_reg', authorizationMiddleware, mainController.normaliseRegistration, mainController.searchVehicleReg);
 
 router.get('/login', mainController.login);
 router.post('/login', mainController.authenticate);
 router.get('/logout', mainController.logout);
 
 // Get Penalty details given a payment code
-router.get('/payment-code/:payment_code', paymentCodeController.getPenaltyDetails);
-router.post('/payment-code/:payment_code/cancel', paymentCodeController.cancelPaymentCode);
-router.get('/payment-code/:payment_code/payment', paymentCodeController.validatePaymentCode, paymentController.renderPaymentPage);
-router.get('/payment-code/:payment_code/:type/payment', paymentCodeController.validatePaymentCode, paymentController.renderGroupPaymentPage);
-router.post('/payment-code/:payment_code/payment', paymentCodeController.validatePaymentCode, paymentController.makePayment);
-router.post('/payment-code/:payment_code/:type/payment', paymentController.makeGroupPayment);
-router.get('/payment-code/:payment_code/confirmPayment', paymentController.confirmPayment);
-router.get('/payment-code/:payment_code/:type/confirmGroupPayment', paymentController.confirmGroupPayment);
-router.post('/payment-code/:payment_code/reversePayment', reversePaymentAuthorizer, paymentController.reversePayment);
-router.post('/payment-code/:payment_code/:type/reverseGroupPayment', reversePaymentAuthorizer, paymentController.reverseGroupPayment);
-router.get('/payment-code/:payment_code/:type/details', paymentCodeController.getPenaltyGroupBreakdownForType);
-router.get('/payment-code/:payment_code/:type/receipt', receiptController);
+router.get('/payment-code/:payment_code', authorizationMiddleware, paymentCodeController.getPenaltyDetails);
+router.post('/payment-code/:payment_code/cancel', authorizationMiddleware, paymentCodeController.cancelPaymentCode);
+router.get('/payment-code/:payment_code/payment', authorizationMiddleware, paymentCodeController.validatePaymentCode, paymentController.renderPaymentPage);
+router.get('/payment-code/:payment_code/:type/payment', authorizationMiddleware, paymentCodeController.validatePaymentCode, paymentController.renderGroupPaymentPage);
+router.post('/payment-code/:payment_code/payment', authorizationMiddleware, paymentCodeController.validatePaymentCode, paymentController.makePayment);
+router.post('/payment-code/:payment_code/:type/payment', authorizationMiddleware, paymentController.makeGroupPayment);
+router.get('/payment-code/:payment_code/confirmPayment', authorizationMiddleware, paymentController.confirmPayment);
+router.get('/payment-code/:payment_code/:type/confirmGroupPayment', authorizationMiddleware, paymentController.confirmGroupPayment);
+router.post('/payment-code/:payment_code/reversePayment', authorizationMiddleware, reversePaymentAuthorizer, paymentController.reversePayment);
+router.post('/payment-code/:payment_code/:type/reverseGroupPayment', authorizationMiddleware, reversePaymentAuthorizer, paymentController.reverseGroupPayment);
+router.get('/payment-code/:payment_code/:type/details', authorizationMiddleware, paymentCodeController.getPenaltyGroupBreakdownForType);
+router.get('/payment-code/:payment_code/:type/receipt', authorizationMiddleware, receiptController);
 
 // Get Penalty details given a penalty reference
-router.get('/penalty/:penalty_id', penaltyController.getPenaltyDetails);
-router.post('/penalty/:penalty_id/cancel', penaltyController.cancelPenalty);
-router.get('/penalty/:penalty_id/payment', paymentController.renderPaymentPage);
+router.get('/penalty/:penalty_id', authorizationMiddleware, penaltyController.getPenaltyDetails);
+router.post('/penalty/:penalty_id/cancel', authorizationMiddleware, penaltyController.cancelPenalty);
+router.get('/penalty/:penalty_id/payment', authorizationMiddleware, paymentController.renderPaymentPage);
 
 // Reports
 router.get('/reports', authorizationMiddleware, reportsAuthorizer, reportController.renderReportFilters);
-router.post('/reports', reportsAuthorizer, reportController.generateReport);
-router.get('/reports/:report_ref/', reportsAuthorizer, reportController.showDetails);
-router.get('/reports/:report_ref/status', reportsAuthorizer, reportController.checkReportStatus);
-router.get('/reports/:report_ref/download', reportsAuthorizer, reportController.downloadReport);
+router.post('/reports', authorizationMiddleware, reportsAuthorizer, reportController.generateReport);
+router.get('/reports/:report_ref/', authorizationMiddleware, reportsAuthorizer, reportController.showDetails);
+router.get('/reports/:report_ref/status', authorizationMiddleware, reportsAuthorizer, reportController.checkReportStatus);
+router.get('/reports/:report_ref/download', authorizationMiddleware, reportsAuthorizer, reportController.downloadReport);
 
 export default router;
