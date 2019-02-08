@@ -172,7 +172,7 @@
           {{ components.heading(text='Additional actions', tag='h3', size='medium') }}
           <nav role="navigation" aria-labelledby="subsection-title">
             <form id="other-actions-form" action="{{urlroot}}/payment-code/{{paymentCode}}/cancel" method="POST">
-              <a href="#" onclick="document.getElementById('other-actions-form').submit();">Cancel payment code</a>
+              <input type="submit" class="cancel-payment-code" value="Cancel payment code" />
           </form>
           </nav>
         </aside>
