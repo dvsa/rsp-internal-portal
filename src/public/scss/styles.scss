@@ -40,6 +40,9 @@ table.grey-table {
 }
 
 table.details {
+  td:first-child {
+    width: 35%;
+  }
   td:nth-child(2) {
     font-weight: bold;
   }
@@ -77,6 +80,21 @@ table#receipt-breakdown {
 
 .secondary-button:hover {
   background-color: #454A4C;
+}
+
+.cancel-payment-code {
+  background: none;
+  border: none;
+  color: #005ea5;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  display: inline-block;
+  vertical-align: middle;
+  white-space: normal;
+  background: none;
+  line-height: 1;
 }
 
 .right {

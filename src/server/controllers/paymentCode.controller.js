@@ -48,7 +48,10 @@ export const getPenaltyDetails = [
       } else {
         const penaltyGroup = await penaltyGroupService.getByPaymentCode(paymentCode);
         view = 'penalty/penaltyGroupSummary';
-        viewData = penaltyGroup;
+        viewData = {
+          ...penaltyGroup,
+          location: penaltyGroup.penaltyDetails[0].penalties[0].location,
+        };
       }
     } catch (error) {
       logger.error(error);

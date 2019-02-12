@@ -78,7 +78,7 @@ describe('MainController', () => {
               paymentStatus: 'PAID',
               summary: '1 penalty',
               date: 1519776000,
-              formattedDate: '28/02/2018 00:00',
+              formattedDate: '24/12/2018 12:00',
             },
           ],
         };
@@ -143,14 +143,14 @@ describe('MainController', () => {
               paymentStatus: 'UNPAID',
               summary: '1 penalty',
               date: 1519776000,
-              formattedDate: '28/02/2018 00:00',
+              formattedDate: '24/12/2018 12:00',
             },
             {
               paymentCode: '55602ee4b37ab59e',
               paymentStatus: 'CANCELLED',
               summary: '1 penalty',
               date: 1519776000,
-              formattedDate: '28/02/2018 00:00',
+              formattedDate: '24/12/2018 12:00',
             },
           ],
         };

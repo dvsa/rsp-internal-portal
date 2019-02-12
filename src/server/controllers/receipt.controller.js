@@ -6,6 +6,7 @@ import config from '../config';
 import logger from '../utils/logger';
 import PenaltyGroupService from '../services/penaltyGroup.service';
 import PaymentService from '../services/payment.service';
+import { MOMENT_DATE_FORMAT, MOMENT_TIME_FORMAT, MOMENT_TIMEZONE } from '../utils/dateTimeFormat';
 
 const penaltyGroupService = new PenaltyGroupService(config.penaltyServiceUrl());
 const paymentService = new PaymentService(config.paymentServiceUrl());
@@ -43,10 +44,9 @@ function addFormattedPaymentDateTimes(paymentDetails) {
   const newPaymentDetails = { ...paymentDetails };
   newPaymentDetails.Payments = Object.keys(newPaymentDetails.Payments).reduce((acc, type) => {
     const timestamp = newPaymentDetails.Payments[type].PaymentDate * 1000;
-    const timezoneId = 'Europe/London';
     acc[type] = {
-      FormattedDate: moment.tz(timestamp, timezoneId).format('DD/MM/YYYY'),
-      FormattedTime: moment.tz(timestamp, timezoneId).format('h:mma'),
+      FormattedDate: moment.tz(timestamp, MOMENT_TIMEZONE).format(MOMENT_DATE_FORMAT),
+      FormattedTime: moment.tz(timestamp, MOMENT_TIMEZONE).format(MOMENT_TIME_FORMAT),
       ...newPaymentDetails.Payments[type],
     };
     return acc;
