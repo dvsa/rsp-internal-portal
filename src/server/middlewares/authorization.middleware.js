@@ -21,7 +21,7 @@ export default (req, res, next) => {
     // If there's a refresh token on the cookies try to use that to get a new access token
     if (req.cookies.rsp_refresh) {
       authService.refreshAccessToken(req.cookies.rsp_refresh.refreshToken).then((token) => {
-        res.cookie('rsp_access', { accessToken: token.access_token, idToken: token.id_token }, { maxAge: token.expires_in * 1000, httpOnly: true });
+        res.cookie('rsp_access', { accessToken: token.access_token, idToken: token.id_token }, { maxAge: token.expires_in * 1000, httpOnly: true, secure: !config.isDevelopment() });
         res.redirect(`${config.urlRoot()}/`);
       }).catch(() => {
         // Failed to retrieve new access token with refresh token
@@ -40,7 +40,7 @@ export default (req, res, next) => {
       if (err) {
         if (req.cookies.rsp_refresh) {
           authService.refreshAccessToken(req.cookies.rsp_refresh.refreshToken).then((token) => {
-            res.cookie('rsp_access', { accessToken: token.access_token, idToken: token.id_token }, { maxAge: token.expires_in * 1000, httpOnly: true });
+            res.cookie('rsp_access', { accessToken: token.access_token, idToken: token.id_token }, { maxAge: token.expires_in * 1000, httpOnly: true, secure: !config.isDevelopment() });
             res.redirect(`${config.urlRoot()}/`);
           }).catch(() => {
             // Invalid refresh token, enforce new login
