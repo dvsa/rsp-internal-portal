@@ -62,7 +62,7 @@ describe('ReceiptController', () => {
               PaymentAmount: '80',
               PaymentDate: 1519300376,
               FormattedDate: '22/02/2018',
-              FormattedTime: '11:52am',
+              FormattedTime: '11:52',
               PaymentStatus: 'PAID',
             },
           },
