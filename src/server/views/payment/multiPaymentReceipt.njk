@@ -43,6 +43,12 @@
               </strong>
             </td>
           </tr>
+          <tr>
+            <td>Receipt code</td>
+              <td>
+                <strong>{{ paymentDetails.Payments[paymentType].PaymentRef }}</strong>
+              </td>
+          </tr>
           {% if paymentDetails.Payments[paymentType].PaymentMethod == 'CNP' %}
             <tr>
               <td>Payment method</td>
