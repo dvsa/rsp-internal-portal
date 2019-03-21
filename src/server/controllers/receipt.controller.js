@@ -29,7 +29,6 @@ export default async (req, res) => {
       paymentDetails: enrichedPaymentDetails,
       ...penaltyGroup,
     };
-    console.log({ ...resp, ...req.session });
     return res.render('payment/multiPaymentReceipt', { ...resp, ...req.session });
   } catch (error) {
     logger.error(error);
