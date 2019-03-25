@@ -76,7 +76,7 @@
             </tr>
             <tr>
               <td>Location:</td>
-              <td>{{ location if complete else 'Not available' }}</td> 
+              <td>{{ location | escape if complete else 'Not available' }}</td> 
             </tr>
           </tbody>
         </table>

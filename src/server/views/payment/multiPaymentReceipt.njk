@@ -43,6 +43,12 @@
               </strong>
             </td>
           </tr>
+          <tr>
+            <td>Receipt code</td>
+              <td>
+                <strong>{{ paymentDetails.Payments[paymentType].PaymentRef }}</strong>
+              </td>
+          </tr>
           {% if paymentDetails.Payments[paymentType].PaymentMethod == 'CNP' %}
             <tr>
               <td>Payment method</td>
@@ -101,11 +107,11 @@
           </tr>
           <tr>
             <td>Date</td>
-            <td><strong>{{ penaltyGroupDetails.date }}</strong></td>
+            <td><strong>{{ penaltyGroupDetails.dateTime }}</strong></td>
           </tr>
           <tr>
             <td>Location</td>
-            <td><strong>{{ penaltyGroupDetails.location }}</strong></td>
+            <td><strong>{{ penaltyGroupDetails.location | escape }}</strong></td>
           </tr>
         </tbody>
       </table>

@@ -190,8 +190,8 @@ export const authenticate = (req, res) => {
 export const login = (req, res) => {
   if (req.query.code) {
     authService.requestAccessToken(req.query.code).then((token) => {
-      res.cookie('rsp_access', { accessToken: token.access_token, idToken: token.id_token }, { maxAge: token.expires_in * 1000, httpOnly: true });
-      res.cookie('rsp_refresh', { refreshToken: token.refresh_token }, { maxAge: 14400000, httpOnly: true });
+      res.cookie('rsp_access', { accessToken: token.access_token, idToken: token.id_token }, { maxAge: token.expires_in * 1000, httpOnly: true, secure: !config.isDevelopment() });
+      res.cookie('rsp_refresh', { refreshToken: token.refresh_token }, { maxAge: 14400000, httpOnly: true, secure: !config.isDevelopment() });
       res.redirect(`${config.urlRoot()}/`);
     }).catch(() => {
       // Failed to get an access token - Get a new authorization code and try again
