@@ -75,6 +75,8 @@ export default async () => {
     maxAge: SIXTY_DAYS_IN_SECONDS,
   }));
 
+  app.use(helmet.noSniff());
+
   // Add express to the nunjucks enviroment instance
   env.express(app);
 
