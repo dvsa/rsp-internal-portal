@@ -5,6 +5,7 @@ import validDateRange from '../utils/validDateRange';
 
 const cpmsService = new CpmsService(config.cpmsServiceUrl());
 const INVALID_DATE_RANGE = 'invalidDateRange';
+const INVALID_SCHEME = 'invalidScheme';
 
 export const renderReportFilters = async (req, res) => {
   let reportTypes;
@@ -15,10 +16,13 @@ export const renderReportFilters = async (req, res) => {
     logger.error(error);
   }
   const invalidDateRange = Object.keys(req.query).some(param => param === INVALID_DATE_RANGE);
-  res.render('reports/generateReport', { types: reportTypes, ...req.session, invalidDateRange });
+  const invalidScheme = Object.keys(req.query).some(param => param === INVALID_SCHEME);
+  res.render('reports/generateReport', {
+    types: reportTypes, ...req.session, invalidDateRange, invalidScheme,
+  });
 };
 
-export const generateReport = (req, res) => {
+export const generateReport = async (req, res) => {
   logger.info(req.body);
   const filters = { ...req.body };
 
@@ -27,14 +31,19 @@ export const generateReport = (req, res) => {
     return;
   }
 
+  if (filters.penaltyType === undefined) {
+    res.redirect(`reports?${INVALID_SCHEME}`);
+    return;
+  }
+
   try {
-    cpmsService.requestReport(filters.penaltyType, filters.reportCode, `${filters.dateFrom} 00:00:00`, `${filters.dateTo} 23:59:00`).then((response) => {
-      if (response.code === '000') {
-        res.render('reports/generatingReport', { reportReference: response.reference, penaltyType: filters.penaltyType, ...req.session });
-      }
-    });
-  } catch (error) {
-    logger.error(error);
+    const response = await cpmsService.requestReport(filters.penaltyType, filters.reportCode, `${filters.dateFrom} 00:00:00`, `${filters.dateTo} 23:59:00`);
+
+    if (response.code === '000') {
+      res.render('reports/generatingReport', { reportReference: response.reference, penaltyType: filters.penaltyType, ...req.session });
+    }
+  } catch (err) {
+    logger.error(err);
   }
 };
 
@@ -53,6 +62,7 @@ export const checkReportStatus = async (req, res) => {
 };
 
 export const downloadReport = async (req, res) => {
+  console.log(`Downloading report. Penalty type: ${req.query.penalty_type}`);
   try {
     const file = await cpmsService.downloadReport(req.query.penalty_type, req.params.report_ref);
     res.setHeader('Content-disposition', `attachment; filename=${req.query.filename}`);

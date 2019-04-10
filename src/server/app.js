@@ -106,7 +106,12 @@ export default async () => {
   // Always sanitizes the body
   app.use((req, res, next) => {
     Object.keys(req.body).forEach((item) => {
-      req.sanitize(item).escape();
+      const reqParam = req.body[item];
+      if (reqParam instanceof Array) {
+        req.sanitize('req.*.string').escape();
+      } else {
+        req.sanitize(item).escape();
+      }
     });
     next();
   });

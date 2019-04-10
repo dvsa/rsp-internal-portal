@@ -12,12 +12,17 @@
     {% call components.columnTwoThirds() %}
       {% if types|length %}
         {{ components.heading(text='Generate reports', tag='h1', size='xlarge') }}
-        {% if invalidDateRange %}
+        {% if (invalidDateRange or invalidScheme) %}
           <div class="error-summary" role="alert" aria-labelledby="error-summary-generate-report" tabindex="-1">
             <h2 class="heading-medium error-summary-heading" id="error-summary-generate-report">
               There was a problem
             </h2>
-            The date range you entered was invalid.
+            {% if invalidDateRange %}
+              The date range you entered was invalid.
+            {% endif %}
+            {% if invalidScheme %}
+              The selected scheme range is invalid.
+            {% endif %}
           </div>
         {% endif %}
         {% call components.form(action='', method='POST') %}
@@ -33,19 +38,31 @@
           </fieldset>
         </div>
         <div class="form-group">
-          {{ components.heading(text='Select penalty type', tag='h3', size='medium') }}
+          {{ components.heading(text='Select schemes', tag='h3', size='medium') }}
           <fieldset>
               <div class="multiple-choice">
-                <input id="fixed-penalty" type="radio" name="penaltyType" value='FPN' required>
-                <label for="fixed-penalty"><strong>Fixed penalty</strong></label>
+                <input id="fixed-penalty" type="checkbox" name="penaltyType" value='FPN'>
+                <label for="fixed-penalty"><strong>GFPDS</strong></label>
               </div>
               <div class="multiple-choice">
-                <input id="court-deposit" type="radio" name="penaltyType" value='CDN' required>
-                <label for="court-deposit"><strong>Court deposit</strong></label>
+                <input id="court-deposit" type="checkbox" name="penaltyType" value='CDN'>
+                <label for="court-deposit"><strong>COURT</strong></label>
               </div> 
               <div class="multiple-choice">
-                <input id="immobilisation" type="radio" name="penaltyType" value='IM' required>
-                <label for="immobilisation"><strong>Immobilisation</strong></label>
+                <input id="immobilisation" type="checkbox" name="penaltyType" value='IM'>
+                <label for="immobilisation"><strong>ECMS</strong></label>
+              </div>
+              <div class="multiple-choice">
+                <input id="MOT2" type="checkbox" name="penaltyType" value='MOT2'>
+                <label for="MOT2"><strong>MOT2</strong></label>
+              </div>
+              <div class="multiple-choice">
+                <input id="OLCS" type="checkbox" name="penaltyType" value='OLCS'>
+                <label for="OLCS"><strong>OLCS</strong></label>
+              </div>
+              <div class="multiple-choice">
+                <input id="OLNI" type="checkbox" name="penaltyType" value='OLNI'>
+                <label for="OLNI"><strong>OLNI</strong></label>
               </div>
           </fieldset>
         </div>

@@ -209,6 +209,7 @@ export default class PaymentService {
         }
         resolve(response.data.items);
       }).catch((error) => {
+        console.error(error);
         reject(new Error(error));
       });
     });
@@ -216,9 +217,11 @@ export default class PaymentService {
   }
 
   requestReport(penaltyType, reportCode, fromDate, toDate) {
+    const scheme = penaltyType instanceof Array ? penaltyType[0] : penaltyType;
+    console.log(`Requesting CPMS generates report for scheme: ${scheme}`);
     const promise = new Promise((resolve, reject) => {
       this.httpClient.post('generateReport/', {
-        penalty_type: penaltyType,
+        penalty_type: scheme,
         report_code: reportCode,
         from_date: fromDate,
         to_date: toDate,
