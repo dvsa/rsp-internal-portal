@@ -40,7 +40,7 @@ export const generateReport = async (req, res) => {
     const response = await cpmsService.requestReport(filters.penaltyType, filters.reportCode, `${filters.dateFrom} 00:00:00`, `${filters.dateTo} 23:59:00`);
 
     if (response.code === '000') {
-      res.render('reports/generatingReport', { reportReference: response.reference, penaltyType: filters.penaltyType, ...req.session });
+      res.render('reports/generatingReport', { reportReference: response.reference, penaltyType: filters.penaltyType[0], ...req.session });
     }
   } catch (err) {
     logger.error(err);

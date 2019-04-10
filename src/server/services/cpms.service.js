@@ -217,8 +217,8 @@ export default class PaymentService {
   }
 
   requestReport(penaltyType, reportCode, fromDate, toDate) {
-    const scheme = penaltyType instanceof Array ? penaltyType[0] : penaltyType;
-    console.log(`Requesting CPMS generates report for scheme: ${scheme}`);
+    const scheme = penaltyType instanceof Array ? penaltyType : [penaltyType];
+    console.log(`Requesting CPMS generates report for schemes: ${scheme.join(', ')}`);
     const promise = new Promise((resolve, reject) => {
       this.httpClient.post('generateReport/', {
         penalty_type: scheme,
