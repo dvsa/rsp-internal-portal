@@ -1,1 +1,3 @@
-export { serveExpressApp } from './lambdas/serveExpressApp';
+import serveExpressApp from './lambdas/serveExpressApp';
+
+export { serveExpressApp };
