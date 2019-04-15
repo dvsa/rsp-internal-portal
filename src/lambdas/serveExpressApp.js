@@ -42,5 +42,5 @@ export default async (event, context) => {
   if (isProd()) {
     event.path = modifyPath(event.path); // eslint-disable-line
   }
-  return awsServerlessExpress.proxy(lambdaExpressServer, event, context);
+  return awsServerlessExpress.proxy(lambdaExpressServer, event, context, 'PROMISE').promise;
 };
