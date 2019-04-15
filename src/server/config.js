@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { SecretsManager } from 'aws-sdk';
 import dotenv from 'dotenv';
 import path from 'path';
