@@ -11,7 +11,7 @@
   {% call components.gridRow() %}
     {% call components.columnTwoThirds() %}
       {% if types|length %}
-        {{ components.heading(text='Generate reports', tag='h1', size='xlarge') }}
+        {{ components.heading(text='Generate reports', tag='h1', size='xlarge', extraStyle='margin-bottom: 0.1px;') }}
         {% if (invalidDateRange or invalidScheme) %}
           <div class="error-summary" role="alert" aria-labelledby="error-summary-generate-report" tabindex="-1">
             <h2 class="heading-medium error-summary-heading" id="error-summary-generate-report">
@@ -42,27 +42,27 @@
           <fieldset>
               <div class="multiple-choice">
                 <input id="fixed-penalty" type="checkbox" name="penaltyType" value='FPN'>
-                <label for="fixed-penalty"><strong>GFPDS</strong></label>
+                <label for="fixed-penalty"><strong>GFPDS (Fixed Penalty)</strong></label>
               </div>
               <div class="multiple-choice">
                 <input id="court-deposit" type="checkbox" name="penaltyType" value='CDN'>
-                <label for="court-deposit"><strong>COURT</strong></label>
+                <label for="court-deposit"><strong>COURT (Court Deposit)</strong></label>
               </div> 
               <div class="multiple-choice">
                 <input id="immobilisation" type="checkbox" name="penaltyType" value='IM'>
-                <label for="immobilisation"><strong>ECMS</strong></label>
+                <label for="immobilisation"><strong>ECMS (Immobilisation)</strong></label>
+              </div>
+              <div class="multiple-choice">
+                <input id="OLCS" type="checkbox" name="penaltyType" value='OLCS'>
+                <label for="OLCS"><strong>OLCS (VOL)</strong></label>
+              </div>
+              <div class="multiple-choice">
+                <input id="OLNI" type="checkbox" name="penaltyType" value='OLNI'>
+                <label for="OLNI"><strong>OLNI (VOL)</strong></label>
               </div>
               <div class="multiple-choice">
                 <input id="MOT2" type="checkbox" name="penaltyType" value='MOT2'>
                 <label for="MOT2"><strong>MOT2</strong></label>
-              </div>
-              <div class="multiple-choice">
-                <input id="OLCS" type="checkbox" name="penaltyType" value='OLCS'>
-                <label for="OLCS"><strong>OLCS</strong></label>
-              </div>
-              <div class="multiple-choice">
-                <input id="OLNI" type="checkbox" name="penaltyType" value='OLNI'>
-                <label for="OLNI"><strong>OLNI</strong></label>
               </div>
           </fieldset>
         </div>

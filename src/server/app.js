@@ -69,6 +69,7 @@ export default async () => {
         'https://www.google.co.uk/ads/',
         'https://www.google.com/ads/',
       ],
+      styleSrc: ["'unsafe-inline'", "'self'", assetsUrl],
     },
   }));
   app.use(helmet.hsts({
