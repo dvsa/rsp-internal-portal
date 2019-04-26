@@ -1,6 +1,7 @@
 import { SecretsManager } from 'aws-sdk';
 import dotenv from 'dotenv';
 import path from 'path';
+import { logError } from './utils/logger';
 
 dotenv.config();
 
@@ -36,11 +37,11 @@ async function bootstrap() {
       const secretsManagerClient = new SecretsManager({ region: process.env.REGION });
       secretsManagerClient.getSecretValue({ SecretId }, (err, secretsManagerResponse) => {
         if (err) {
-          console.log(err);
+          logError('SecretsManageError', err.message);
           reject(err);
+          return;
         }
         configuration = JSON.parse(secretsManagerResponse.SecretString);
-        console.log(`Cached ${Object.keys(configuration).length} config items from secrets manager`);
         resolve(configuration);
       });
     } else {

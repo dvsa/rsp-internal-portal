@@ -11,46 +11,42 @@ export default class PenaltyGroupService {
   }
 
   async getByPaymentCode(paymentCode) {
-    try {
-      const response = await this.httpClient.get(`penaltyGroup/${paymentCode}`);
-      if (isEmpty(response.data) || !response.data.ID) {
-        throw new Error('Payment code not found');
-      }
-
-      const {
-        Payments,
-        ID,
-        PaymentStatus,
-        VehicleRegistration,
-        Location,
-        Timestamp,
-        TotalAmount,
-        Enabled,
-      } = response.data;
-      const {
-        splitAmounts,
-        parsedPenalties,
-        nextPayment,
-      } = PenaltyGroupService.parsePayments(Payments);
-      return {
-        isPenaltyGroup: true,
-        isCancellable: splitAmounts.some(a => a.status === 'UNPAID') && Enabled !== false,
-        penaltyGroupDetails: {
-          registrationNumber: VehicleRegistration,
-          location: Location,
-          dateTime: moment.unix(Timestamp).format(MOMENT_DATE_TIME_FORMAT),
-          amount: TotalAmount,
-          enabled: Enabled,
-          splitAmounts,
-        },
-        paymentCode: ID,
-        penaltyDetails: parsedPenalties,
-        paymentStatus: PaymentStatus,
-        nextPayment,
-      };
-    } catch (err) {
-      throw new Error(err);
+    const response = await this.httpClient.get(`penaltyGroup/${paymentCode}`, 'GetGroupByPaymentCode');
+    if (isEmpty(response.data) || !response.data.ID) {
+      throw new Error('Payment code not found');
     }
+
+    const {
+      Payments,
+      ID,
+      PaymentStatus,
+      VehicleRegistration,
+      Location,
+      Timestamp,
+      TotalAmount,
+      Enabled,
+    } = response.data;
+    const {
+      splitAmounts,
+      parsedPenalties,
+      nextPayment,
+    } = PenaltyGroupService.parsePayments(Payments);
+    return {
+      isPenaltyGroup: true,
+      isCancellable: splitAmounts.some(a => a.status === 'UNPAID') && Enabled !== false,
+      penaltyGroupDetails: {
+        registrationNumber: VehicleRegistration,
+        location: Location,
+        dateTime: moment.unix(Timestamp).format(MOMENT_DATE_TIME_FORMAT),
+        amount: TotalAmount,
+        enabled: Enabled,
+        splitAmounts,
+      },
+      paymentCode: ID,
+      penaltyDetails: parsedPenalties,
+      paymentStatus: PaymentStatus,
+      nextPayment,
+    };
   }
 
   static getNextPayment(unpaidPayments) {
@@ -79,26 +75,23 @@ export default class PenaltyGroupService {
     return { splitAmounts, parsedPenalties, nextPayment };
   }
 
-  getPaymentsByCodeAndType(paymentCode, type) {
-    return this.httpClient.get(`penaltyGroup/${paymentCode}`).then((response) => {
-      if (isEmpty(response.data) || !response.data.ID) {
-        throw new Error('Payment code not found');
-      }
-      const { Payments } = response.data;
-      const pensOfType = Payments.filter(p => p.PaymentCategory === type)[0].Penalties;
-      const parsedPenalties = pensOfType.map(p => PenaltyService.parsePenalty(p));
-      return {
-        penaltyDetails: parsedPenalties,
-        penaltyType: type,
-        totalAmount: pensOfType.reduce((total, pen) => total + pen.Value.penaltyAmount, 0),
-        paymentStatus: parsedPenalties.every(p => p.status === 'PAID') ? 'PAID' : 'UNPAID',
-      };
-    }).catch((error) => {
-      throw new Error(error);
-    });
+  async getPaymentsByCodeAndType(paymentCode, type) {
+    const response = await this.httpClient.get(`penaltyGroup/${paymentCode}`, 'GetGroupPayments');
+    if (isEmpty(response.data) || !response.data.ID) {
+      throw new Error('Payment code not found');
+    }
+    const { Payments } = response.data;
+    const pensOfType = Payments.filter(p => p.PaymentCategory === type)[0].Penalties;
+    const parsedPenalties = pensOfType.map(p => PenaltyService.parsePenalty(p));
+    return {
+      penaltyDetails: parsedPenalties,
+      penaltyType: type,
+      totalAmount: pensOfType.reduce((total, pen) => total + pen.Value.penaltyAmount, 0),
+      paymentStatus: parsedPenalties.every(p => p.status === 'PAID') ? 'PAID' : 'UNPAID',
+    };
   }
 
   cancel(paymentCode) {
-    return this.httpClient.delete(`penaltyGroup/${paymentCode}`);
+    return this.httpClient.delete(`penaltyGroup/${paymentCode}`, undefined, 'CancelPenaltyGroup');
   }
 }
