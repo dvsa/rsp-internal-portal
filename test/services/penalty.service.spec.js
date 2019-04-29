@@ -140,7 +140,7 @@ describe('Penalty Service', () => {
           await penaltyService.cancel(penaltyId);
           fail();
         } catch (error) {
-          expect(error.message).to.equal('Unexpected penalty penalty response prevented cancellation');
+          expect(error.message).to.equal('Unexpected penalty response prevented cancellation');
         }
         sinon.assert.notCalled(httpDeleteStub);
       });
