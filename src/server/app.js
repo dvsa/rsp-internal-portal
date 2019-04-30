@@ -1,5 +1,5 @@
 /* eslint-disable global-require */
-import 'babel-polyfill';
+import '@babel/polyfill';
 import express from 'express';
 import bodyParser from 'body-parser';
 import compression from 'compression';
@@ -115,7 +115,7 @@ export default async () => {
 
   app.use(cookieParser());
   app.use(awsServerlessExpressMiddleware.eventContext());
-  app.use('/', require('./routes'));
+  app.use('/', require('./routes').default);
 
   app.use(errorhandler());
   return app;

@@ -42,7 +42,7 @@ const reportsAuthorizer = (req, res, next) => {
   return next();
 };
 
-export default {
+export {
   reversePaymentAuthorizer,
   reportsAuthorizer,
 };
