@@ -18,7 +18,7 @@ module.exports = {
           options: {
             babelrc: false,
             presets: [
-              ['env', {
+              ['@babel/env', {
                 targets: {
                   browsers: [
                     'last 3 versions',
@@ -26,11 +26,13 @@ module.exports = {
                     'last 3 iOS major versions',
                   ],
                 },
-                debug: true,
-                useBuiltIns: true,
+                debug: false,
+                useBuiltIns: 'entry',
+                corejs: '2',
               }],
-              'stage-2',
-              'stage-3',
+            ],
+            plugins: [
+              ['@babel/plugin-proposal-class-properties', { loose: false }],
             ],
           },
         },

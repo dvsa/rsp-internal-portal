@@ -2,7 +2,7 @@
 import path from 'path';
 import common from './webpack.config.common.babel';
 import merge from 'webpack-merge';
-import MinifyPlugin from 'babel-minify-webpack-plugin';
+import webpack from 'webpack';
 
 module.exports = merge(common, {
   output: {
@@ -10,6 +10,6 @@ module.exports = merge(common, {
     path: path.resolve('dist', 'public', 'javascripts'),
   },
   plugins: [
-    new MinifyPlugin(),
+    new webpack.optimize.UglifyJsPlugin()
   ],
 });
