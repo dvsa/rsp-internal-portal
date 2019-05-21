@@ -41,8 +41,9 @@ router.post('/penalty/:penalty_id/cancel', authorizationMiddleware, penaltyContr
 router.get('/penalty/:penalty_id/payment', authorizationMiddleware, paymentController.renderPaymentPage);
 
 // Reports
-router.get('/reports', authorizationMiddleware, reportsAuthorizer, reportController.renderReportFilters);
-router.post('/reports', authorizationMiddleware, reportsAuthorizer, reportController.generateReport);
+router.get('/reports/create', authorizationMiddleware, reportsAuthorizer, reportController.renderReportFilters);
+router.post('/reports/create', authorizationMiddleware, reportsAuthorizer, reportController.generateReport);
+router.get('/reports', authorizationMiddleware, reportsAuthorizer, reportController.renderReportHistory);
 router.get('/reports/:report_ref/', authorizationMiddleware, reportsAuthorizer, reportController.showDetails);
 router.get('/reports/:report_ref/status', authorizationMiddleware, reportsAuthorizer, reportController.checkReportStatus);
 router.get('/reports/:report_ref/download', authorizationMiddleware, reportsAuthorizer, reportController.downloadReport);

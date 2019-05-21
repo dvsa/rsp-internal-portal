@@ -54,6 +54,43 @@ table.receipt-details {
   }
 }
 
+.report-table-container {
+  overflow: auto;
+}
+
+table.report-table {
+  margin-top: 24px;
+}
+
+table.report-table td {
+  padding-top: 9px;
+  padding-bottom: 90px;
+  line-height: initial;
+}
+
+table.report-table td:first-child {
+  min-width: 180px;
+}
+
+table.report-table td:last-child {
+  min-width: 120px;
+}
+
+.create-report-button-container {
+  margin-top: -65px;
+}
+
+
+.create-report-button-container a {
+  float: right;
+}
+
+.create-report-button-container::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
 table#receipt-breakdown {
   margin-top: 30px;
 }
@@ -73,7 +110,7 @@ table#receipt-breakdown {
 
 .secondary-button {
   background-color: #bfc1c3;
-  color: #0b0c0c;
+  color: #0b0c0c !important;
   -webkit-box-shadow: 0 2px 0 #6f777b;
   box-shadow: 0 2px 0 #6f777b;
 }

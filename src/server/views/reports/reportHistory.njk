@@ -1,0 +1,52 @@
+{% extends 'layouts/default.layout.njk' %}
+
+{% set pageTitle = 'Reporting tool prototype' %}
+{% set pageBreadcrumbItems = [
+    { text: 'Home', url: '/' }
+  ]
+%}
+
+{% block content %}
+  <div style='margin-bottom: 20px;'>
+    {{ components.heading(text='Report History', tag='h1', size='xlarge', extraStyle='margin-bottom: 20px;') }}
+
+    <div class="create-report-button-container">
+      {{ components.button(text='Create a new report', url='reports/create') }}
+    </div>
+  </div>
+  <div class="report-table-container">
+    <table class="report-table">
+      <tbody>
+        <thead>
+          <tr>
+            <th>Report ID</th>
+            <th>Date created</th>
+            <th>Start date</th>
+            <th>End date</th>
+            <th>Created by</th>
+            <th>Report type</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        {% for report in reports %}
+          <tr>
+            <td>{{report.reportId}}</td>
+            <td>{{report.dateTime}}</td>
+            <td>{{report.startDate}}</td>
+            <td>{{report.endDate}}</td>
+            <td>{{report.creatorUserName}}</td>
+            <td>{{report.reportType}}</td>
+            <td>
+              {% if report.status === 'Complete'%}
+                {{ components.button(text='Download', url='#1', secondary='true') }}
+              {% else %}
+                {{report.status}}
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
