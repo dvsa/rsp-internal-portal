@@ -4,7 +4,7 @@ import penaltyReferenceValidation from './../validation/penaltyReference';
 import PenaltyService from './../services/penalty.service';
 import config from '../config';
 import tryAddCancellationFlagToViewData from '../utils/tryAddCancellationFlagToViewData';
-import { logInfo } from '../utils/logger';
+import { logInfo, logError } from '../utils/logger';
 
 const penaltyService = new PenaltyService(config.penaltyServiceUrl());
 
@@ -35,14 +35,20 @@ export const getPenaltyDetails = [
 
 export const cancelPenalty = async (req, res) => {
   const penaltyId = req.params.penalty_id;
-  logInfo('CancelPenalty', {
+  const logMessage = {
     userEmail: req.session.rsp_user.email,
     penaltyId,
-  });
+  };
+  logInfo('CancelPenalty', logMessage);
   try {
     await penaltyService.cancel(penaltyId);
     res.redirect(`${config.urlRoot()}/penalty/${penaltyId}`);
+    logInfo('CancelPenaltySuccess', logMessage);
   } catch (error) {
     res.redirect(`${config.urlRoot()}/penalty/${penaltyId}?cancellation=failed`);
+    logError('CancelPenaltyError', {
+      ...logMessage,
+      error: error.message,
+    });
   }
 };

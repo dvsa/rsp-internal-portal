@@ -1,7 +1,7 @@
 import { SecretsManager } from 'aws-sdk';
 import dotenv from 'dotenv';
 import path from 'path';
-import { logError } from './utils/logger';
+import { logError, logInfo } from './utils/logger';
 
 dotenv.config();
 
@@ -33,11 +33,11 @@ async function bootstrap() {
   return new Promise((resolve, reject) => {
     if (process.env.USE_SECRETS_MANAGER === 'true') {
       const SecretId = process.env.SECRETS_MANAGER_SECRET_NAME;
-      console.log(`Pulling config from AWS Secrets Manager for secret ${SecretId}...`);
+      logInfo('InternalPortalSecretsManagerId', { secretId: SecretId });
       const secretsManagerClient = new SecretsManager({ region: process.env.REGION });
       secretsManagerClient.getSecretValue({ SecretId }, (err, secretsManagerResponse) => {
         if (err) {
-          logError('SecretsManageError', err.message);
+          logError('InternalPortalSecretsManagerError', err.message);
           reject(err);
           return;
         }
@@ -45,10 +45,9 @@ async function bootstrap() {
         resolve(configuration);
       });
     } else {
-      console.log('Using envvars for config');
+      logInfo('InternalPortalEnvVars', 'Using envvars for config');
       configuration = Object.values(configMetadata)
         .reduce((config, envkey) => ({ [envkey]: process.env[envkey], ...config }), configuration);
-      console.log('Finished getting envvars');
       resolve(configuration);
     }
   });

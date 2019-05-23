@@ -426,11 +426,13 @@ export const reversePayment = async (req, res) => {
     return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
   }
 
-  logInfo('ReversePayment', {
+  const logMessage = {
     userEmail: req.session.rsp_user.email,
     userRole: req.session.rsp_user_role,
     penaltyDetails,
-  });
+  };
+
+  logInfo('ReversePayment', logMessage);
 
   const penaltyId = `${reference}_${type}`;
 
@@ -440,7 +442,12 @@ export const reversePayment = async (req, res) => {
     } else if (paymentMethod === 'CHEQUE') {
       await cpmsService.reverseChequePayment(paymentRef, type, paymentCode);
     }
+    logInfo('ReversePaymentCPMSSuccess', logMessage);
   } catch (cpmsError) {
+    logError('ReversePaymentCPMSError', {
+      ...logMessage,
+      error: cpmsError.message,
+    });
     return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
   }
 
@@ -468,13 +475,15 @@ export const reverseGroupPayment = async (req, res) => {
     return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
   }
 
-  logInfo('ReverseGroupPayment', {
+  const logMesssage = {
     userEmail: req.session.rsp_user.email,
     userRole: req.session.rsp_user_role,
     paymentCode,
     penaltyType,
     paymentMethod: PaymentMethod,
-  });
+  };
+
+  logInfo('ReverseGroupPayment', logMesssage);
 
   try {
     if (PaymentMethod === 'CARD' || PaymentMethod === 'CNP') {
@@ -482,15 +491,25 @@ export const reverseGroupPayment = async (req, res) => {
     } else if (PaymentMethod === 'CHEQUE') {
       await cpmsService.reverseChequePayment(PaymentRef, penaltyType, paymentCode);
     }
+    logInfo('ReverseGroupPaymentCPMSSuccess', logMesssage);
   } catch (cpmsError) {
+    logError('ReverseGroupPaymentCPMSError', {
+      ...logMesssage,
+      error: cpmsError.message,
+    });
     return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
   }
 
   try {
     await paymentService.reverseGroupPayment(paymentCode, penaltyType);
   } catch (error) {
+    logError('ReverseGroupPaymentPaymentServiceError', {
+      ...logMesssage,
+      error: error.message,
+    });
     return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
   }
+  logInfo('ReverseGroupPaymentSuccess', logMesssage);
   return true;
 };
 
