@@ -150,6 +150,9 @@ export const makePayment = async (req, res) => {
       default: return res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
     }
   } catch (error) {
+    logError('MakePaymentError', {
+      error: error.message,
+    });
     return res.redirect(`${config.urlRoot()}/?invalidPaymentCode`);
   }
 };
