@@ -1,40 +1,40 @@
 import CpmsService from '../services/cpms.service';
 import config from '../config';
-import logger from './../utils/logger';
+import { logInfo } from './../utils/logger';
 import validDateRange from '../utils/validDateRange';
 
 const cpmsService = new CpmsService(config.cpmsServiceUrl());
 const INVALID_DATE_RANGE = 'invalidDateRange';
 
 export const renderReportFilters = async (req, res) => {
-  let reportTypes;
-  try {
-    reportTypes = await cpmsService.getReportTypes();
-    logger.info(reportTypes);
-  } catch (error) {
-    logger.error(error);
-  }
+  const reportTypes = await cpmsService.getReportTypes();
   const invalidDateRange = Object.keys(req.query).some(param => param === INVALID_DATE_RANGE);
   res.render('reports/generateReport', { types: reportTypes, ...req.session, invalidDateRange });
 };
 
-export const generateReport = (req, res) => {
-  logger.info(req.body);
-  const filters = { ...req.body };
+export const generateReport = async (req, res) => {
+  const reportFilters = { ...req.body };
 
-  if (!validDateRange(filters.dateFrom, filters.dateTo)) {
+  if (!validDateRange(reportFilters.dateFrom, reportFilters.dateTo)) {
     res.redirect(`reports?${INVALID_DATE_RANGE}`);
     return;
   }
 
-  try {
-    cpmsService.requestReport(filters.penaltyType, filters.reportCode, `${filters.dateFrom} 00:00:00`, `${filters.dateTo} 23:59:00`).then((response) => {
-      if (response.code === '000') {
-        res.render('reports/generatingReport', { reportReference: response.reference, penaltyType: filters.penaltyType, ...req.session });
-      }
-    });
-  } catch (error) {
-    logger.error(error);
+  logInfo('GenerateReport', {
+    userEmail: req.session.rsp_user.email,
+    userRole: req.session.rsp_user_role,
+    reportFilters,
+  });
+
+  const response = await cpmsService.requestReport(
+    reportFilters.penaltyType,
+    reportFilters.reportCode,
+    `${reportFilters.dateFrom} 00:00:00`,
+    `${reportFilters.dateTo} 23:59:00`,
+  );
+
+  if (response.code === '000') {
+    res.render('reports/generatingReport', { reportReference: response.reference, penaltyType: reportFilters.penaltyType, ...req.session });
   }
 };
 
@@ -47,19 +47,24 @@ export const checkReportStatus = async (req, res) => {
 
     res.status(200).send(status);
   } catch (error) {
-    logger.error(error);
     res.status(500).send();
   }
 };
 
 export const downloadReport = async (req, res) => {
+  logInfo('DownloadReport', {
+    userEmail: req.session.rsp_user.email,
+    userRole: req.session.rsp_user_role,
+    reportRef: req.params.report_ref,
+  });
+
   try {
     const file = await cpmsService.downloadReport(req.query.penalty_type, req.params.report_ref);
     res.setHeader('Content-disposition', `attachment; filename=${req.query.filename}`);
     res.set('Content-Type', 'application/force-download');
     res.end(file);
   } catch (error) {
-    logger.error(error);
+    req.status(500).send();
   }
 };
 
@@ -82,7 +87,6 @@ export const showDetails = async (req, res) => {
       res.redirect(`${config.urlRoot()}/reports/${req.params.report_ref}/status?penalty_type=${req.query.penalty_type}`);
     }
   } catch (error) {
-    logger.error(error);
     res.status(500).send();
   }
 };

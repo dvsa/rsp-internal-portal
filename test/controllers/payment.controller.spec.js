@@ -358,7 +358,7 @@ describe('PaymentController', () => {
       penaltySvcStub
         .callsFake(c => Promise.resolve(penaltyServiceGetResponses.find(p => p.paymentCode === c)));
       paymentServiceStub = sinon.stub(PaymentService.prototype, 'makePayment');
-      request = { params: requestParams, session: { rsp_user_role: 'BankingFinance' } };
+      request = { params: requestParams, session: { rsp_user_role: 'BankingFinance', rsp_user: { email: 'test_user@example.com' } } };
     });
     afterEach(() => {
       PenaltyService.prototype.getByPaymentCode.restore();
@@ -465,7 +465,7 @@ describe('PaymentController', () => {
       penaltySvcStub
         .callsFake(c => Promise.resolve(penaltyServiceGetResponses.find(p => p.paymentCode === c)));
       paymentServiceStub = sinon.stub(PaymentService.prototype, 'makePayment');
-      request = { params: requestParams, session: { rsp_user_role: 'BankingFinance' } };
+      request = { params: requestParams, session: { rsp_user_role: 'BankingFinance', rsp_user: { email: 'test_user@example.com' } } };
     });
     afterEach(() => {
       PenaltyService.prototype.getByPaymentCode.restore();

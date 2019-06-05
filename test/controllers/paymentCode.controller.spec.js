@@ -78,7 +78,7 @@ describe('Payment Code Controller', () => {
       let penaltyGroupServiceStub;
       beforeEach(() => {
         paymentCode = '1234567890zz';
-        request = { params: { payment_code: paymentCode } };
+        request = { params: { payment_code: paymentCode }, session: { rsp_user_role: 'BankingFinance', rsp_user: { email: 'test_user@example.com' } } };
         penaltyGroupServiceStub = sinon.stub(PenaltyGroupService.prototype, 'cancel');
       });
       afterEach(() => {

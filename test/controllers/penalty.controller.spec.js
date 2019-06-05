@@ -13,7 +13,7 @@ describe('PenaltyController', () => {
 
     beforeEach(() => {
       penaltyServiceMock = sinon.stub(PenaltyService.prototype, 'cancel');
-      request = { params: { penalty_id: penaltyId } };
+      request = { params: { penalty_id: penaltyId }, session: { rsp_user_role: 'BankingFinance', rsp_user: { email: 'test_user@example.com' } } };
     });
     afterEach(() => {
       PenaltyService.prototype.cancel.restore();
