@@ -456,10 +456,10 @@ export const reversePayment = async (req, res) => {
 
   try {
     await paymentService.reversePayment(penaltyId);
+    return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
   } catch (error) {
     return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
   }
-  return true;
 };
 
 export const reverseGroupPayment = async (req, res) => {
@@ -505,6 +505,8 @@ export const reverseGroupPayment = async (req, res) => {
 
   try {
     await paymentService.reverseGroupPayment(paymentCode, penaltyType);
+    logInfo('ReverseGroupPaymentSuccess', logMesssage);
+    return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
   } catch (error) {
     logError('ReverseGroupPaymentPaymentServiceError', {
       ...logMesssage,
@@ -512,8 +514,6 @@ export const reverseGroupPayment = async (req, res) => {
     });
     return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
   }
-  logInfo('ReverseGroupPaymentSuccess', logMesssage);
-  return true;
 };
 
 function buildGroupPaymentPayload(paymentCode, receiptReference, type, penaltyGroup, confirmResp) {
