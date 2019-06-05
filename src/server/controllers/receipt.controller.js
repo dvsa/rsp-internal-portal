@@ -1,9 +1,7 @@
 /* eslint-disable no-use-before-define */
-
 import moment from 'moment-timezone';
 
 import config from '../config';
-import logger from '../utils/logger';
 import PenaltyGroupService from '../services/penaltyGroup.service';
 import PaymentService from '../services/payment.service';
 import { MOMENT_DATE_FORMAT, MOMENT_TIME_FORMAT, MOMENT_TIMEZONE } from '../utils/dateTimeFormat';
@@ -12,8 +10,8 @@ const penaltyGroupService = new PenaltyGroupService(config.penaltyServiceUrl());
 const paymentService = new PaymentService(config.paymentServiceUrl());
 
 export default async (req, res) => {
+  const paymentCode = req.params.payment_code;
   try {
-    const paymentCode = req.params.payment_code;
     const { type } = req.params;
 
     if (!isValidPaymentPaymentType(type)) {
@@ -31,7 +29,6 @@ export default async (req, res) => {
     };
     return res.render('payment/multiPaymentReceipt', { ...resp, ...req.session });
   } catch (error) {
-    logger.error(error);
     return res.redirect(`${config.urlRoot()}/?invalidPaymentCode`);
   }
 };

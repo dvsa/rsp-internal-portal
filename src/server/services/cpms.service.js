@@ -1,9 +1,10 @@
 import { isEmpty } from 'lodash';
 import SignedHttpClient from './../utils/httpclient';
+import { ServiceName } from '../utils/logger';
 
 export default class PaymentService {
   constructor(serviceUrl) {
-    this.httpClient = new SignedHttpClient(serviceUrl);
+    this.httpClient = new SignedHttpClient(serviceUrl, {}, ServiceName.CPMS);
   }
 
   createCardNotPresentTransaction(paymentCode, reg, penaltyRef, penaltyType, amount, redirectUrl) {
@@ -15,7 +16,7 @@ export default class PaymentService {
       redirect_url: redirectUrl,
       vehicle_reg: reg,
     };
-    return this.httpClient.post('cardNotPresentPayment/', payload, 3);
+    return this.httpClient.post('cardNotPresentPayment/', payload, 3, 'CNPPayment');
   }
 
   createCardNotPresentGroupTransaction(penGrpId, penGrpDetails, type, penalties, redirectUrl) {
@@ -33,7 +34,7 @@ export default class PaymentService {
         VehicleRegistration: p.vehicleReg,
       })),
     };
-    return this.httpClient.post('groupPayment/', payload, 3);
+    return this.httpClient.post('groupPayment/', payload, 3, 'GroupCNPPayment');
   }
 
   createCashTransaction(paymentCode, reg, penaltyRef, penaltyType, amount, slipNumber) {
@@ -47,7 +48,7 @@ export default class PaymentService {
       batch_number: slipNumber,
       vehicle_reg: reg,
     };
-    return this.httpClient.post('cashPayment/', payload, 3);
+    return this.httpClient.post('cashPayment/', payload, 3, 'CashPayment');
   }
 
   createGroupCashTransaction(penGrpId, penGrpDetails, type, penalties, redirectUrl, slipNumber) {
@@ -70,7 +71,7 @@ export default class PaymentService {
         VehicleRegistration: p.vehicleReg,
       })),
     };
-    return this.httpClient.post('groupPayment/', payload, 3);
+    return this.httpClient.post('groupPayment/', payload, 3, 'GroupCashPayment');
   }
 
   createChequeTransaction(
@@ -90,7 +91,7 @@ export default class PaymentService {
       name_on_cheque: nameOnCheque,
       vehicle_reg: vehicleReg,
     };
-    return this.httpClient.post('chequePayment/', payload, 3);
+    return this.httpClient.post('chequePayment/', payload, 3, 'ChequePayment');
   }
 
   createGroupChequeTransaction(
@@ -125,7 +126,7 @@ export default class PaymentService {
         VehicleRegistration: p.vehicleReg,
       })),
     };
-    return this.httpClient.post('groupPayment/', payload, 3);
+    return this.httpClient.post('groupPayment/', payload, 3, 'GroupChequePayment');
   }
 
   createPostalOrderTransaction(
@@ -143,7 +144,7 @@ export default class PaymentService {
       postal_order_number: postalOrderNumber,
       vehicle_reg: vehicleReg,
     };
-    return this.httpClient.post('postalOrderPayment/', payload, 3);
+    return this.httpClient.post('postalOrderPayment/', payload, 3, 'PostalOrderPayment');
   }
 
   createGroupPostalOrderTransaction(
@@ -174,7 +175,7 @@ export default class PaymentService {
         VehicleRegistration: p.vehicleReg,
       })),
     };
-    return this.httpClient.post('groupPayment/', payload, 3);
+    return this.httpClient.post('groupPayment/', payload, 3, 'GroupPostalOrderPayment');
   }
 
   confirmPayment(receiptReference, penaltyType) {
@@ -182,7 +183,7 @@ export default class PaymentService {
       receipt_reference: receiptReference,
       penalty_type: penaltyType,
     };
-    return this.httpClient.post('confirm/', payload, 3);
+    return this.httpClient.post('confirm/', payload, 3, 'ConfirmPayment');
   }
 
   reverseCardPayment(receiptReference, penaltyType, penaltyId) {
@@ -190,7 +191,7 @@ export default class PaymentService {
       receipt_ref: receiptReference,
       penalty_type: penaltyType,
       payment_ref: penaltyId,
-    });
+    }, 0, 'ReverseCard');
   }
 
   reverseChequePayment(receiptReference, penaltyType, penaltyId) {
@@ -198,64 +199,41 @@ export default class PaymentService {
       receipt_ref: receiptReference,
       penalty_type: penaltyType,
       payment_ref: penaltyId,
-    });
+    }, 0, 'ReverseCheque');
   }
 
-  getReportTypes(penaltyType = 'FPN') {
-    const promise = new Promise((resolve, reject) => {
-      this.httpClient.post('listReports/', { penalty_type: penaltyType }).then((response) => {
-        if (isEmpty(response.data) || response.data.items === undefined) {
-          resolve([]);
-        }
-        resolve(response.data.items);
-      }).catch((error) => {
-        reject(new Error(error));
-      });
-    });
-    return promise;
+  async getReportTypes(penaltyType = 'FPN') {
+    const response = await this.httpClient.post('listReports/', { penalty_type: penaltyType }, 0, 'GetReportTypes');
+    if (isEmpty(response.data) || response.data.items === undefined) {
+      return [];
+    }
+    return response.data.items;
   }
 
-  requestReport(penaltyType, reportCode, fromDate, toDate) {
-    const promise = new Promise((resolve, reject) => {
-      this.httpClient.post('generateReport/', {
-        penalty_type: penaltyType,
-        report_code: reportCode,
-        from_date: fromDate,
-        to_date: toDate,
-      }).then((response) => {
-        resolve(response.data);
-      }).catch((error) => {
-        reject(new Error(error));
-      });
-    });
-    return promise;
+  async requestReport(penaltyType, reportCode, fromDate, toDate) {
+    const response = await this.httpClient.post('generateReport/', {
+      penalty_type: penaltyType,
+      report_code: reportCode,
+      from_date: fromDate,
+      to_date: toDate,
+    }, 0, 'RequestReport');
+    return response.data;
   }
 
-  checkReportStatus(penaltyType, reportReference) {
-    const promise = new Promise((resolve, reject) => {
-      this.httpClient.post('checkReportStatus/', {
-        penalty_type: penaltyType,
-        report_ref: reportReference,
-      }).then((response) => {
-        resolve(response.data);
-      }).catch((error) => {
-        reject(new Error(error));
-      });
-    });
-    return promise;
+  async checkReportStatus(penaltyType, reportReference) {
+    const response = await this.httpClient.post('checkReportStatus/', {
+      penalty_type: penaltyType,
+      report_ref: reportReference,
+    }, 0, 'CheckReport');
+    return response.data;
   }
 
-  downloadReport(penaltyType, reportReference) {
-    const promise = new Promise((resolve, reject) => {
-      this.httpClient.post('downloadReport/', {
-        penalty_type: penaltyType,
-        report_ref: reportReference,
-      }).then((response) => {
-        resolve(response.data);
-      }).catch((error) => {
-        reject(new Error(error));
-      });
-    });
-    return promise;
+  async downloadReport(penaltyType, reportReference) {
+    const response = await this.httpClient.post('downloadReport/', {
+      penalty_type: penaltyType,
+      report_ref: reportReference,
+    }, 0, 'DownloadReport');
+
+    return response.data;
   }
 }

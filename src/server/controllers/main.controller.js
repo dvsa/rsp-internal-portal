@@ -6,6 +6,7 @@ import AuthService from '../services/auth.service';
 import config from '../config';
 import PenaltyService from '../services/penalty.service';
 import { MOMENT_DATE_TIME_FORMAT, MOMENT_TIMEZONE } from '../utils/dateTimeFormat';
+import { logError } from '../utils/logger';
 
 const authService = new AuthService(config.cognitoUrl());
 const penaltyService = new PenaltyService(config.penaltyServiceUrl());
@@ -93,8 +94,8 @@ const handleRegSearchForm = (req, res) => {
 };
 
 export const searchVehicleReg = async (req, res) => {
+  const reg = req.params.vehicle_reg;
   try {
-    const reg = req.params.vehicle_reg;
     const searchResult = await penaltyService.searchByRegistration(reg);
     const { Penalties, PenaltyGroups } = searchResult;
     const viewData = generateSearchResultViewData(reg, Penalties, PenaltyGroups);
@@ -103,7 +104,10 @@ export const searchVehicleReg = async (req, res) => {
       ...req.session,
     });
   } catch (error) {
-    console.log(error);
+    logError('SearchVehicleRegError', {
+      error: error.message,
+      vehicleReg: reg,
+    });
     res.redirect(`${config.urlRoot()}/?invalidReg`);
   }
 };

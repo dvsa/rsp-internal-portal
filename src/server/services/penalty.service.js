@@ -4,10 +4,11 @@ import { isObject } from 'util';
 
 import SignedHttpClient from './../utils/httpclient';
 import { MOMENT_DATE_FORMAT, MOMENT_DATE_TIME_FORMAT } from '../utils/dateTimeFormat';
+import { ServiceName } from '../utils/logger';
 
 export default class PenaltyService {
   constructor(serviceUrl) {
-    this.httpClient = new SignedHttpClient(serviceUrl);
+    this.httpClient = new SignedHttpClient(serviceUrl, {}, ServiceName.PenaltyService);
   }
 
   static getPenaltyTypeDescription(penaltyType) {
@@ -17,7 +18,7 @@ export default class PenaltyService {
       case 'FPN':
         return 'Fixed Penalty Notice';
       case 'IM':
-        return 'immobilisation';
+        return 'Immobilisation';
       default:
         return 'Unknown';
     }
@@ -54,58 +55,40 @@ export default class PenaltyService {
     return penaltyDetails;
   }
 
-  getByPaymentCode(paymentCode) {
-    const promise = new Promise((resolve, reject) => {
-      this.httpClient.get(`documents/tokens/${paymentCode}`).then((response) => {
-        if (isEmpty(response.data)) {
-          reject(new Error('Payment code not found'));
-        }
-        resolve(PenaltyService.parsePenalty(response.data));
-      }).catch((error) => {
-        console.log(error);
-        reject(new Error(error));
-      });
-    });
-    return promise;
+  async getByPaymentCode(paymentCode) {
+    const response = await this.httpClient.get(`documents/tokens/${paymentCode}`, 'GetByPaymentCode');
+
+    if (isEmpty(response.data)) {
+      throw new Error('Payment code not found');
+    }
+    return PenaltyService.parsePenalty(response.data);
   }
 
-  getById(penaltyId) {
-    const promise = new Promise((resolve, reject) => {
-      this.httpClient.get(`documents/${penaltyId}`).then((response) => {
-        if (isEmpty(response.data)) {
-          reject(new Error('Penalty reference not found'));
-        }
-        if (response.data.Value.inPenaltyGroup) {
-          reject(new Error('Penalty is part of a penalty group'));
-        }
-        resolve(PenaltyService.parsePenalty(response.data));
-      }).catch((error) => {
-        reject(new Error(error));
-      });
-    });
-    return promise;
+  async getById(penaltyId) {
+    const response = await this.httpClient.get(`documents/${penaltyId}`, 'GetById');
+    if (isEmpty(response.data)) {
+      throw new Error('Penalty reference not found');
+    }
+    if (response.data.Value.inPenaltyGroup) {
+      throw new Error('Penalty is part of a penalty group');
+    }
+    return PenaltyService.parsePenalty(response.data);
   }
 
-  searchByRegistration(registration) {
-    const promise = new Promise((resolve, reject) => {
-      this.httpClient.get(`vehicle-reg/${registration}`).then((response) => {
-        if (isEmpty(response.data) || response.data.Enabled === false) {
-          reject(new Error(`No vehicle found by registration ${registration}`));
-        }
-        resolve(response.data);
-      }).catch((error) => {
-        reject(new Error(error));
-      });
-    });
-    return promise;
+  async searchByRegistration(registration) {
+    const response = await this.httpClient.get(`vehicle-reg/${registration}`, 'SearchByReg');
+    if (isEmpty(response.data) || response.data.Enabled === false) {
+      throw new Error(`No vehicle found by registration ${registration}`);
+    }
+    return response.data;
   }
 
   async cancel(penaltyId) {
-    const penaltyDocumentResp = await this.httpClient.get(`documents/${penaltyId}`);
+    const penaltyDocumentResp = await this.httpClient.get(`documents/${penaltyId}`, 'GetDocument');
     if (!has(penaltyDocumentResp, 'data') || !isObject(penaltyDocumentResp.data)) {
-      throw new Error('Unexpected penalty penalty response prevented cancellation');
+      throw new Error('Unexpected penalty response prevented cancellation');
     }
     const penaltyDocument = penaltyDocumentResp.data;
-    return this.httpClient.delete(`documents/${penaltyId}`, penaltyDocument);
+    return this.httpClient.delete(`documents/${penaltyId}`, penaltyDocument, 'CancelDocument');
   }
 }

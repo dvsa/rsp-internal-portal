@@ -6,6 +6,7 @@ import URL from 'url-parse';
 import { isObject } from 'util';
 
 import config from '../config';
+import { logAxiosError } from './logger';
 
 export const createUnsignedHttpClient = (baseURL, headers = { Authorization: 'allow' }) => axios.create({
   baseURL,
@@ -13,9 +14,10 @@ export const createUnsignedHttpClient = (baseURL, headers = { Authorization: 'al
 });
 
 export default class SignedHttpClient {
-  constructor(baseURL, headers) {
+  constructor(baseURL, headers, serviceName) {
     this.baseUrlOb = new URL(baseURL);
     this.headers = headers;
+    this.serviceName = serviceName;
     this.credentials = {
       clientId: config.iamClientId(),
       clientSecret: config.iamClientSecret(),
@@ -27,7 +29,7 @@ export default class SignedHttpClient {
     axiosRetry(axios);
   }
 
-  get(path) {
+  get(path, logName) {
     const options = {
       path: `${this.baseUrlOb.pathname}${path}`,
       ...(config.doSignedRequests() ? this.signingOptions : {}),
@@ -39,10 +41,13 @@ export default class SignedHttpClient {
       });
     }
     const fullPath = `${this.baseUrlOb.href}${path}`;
-    return axios.get(fullPath, options);
+    return axios.get(fullPath, options).catch((err) => {
+      logAxiosError(logName, this.serviceName, err);
+      throw err;
+    });
   }
 
-  post(path, data, retryAttempts) {
+  post(path, data, retryAttempts, logName) {
     const options = {
       body: JSON.stringify(data),
       path: `${this.baseUrlOb.pathname}${path}`,
@@ -58,17 +63,20 @@ export default class SignedHttpClient {
       });
     }
 
-    if (isNumber(retryAttempts)) {
+    if (isNumber(retryAttempts) && retryAttempts !== 0) {
       options['axios-retry'] = {
         retries: retryAttempts,
         retryCondition: axiosRetry.isRetryableError,
       };
     }
 
-    return axios.post(`${this.baseUrlOb.href}${path}`, data, options);
+    return axios.post(`${this.baseUrlOb.href}${path}`, data, options).catch((err) => {
+      logAxiosError(logName, this.serviceName, err, data);
+      throw err;
+    });
   }
 
-  delete(path, body) {
+  delete(path, body, logName) {
     const request = {
       method: 'DELETE',
       path: `${this.baseUrlOb.pathname}${path}`,
@@ -88,6 +96,9 @@ export default class SignedHttpClient {
         secretAccessKey: this.credentials.clientSecret,
       });
     }
-    return axios.delete(`${this.baseUrlOb.href}${path}`, request);
+    return axios.delete(`${this.baseUrlOb.href}${path}`, request).catch((err) => {
+      logAxiosError(logName, this.serviceName, err, body);
+      throw err;
+    });
   }
 }
