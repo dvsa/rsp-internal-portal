@@ -69,8 +69,9 @@
           {{ components.heading(text="Payment details ", tag="h3", size="medium") }}
           <p>{{ components.field(id="postalOrderNumber", type="number", label= "Postal order number", required=true) }}</p>
           <p>{{ components.field(id="slipNumber", type="number", label="Paying in slip number", required=true) }}</p>
-          {{ components.button(text="Confirm payment", type="submit") }}
+          {{ components.button(text="Confirm payment", type="submit", id="confirm-payment-button") }}
         {%- endcall %}
     {%- endcall %}
   {%- endcall %}
+  <script src="{{ assets }}/javascripts/disable-button-on-click.js" type="text/javascript"></script>
 {% endblock %}
