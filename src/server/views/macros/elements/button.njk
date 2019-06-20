@@ -1,8 +1,8 @@
-{% macro button(text='', url=false, start=false, disabled=false, secondary=false) %}
+{% macro button(text='', url=false, start=false, disabled=false, secondary=false, id=undefined) %}
   {% set disabledCode = 'disabled="disabled" aria-disabled="true"' %}
   {% if url %}
-    <a class="button {{ 'button-start' if start }}" href="{{ urlroot }}{{ url }}" role="button">{{ text }}</a>
+    <a class="button {{ 'button-start' if start }}" href="{{ urlroot }}{{ url }}" role="button" id={{id}}>{{ text }}</a>
   {% else %}
-    <input class="button {{ 'secondary-button' if secondary }}" type="submit" value="{{ text }}" {{ disabledCode if disabled }}>
+    <input class="button {{ 'secondary-button' if secondary }}" type="submit" value="{{ text }}" id={{id}} {{ disabledCode if disabled }}>
   {% endif %}
 {% endmacro %}
