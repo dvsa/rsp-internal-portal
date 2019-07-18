@@ -5,6 +5,8 @@ import PenaltyService from './penalty.service';
 import SignedHttpClient from '../utils/httpclient';
 import { MOMENT_DATE_TIME_FORMAT } from '../utils/dateTimeFormat';
 
+const ORPHANED_PAYMENT_CHECKING_TIME = 3.6e6;
+
 export default class PenaltyGroupService {
   constructor(serviceUrl) {
     this.httpClient = new SignedHttpClient(serviceUrl);
@@ -25,15 +27,20 @@ export default class PenaltyGroupService {
       Timestamp,
       TotalAmount,
       Enabled,
+      fpnPaymentStartTime,
+      imPaymentStartTime,
+      cdnPaymentStartTime,
     } = response.data;
     const {
       splitAmounts,
       parsedPenalties,
       nextPayment,
     } = PenaltyGroupService.parsePayments(Payments);
+    // If a recent payment attempt was made, block cancellation
+    const recentPendingPayment = recentPayment(fpnPaymentStartTime) || recentPayment(imPaymentStartTime) || recentPayment(cdnPaymentStartTime);
     return {
       isPenaltyGroup: true,
-      isCancellable: splitAmounts.some(a => a.status === 'UNPAID') && Enabled !== false,
+      isCancellable: splitAmounts.some(a => a.status === 'UNPAID') && Enabled !== false && !recentPendingPayment,
       penaltyGroupDetails: {
         registrationNumber: VehicleRegistration,
         location: Location,
@@ -93,5 +100,13 @@ export default class PenaltyGroupService {
 
   cancel(paymentCode) {
     return this.httpClient.delete(`penaltyGroup/${paymentCode}`, undefined, 'CancelPenaltyGroup');
+  }
+
+  recentPayment(time) {
+    if (time) {
+      const ageMilliseconds = moment.duration(moment(moment.now()).diff(moment(time))).asMilliseconds();
+      return ageMilliseconds < ORPHANED_PAYMENT_CHECKING_TIME;
+    }
+    return false;
   }
 }
