@@ -29,7 +29,7 @@ export const getPenaltyDetails = [
         res.render('penalty/penaltyDetails', {
           ...viewData,
           ...req.session,
-          isCancellable: penaltyDetails.status == 'UNPAID' && penaltyDetails.enabled === true && !recentPayment(penaltyDetails.paymentStartTime)
+          isCancellable: penaltyDetails.status === 'UNPAID' && penaltyDetails.enabled === true && !recentPayment(penaltyDetails.paymentStartTime),
         });
       }).catch(() => {
         res.redirect(`../?invalid${penaltyType}`);
