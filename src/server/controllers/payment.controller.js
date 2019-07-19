@@ -27,6 +27,10 @@ function validPaymentTypeForPenaltyType(paymentType, penaltyType) {
   return true;
 }
 
+const validFormInputNumber = (inputString) => {
+  return inputString !== undefined && Number.isNaN(Number(inputString))
+};
+
 export const makePayment = async (req, res) => {
   const paymentCode = req.params.payment_code;
   const userRole = req.session.rsp_user_role;
@@ -52,7 +56,11 @@ export const makePayment = async (req, res) => {
       paymentType: req.body.paymentType,
     });
 
-    if (details.slipNumber !== undefined && Number.isNaN(Number(details.slipNumber))) {
+    const invalidSlipNumber = validFormInputNumber(details.slipNumber);
+    const invalidChequeNumber = validFormInputNumber(details.chequeNumber);
+    const invalidPONumber = validFormInputNumber(details.postalOrderNumber);
+
+    if (invalidSlipNumber || invalidChequeNumber || invalidPONumber) {
       let url = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
       if (url.indexOf('invalidSlipNumber') === -1) {
         url += '&invalidSlipNumber';
