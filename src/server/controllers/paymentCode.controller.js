@@ -6,7 +6,6 @@ import config from './../config';
 import { logError, logInfo } from './../utils/logger';
 import PenaltyGroupService from '../services/penaltyGroup.service';
 import tryAddCancellationFlagToViewData from '../utils/tryAddCancellationFlagToViewData';
-import { recentPayment } from '../utils/recentPayment';
 
 const penaltyService = new PenaltyService(config.penaltyServiceUrl());
 const penaltyGroupService = new PenaltyGroupService(config.penaltyServiceUrl());
@@ -60,7 +59,6 @@ export const getPenaltyDetails = [
     const finalViewData = {
       ...tryAddCancellationFlagToViewData(req, viewData),
       ...req.session,
-      isCancellable: viewData.status == 'UNPAID' && viewData.enabled === true && !recentPayment(viewData.paymentStartTime),
     };
     res.render(view, finalViewData);
   },
