@@ -36,7 +36,11 @@ export default class PenaltyGroupService {
       nextPayment,
     } = PenaltyGroupService.parsePayments(Payments);
     // If a recent payment attempt was made, block cancellation
-    const recentPendingPayment = recentPayment(fpnPaymentStartTime) || recentPayment(imPaymentStartTime) || recentPayment(cdnPaymentStartTime);
+    const recentPendingPayment =
+      recentPayment(fpnPaymentStartTime) ||
+      recentPayment(imPaymentStartTime) ||
+      recentPayment(cdnPaymentStartTime);
+
     return {
       isPenaltyGroup: true,
       isCancellable: splitAmounts.some(a => a.status === 'UNPAID') && Enabled !== false && !recentPendingPayment,
