@@ -4,8 +4,7 @@ import { find, isEmpty, uniq } from 'lodash';
 import PenaltyService from './penalty.service';
 import SignedHttpClient from '../utils/httpclient';
 import { MOMENT_DATE_TIME_FORMAT } from '../utils/dateTimeFormat';
-
-const ORPHANED_PAYMENT_CHECKING_TIME = 3.6e6;
+import { recentPayment } from '../utils/recentPayment';
 
 export default class PenaltyGroupService {
   constructor(serviceUrl) {
@@ -100,13 +99,5 @@ export default class PenaltyGroupService {
 
   cancel(paymentCode) {
     return this.httpClient.delete(`penaltyGroup/${paymentCode}`, undefined, 'CancelPenaltyGroup');
-  }
-
-  recentPayment(time) {
-    if (time) {
-      const ageMilliseconds = moment.duration(moment(moment.now()).diff(moment(time))).asMilliseconds();
-      return ageMilliseconds < ORPHANED_PAYMENT_CHECKING_TIME;
-    }
-    return false;
   }
 }

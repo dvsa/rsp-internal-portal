@@ -5,6 +5,7 @@ import PenaltyService from './../services/penalty.service';
 import config from '../config';
 import tryAddCancellationFlagToViewData from '../utils/tryAddCancellationFlagToViewData';
 import { logInfo, logError } from '../utils/logger';
+import { recentPayment } from '../utils/recentPayment';
 
 const penaltyService = new PenaltyService(config.penaltyServiceUrl());
 
@@ -25,7 +26,11 @@ export const getPenaltyDetails = [
 
       penaltyService.getById(penaltyId).then((penaltyDetails) => {
         const viewData = tryAddCancellationFlagToViewData(req, penaltyDetails);
-        res.render('penalty/penaltyDetails', { ...viewData, ...req.session });
+        res.render('penalty/penaltyDetails', {
+          ...viewData,
+          ...req.session,
+          isCancellable: penaltyDetails.status == 'UNPAID' && penaltyDetails.enabled === true && !recentPayment(penaltyDetails.paymentStartTime)
+        });
       }).catch(() => {
         res.redirect(`../?invalid${penaltyType}`);
       });
