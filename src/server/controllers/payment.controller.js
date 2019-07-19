@@ -52,6 +52,15 @@ export const makePayment = async (req, res) => {
       paymentType: req.body.paymentType,
     });
 
+    if (details.slipNumber !== undefined && Number.isNaN(Number(details.slipNumber))) {
+      let url = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+      if (url.indexOf('invalidSlipNumber') === -1) {
+        url += '&invalidSlipNumber';
+      }
+      res.redirect(url);
+      return;
+    }
+
     switch (req.body.paymentType) {
       case 'cash':
         return cpmsService.createCashTransaction(
@@ -262,16 +271,19 @@ export const renderPaymentPage = async (req, res) => {
         return res.render('payment/cash', {
           ...penaltyDetails,
           ...req.session,
+          invalidSlipNumber: req.query.invalidSlipNumber !== undefined,
         });
       case 'cheque':
         return res.render('payment/cheque', {
           ...penaltyDetails,
           ...req.session,
+          invalidSlipNumber: req.query.invalidSlipNumber !== undefined,
         });
       case 'postal':
         return res.render('payment/postal', {
           ...penaltyDetails,
           ...req.session,
+          invalidSlipNumber: req.query.invalidSlipNumber !== undefined,
         });
       default:
         return cpmsService.createCardNotPresentTransaction(
@@ -326,16 +338,19 @@ export const renderGroupPaymentPage = async (req, res) => {
         return res.render('payment/groupCash', {
           ...penaltyGroupWithPaymentType,
           ...req.session,
+          invalidSlipNumber: req.query.invalidSlipNumber !== undefined,
         });
       case 'cheque':
         return res.render('payment/groupCheque', {
           ...penaltyGroupWithPaymentType,
           ...req.session,
+          invalidSlipNumber: req.query.invalidSlipNumber !== undefined,
         });
       case 'postal':
         return res.render('payment/groupPostalOrder', {
           ...penaltyGroupWithPaymentType,
           ...req.session,
+          invalidSlipNumber: req.query.invalidSlipNumber !== undefined,
         });
       default:
         return res.redirect(`${config.urlRoot()}/?invalidPaymentCode`);

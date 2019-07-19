@@ -60,8 +60,14 @@
 
           {{ components.heading(text="Payment details ", tag="h3", size="medium") }}
           <p>{{ components.field(id="chequeDate", type="date", label="Date on cheque", required=true) }}</p>
+          {% if invalidSlipNumber %}
+            <span class="error-message">Cheque number must be a number</span>
+          {% endif %}
           <p>{{ components.field(id="chequeNumber", type="number", label= "Cheque number", required=true) }}</p>
           <p>{{ components.field(id="nameOnCheque", label="Name on cheque", required=true) }}</p>
+          {% if invalidSlipNumber %}
+            <span class="error-message">Paying in slip number must be a number</span>
+          {% endif %}
           <p>{{ components.field(id="slipNumber", type="number", label="Paying in slip number", required=true) }}</p>
           {{ components.button(text="Confirm payment", type="submit", id="confirm-payment-button") }}
         {%- endcall %}
