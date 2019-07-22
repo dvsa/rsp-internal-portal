@@ -27,9 +27,8 @@ function validPaymentTypeForPenaltyType(paymentType, penaltyType) {
   return true;
 }
 
-const validFormInputNumber = (inputString) => {
-  return inputString !== undefined && Number.isNaN(Number(inputString))
-};
+const validFormInputNumber = inputString =>
+  inputString !== undefined && Number.isNaN(Number(inputString));
 
 export const makePayment = async (req, res) => {
   const paymentCode = req.params.payment_code;
@@ -65,8 +64,7 @@ export const makePayment = async (req, res) => {
       if (url.indexOf('invalidSlipNumber') === -1) {
         url += '&invalidSlipNumber';
       }
-      res.redirect(url);
-      return;
+      return res.redirect(url);
     }
 
     switch (req.body.paymentType) {
