@@ -17,6 +17,7 @@ const configMetadata = {
   iamClientSecret: 'IAM_CLIENT_SECRET',
   identityProvider: 'IDENTITY_PROVIDER',
   nodeEnv: 'NODE_ENV',
+  orphanedPaymentCheckingTime: 'ORPHANED_PAYMENT_CHECKING_TIME',
   paymentServiceUrl: 'PAYMENT_SERVICE_URL',
   penaltyServiceUrl: 'PENALTY_SERVICE_URL',
   port: 'PORT',
@@ -114,6 +115,10 @@ function isDevelopment() {
   return env() === 'development';
 }
 
+function orphanedPaymentCheckingTime() {
+  return configuration[configMetadata.orphanedPaymentCheckingTime];
+}
+
 function paymentServiceUrl() {
   return configuration[configMetadata.paymentServiceUrl];
 }
@@ -165,6 +170,7 @@ const config = {
   iamClientSecret,
   identityProvider,
   isDevelopment,
+  orphanedPaymentCheckingTime,
   paymentServiceUrl,
   penaltyServiceUrl,
   port,

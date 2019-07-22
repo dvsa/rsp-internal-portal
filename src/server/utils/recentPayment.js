@@ -1,12 +1,11 @@
 import moment from 'moment';
+import config from '../config';
 
 
-const ORPHANED_PAYMENT_CHECKING_TIME = 3.6e6;
-
-export const recentPayment = (time) => {
-  if (time) {
-    const age = moment.duration(moment(moment.now()).diff(moment(time))).asMilliseconds();
-    return age < ORPHANED_PAYMENT_CHECKING_TIME;
+export const recentPayment = (timeSeconds) => {
+  if (timeSeconds) {
+    const age = moment.duration(moment(moment.now()).diff(moment(timeSeconds * 1000))).asMilliseconds();
+    return age < config.orphanedPaymentCheckingTime();
   }
   return false;
 };
