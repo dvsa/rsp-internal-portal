@@ -116,7 +116,7 @@ function isDevelopment() {
 }
 
 function orphanedPaymentCheckingTime() {
-  return configuration[configMetadata.orphanedPaymentCheckingTime];
+  return Number(configuration[configMetadata.orphanedPaymentCheckingTime]);
 }
 
 function paymentServiceUrl() {
