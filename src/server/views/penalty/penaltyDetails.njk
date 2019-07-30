@@ -123,7 +123,7 @@
         {% endif %}
     {%- endcall %}
 
-    {% if status == 'UNPAID' and enabled == true %}
+    {% if isCancellable %}
       {% call components.columnOneThird() %}
       <aside class="govuk-related-items" role="complementary">
         {{ components.heading(text='Additional actions', tag='h3', size='medium') }}
