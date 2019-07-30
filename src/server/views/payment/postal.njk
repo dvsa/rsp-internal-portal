@@ -59,10 +59,17 @@
             <input type="hidden" name="paymentType" value="postal">
 
           {{ components.heading(text="Payment details ", tag="h3", size="medium") }}
+          {% if invalidSlipNumber %}
+            <span class="error-message">Postal order number must be a number</span>
+          {% endif %}
           <p>{{ components.field(id="postalOrderNumber", type="number", label= "Postal order number", required=true) }}</p>
+          {% if invalidSlipNumber %}
+            <span class="error-message">Paying in slip number must be a number</span>
+          {% endif %}
           <p>{{ components.field(id="slipNumber", type="number", label="Paying in slip number", required=true) }}</p>
-          {{ components.button(text="Confirm payment", type="submit") }}
+          {{ components.button(text="Confirm payment", type="submit", id="confirm-payment-button") }}
         {%- endcall %}
     {%- endcall %}
   {%- endcall %}
+  <script src="{{ assets }}/javascripts/disable-button-on-click.js?version=22-07-2019" type="text/javascript"></script>
 {% endblock %}

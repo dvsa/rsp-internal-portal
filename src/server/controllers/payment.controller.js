@@ -27,6 +27,9 @@ function validPaymentTypeForPenaltyType(paymentType, penaltyType) {
   return true;
 }
 
+const validFormInputNumber = inputString =>
+  inputString !== undefined && Number.isNaN(Number(inputString));
+
 export const makePayment = async (req, res) => {
   const paymentCode = req.params.payment_code;
   const userRole = req.session.rsp_user_role;
@@ -51,6 +54,18 @@ export const makePayment = async (req, res) => {
       userRole,
       paymentType: req.body.paymentType,
     });
+
+    const invalidSlipNumber = validFormInputNumber(details.slipNumber);
+    const invalidChequeNumber = validFormInputNumber(details.chequeNumber);
+    const invalidPONumber = validFormInputNumber(details.postalOrderNumber);
+
+    if (invalidSlipNumber || invalidChequeNumber || invalidPONumber) {
+      let url = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+      if (url.indexOf('invalidSlipNumber') === -1) {
+        url += '&invalidSlipNumber';
+      }
+      return res.redirect(url);
+    }
 
     switch (req.body.paymentType) {
       case 'cash':
@@ -262,16 +277,19 @@ export const renderPaymentPage = async (req, res) => {
         return res.render('payment/cash', {
           ...penaltyDetails,
           ...req.session,
+          invalidSlipNumber: req.query.invalidSlipNumber !== undefined,
         });
       case 'cheque':
         return res.render('payment/cheque', {
           ...penaltyDetails,
           ...req.session,
+          invalidSlipNumber: req.query.invalidSlipNumber !== undefined,
         });
       case 'postal':
         return res.render('payment/postal', {
           ...penaltyDetails,
           ...req.session,
+          invalidSlipNumber: req.query.invalidSlipNumber !== undefined,
         });
       default:
         return cpmsService.createCardNotPresentTransaction(
@@ -326,16 +344,19 @@ export const renderGroupPaymentPage = async (req, res) => {
         return res.render('payment/groupCash', {
           ...penaltyGroupWithPaymentType,
           ...req.session,
+          invalidSlipNumber: req.query.invalidSlipNumber !== undefined,
         });
       case 'cheque':
         return res.render('payment/groupCheque', {
           ...penaltyGroupWithPaymentType,
           ...req.session,
+          invalidSlipNumber: req.query.invalidSlipNumber !== undefined,
         });
       case 'postal':
         return res.render('payment/groupPostalOrder', {
           ...penaltyGroupWithPaymentType,
           ...req.session,
+          invalidSlipNumber: req.query.invalidSlipNumber !== undefined,
         });
       default:
         return res.redirect(`${config.urlRoot()}/?invalidPaymentCode`);

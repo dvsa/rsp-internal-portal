@@ -4,6 +4,7 @@ import { find, isEmpty, uniq } from 'lodash';
 import PenaltyService from './penalty.service';
 import SignedHttpClient from '../utils/httpclient';
 import { MOMENT_DATE_TIME_FORMAT } from '../utils/dateTimeFormat';
+import { recentPayment } from '../utils/recentPayment';
 
 export default class PenaltyGroupService {
   constructor(serviceUrl) {
@@ -25,15 +26,24 @@ export default class PenaltyGroupService {
       Timestamp,
       TotalAmount,
       Enabled,
+      fpnPaymentStartTime,
+      imPaymentStartTime,
+      cdnPaymentStartTime,
     } = response.data;
     const {
       splitAmounts,
       parsedPenalties,
       nextPayment,
     } = PenaltyGroupService.parsePayments(Payments);
+    // If a recent payment attempt was made, block cancellation
+    const recentPendingPayment =
+      recentPayment(fpnPaymentStartTime) ||
+      recentPayment(imPaymentStartTime) ||
+      recentPayment(cdnPaymentStartTime);
+
     return {
       isPenaltyGroup: true,
-      isCancellable: splitAmounts.some(a => a.status === 'UNPAID') && Enabled !== false,
+      isCancellable: splitAmounts.some(a => a.status === 'UNPAID') && Enabled !== false && !recentPendingPayment,
       penaltyGroupDetails: {
         registrationNumber: VehicleRegistration,
         location: Location,

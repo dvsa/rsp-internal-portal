@@ -51,6 +51,7 @@ export default class PenaltyService {
       paymentCodeIssueDateTime: rawPenalty.paymentCodeDateTime ?
         moment.unix(rawPenalty.paymentCodeDateTime).format(MOMENT_DATE_TIME_FORMAT)
         : undefined,
+      paymentStartTime: rawPenalty.paymentStartTime,
     };
     return penaltyDetails;
   }
