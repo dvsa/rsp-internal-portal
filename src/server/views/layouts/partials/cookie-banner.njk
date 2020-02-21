@@ -6,7 +6,7 @@
         {% call components.columnTwoThirds() %}
           <div class="cookie-banner__message">
             <span class="cookie-banner__heading">Tell us whether you accept cookies</span>
-            {{ components.paragraph(text='We use <a href="/cookie-details">cookies to collect information</a> about how you use the Roadside Payments service. We use this information to make the website work as well as possible and improve government services.') }}
+            {{ components.paragraph(text='We use <a href="{{ urlroot }}/cookie-details">cookies to collect information</a> about how you use the Roadside Payments service. We use this information to make the website work as well as possible and improve government services.') }}
           </div>
           <div class="cookie-banner__buttons">
             {% call components.columnHalf() %}
