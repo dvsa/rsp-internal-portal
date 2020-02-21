@@ -24,10 +24,10 @@ router.post('/login', mainController.authenticate);
 router.get('/logout', mainController.logout);
 
 // Cookie Settings
-router.get('/cookie-preferences', cookiePreferencesController.index);
+router.get('/cookie-preferences', authorizationMiddleware, cookiePreferencesController.index);
 
 // Cookie Details
-router.get('/cookie-details', cookieDetailsController.index);
+router.get('/cookie-details', authorizationMiddleware, cookieDetailsController.index);
 
 // Get Penalty details given a payment code
 router.get('/payment-code/:payment_code', authorizationMiddleware, paymentCodeController.getPenaltyDetails);
