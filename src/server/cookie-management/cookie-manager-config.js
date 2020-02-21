@@ -14,6 +14,10 @@ export const cookieManagerConfig = {
   'cookie-banner-visibility-class': 'hidden',
   'cookie-banner-visible-on-page-with-preference-form': false,
   'set-checkboxes-in-preference-form': true,
+  'domains': [
+    'localhost',
+    'pay-roadside-fine.service.gov.uk',
+  ],
   'cookie-manifest': [
     {
       'category-name': 'essential',
