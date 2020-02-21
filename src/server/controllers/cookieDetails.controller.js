@@ -1,2 +1,2 @@
 // Index Route
-export const index = (req, res) => res.render('cookies/details');
+export const index = (req, res) => res.render('cookies/details', req.session);
