@@ -29,7 +29,7 @@
         <p>We use cookies to store information about how you use the Roadside Payments service, such as the pages you visit.</p>
 
         {{ components.heading(text='Cookie settings', tag='h2', size='large') }}
-        <p>We use 1 type of cookie. You can choose if you're happy for us to use it.</p>
+        <p>We use 2 types of cookie. You can choose if you're happy for us to use the non-essential cookies.</p>
 
         <form id="cookie-preferences-form">
           {% call components.formGroup(label='Cookies that measure website use') %}
@@ -44,7 +44,7 @@
 
             <br />
 
-            <p>We do not allow Google to use or share the data about how you use this site.</p>
+            <p>Google doesn’t collect or store your personal information, such as your name or address, so this information can’t be used to identify who you are.</p>
 
             <div class="radio-item">
               {{ components.radio(text='on', value='on', id='analytics-on', name='analytics') }}
