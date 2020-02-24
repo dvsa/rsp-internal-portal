@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import authorizationMiddleware from './middlewares/authorization.middleware';
 import * as mainController from './controllers/main.controller';
+import * as cookiePreferencesController from './controllers/cookiePreferences.controller';
+import * as cookieDetailsController from './controllers/cookieDetails.controller';
 import * as paymentCodeController from './controllers/paymentCode.controller';
 import * as paymentController from './controllers/payment.controller';
 import * as penaltyController from './controllers/penalty.controller';
@@ -20,6 +22,12 @@ router.get('/vehicle-reg-search-results/:vehicle_reg', authorizationMiddleware, 
 router.get('/login', mainController.login);
 router.post('/login', mainController.authenticate);
 router.get('/logout', mainController.logout);
+
+// Cookie Settings
+router.get('/cookie-preferences', authorizationMiddleware, cookiePreferencesController.index);
+
+// Cookie Details
+router.get('/cookie-details', authorizationMiddleware, cookieDetailsController.index);
 
 // Get Penalty details given a payment code
 router.get('/payment-code/:payment_code', authorizationMiddleware, paymentCodeController.getPenaltyDetails);

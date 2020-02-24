@@ -79,6 +79,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.0",
+    "@dvsa/cookie-manager": "^1.0.9",
     "amazon-cognito-identity-js": "^2.0.1",
     "archiver": "^2.1.1",
     "aws-sdk": "^2.326.0",

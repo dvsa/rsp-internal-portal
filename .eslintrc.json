@@ -11,5 +11,9 @@
     },
     "plugins": [
         "chai-friendly"
-    ]
+    ],
+    "globals": {
+        "window": true,
+        "document": true
+    }
 }

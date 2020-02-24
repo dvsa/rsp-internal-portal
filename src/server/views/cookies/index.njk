@@ -1,0 +1,69 @@
+{% extends 'layouts/default.layout.njk' %}
+
+{% set pageTitle = 'DVSA Road Side Payment Portal' %}
+{% set pageBreadcrumbItems = [
+  {
+    text: 'Home',
+    url: '/'
+  }, {
+    text: 'Cookie preferences'
+  }
+] %}
+
+{% block content %}
+
+  {% call components.gridRow() %}
+    {% call components.columnTwoThirds() %}
+
+      <div id="cookie-preferences-confirmation" class="cookie-preferences-confirmation hidden">
+        <section aria-label="Notice" aria-live="polite" role="region">
+          {{ components.heading(text='Your cookie settings were saved', tag='h2') }}
+          <p>Government services may set additional cookies and, if so, will have their own cookie policy and banner.</p>
+          <a id="confirmation-go-back" href="/">Go back to the page you were looking at</a>
+        </section>
+      </div>
+
+      <div class="cookie-preferences">
+        {{ components.heading(text='Cookies on Roadside Payments service', tag='h1', size='xlarge') }}
+        <p>Cookies are files saved on your phone, tablet or computer when you visit a website.</p>
+        <p>We use cookies to store information about how you use the Roadside Payments service, such as the pages you visit.</p>
+
+        {{ components.heading(text='Cookie settings', tag='h2', size='large') }}
+        <p>We use 2 types of cookie. You can choose if you're happy for us to use the non-essential cookies.</p>
+
+        <form id="cookie-preferences-form">
+          {% call components.formGroup(label='Cookies that measure website use') %}
+
+            <p>We use Google Analytics to measure how you use the website so we can improve it based on user needs. Google Analytics sets cookies that store anonymised information about:</p>
+
+            <ul class="list-bullet">
+              <li>how you got to the site</li>
+              <li>the pages you visit on Roadside Payments and government digital services, and how long you spend on each page</li>
+              <li>what you click on while you're visiting the site</li>
+            </ul>
+
+            <br />
+
+            <p>Google doesn’t collect or store your personal information, such as your name or address, so this information can’t be used to identify who you are.</p>
+
+            <div class="radio-item">
+              {{ components.radio(text='on', value='on', id='analytics-on', name='analytics') }}
+            </div>
+            <div class="radio-item">
+              {{ components.radio(text='off', value='off', id='analytics-off', name='analytics', checked='true') }}
+            </div>
+
+          {%- endcall %}
+
+          {{ components.heading(text='Essential cookies', tag='h2', size='large') }}
+          <p>These essential cookies do things like remember your progress through a form (for example a licence application)</p>
+          <p>They always need to be on.</p>
+          <p><a href="{{ urlroot }}/cookie-details">Find out more about cookies on Roadside Payments</a></p>
+          <button type="submit" class="button button--submit">Save changes</button>
+
+        </form>
+      </div>
+
+    {%- endcall %}
+  {%- endcall %}
+{% endblock %}

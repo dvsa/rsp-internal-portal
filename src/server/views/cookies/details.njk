@@ -1,0 +1,124 @@
+{% extends 'layouts/default.layout.njk' %}
+
+{% set pageTitle = 'DVSA Road Side Payment Portal' %}
+{% set pageBreadcrumbItems = [
+  {
+    text: 'Home',
+    url: '/'
+  }, {
+    text: 'Cookie details'
+  }
+] %}
+
+{% block content %}
+
+  {% call components.gridRow() %}
+    {% call components.columnTwoThirds() %}
+
+      <div class="cookie-details">
+        {{ components.heading(text='Details about cookies on Roadside Payments service', tag='h1', size='xlarge') }}
+        <p>Roadside Payments puts small files (known as ‘cookies’) onto your computer to collect information about how you browse the site. Find out more about the cookies we use, what they’re for and when they expire.</p>
+
+        {{ components.heading(text='Cookies that measure website use', tag='h2', size='medium') }}
+        <p>We use Google Analytics software (Universal Analytics) to collect anonymised information about how you use Roadside Payments. We do this to help make sure the site is meeting the needs of its users and to help us make improvements to the site and to government digital services.</p>
+
+        <div role="note" aria-label="information" class="inset-text">Google doesn’t collect or store your personal information, such as your name or address, so this information can’t be used to identify who you are.</div>
+
+        <p>Google Analytics stores information about:</p>
+
+        <ul class="list-bullet">
+            <li>how you got to the site</li>
+            <li>the pages you visit on Roadside Payments and government digital services, and how long you spend on each page</li>
+            <li>what you click on while you're visiting the site</li>
+        </ul>
+
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Purpose</th>
+              <th scope="col">Expires</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>_ga</td>
+              <td>These help us count how many people visit Roadside Payments by tracking if you’ve visited before</td>
+              <td>2 years</td>
+            </tr>
+              <td>_gid</td>
+              <td>These help us count how many people visit Roadside Payments by tracking if you’ve visited before</td>
+              <td>24 hours</td>
+            </tr>
+            </tr>
+              <td>_gat</td>
+              <td>Used to throttle request rate</td>
+              <td>1 minute</td>
+            </tr>
+          </tbody>
+        </table>
+
+        {{ components.heading(text='Essential cookies', tag='h2', size='medium') }}
+
+        {{ components.heading(text='Authentication and Authorisation', tag='h3', size='small') }}
+        <p>When you login to the Roadside Payments service we use cookies to confirm your identity (authentication) and check which parts of the service you're allowed to use (authorisation). We also use a cookie to automatically refresh your access to the service if your access has expired.</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Purpose</th>
+              <th scope="col">Expires</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>rsp_access</td>
+              <td>This allows us to confirm your identity in order to access the Roadside Payments service.</td>
+              <td>1 hour</td>
+            </tr>
+            <tr>
+              <td>rsp_refresh</td>
+              <td>This allows us to automatically refresh your access to the service without having to login again.</td>
+              <td>4 hours</td>
+            </tr>
+            <tr>
+              <td>rsp_internal_portal_user</td>
+              <td>This stores the session data so we know what resources you are allowed to access</td>
+              <td>4 hours</td>
+            </tr>
+            <tr>
+              <td>rsp_internal_portal_user.sig</td>
+              <td>Stores an identifier for the session data to ensure it cannot be tampered with.</td>
+              <td>4 hours</td>
+            </tr>
+          </tbody>
+        </table>
+
+        {{ components.heading(text='Cookies message', tag='h3', size='small') }}
+        <p>You may see a banner when you visit Roadside Payments inviting you to accept cookies or review your settings. We’ll set cookies so that your computer knows you’ve seen it and not to show it again, and also to store your settings. We will store if you've chosen to accept or reject analytics cookies for 1 year.</p>
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Purpose</th>
+              <th scope="col">Expires</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>cm-user-preferences</td>
+              <td>Saves your cookie consent preferences</td>
+              <td>1 year</td>
+            </tr>
+          </tbody>
+        </table>
+
+        {{ components.heading(text='Change your preferences', tag='h2', size='medium') }}
+        <p>You can <a href='{{ urlroot }}/cookie-preferences'>change which cookies you’re happy for us to use.</a></p>
+
+      </div>
+
+    {%- endcall %}
+  {%- endcall %}
+{% endblock %}

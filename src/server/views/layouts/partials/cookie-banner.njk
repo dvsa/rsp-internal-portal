@@ -1,0 +1,24 @@
+<!-- cookie-banner -->
+{% block content %}
+  <div id="global-cookie-banner" role="region" aria-label="cookie banner" class="hidden">
+    <div class="cookie-banner">
+      {% call components.gridRow() %}
+        {% call components.columnTwoThirds() %}
+          <div class="cookie-banner__message">
+            <span class="cookie-banner__heading">Tell us whether you accept cookies</span>
+            <p>We use <a href="{{ urlroot }}/cookie-details">cookies to collect information</a> about how you use the Roadside Payments service. We use this information to make the website work as well as possible and improve government services.</p>
+          </div>
+          <div class="cookie-banner__buttons">
+            {% call components.columnHalf() %}
+              <button type="submit" class="button button--submit">Accept all cookies</button>
+            {%- endcall %}
+            {% call components.columnHalf() %}
+              {{ components.button(text='Set cookie preferences', url='/cookie-preferences') }}
+            {%- endcall %}
+          </div>
+        {%- endcall %}
+      {%- endcall %}
+    </div>
+  </div>
+{% endblock %}
+<!-- /cookie-banner -->
