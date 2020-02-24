@@ -15,13 +15,3 @@ export const setAnalyticsTracking = () => {
     window['ga-disable-UA-124455500-2'] = false;
   }
 };
-
-export const peferencesConfirmationBack = () => {
-  const link = document.getElementById('confirmation-go-back');
-  if (link !== null) {
-    link.onclick = (event) => {
-      event.preventDefault();
-      window.history.back();
-    };
-  }
-};

@@ -3,6 +3,7 @@ import path from 'path';
 module.exports = {
   entry: {
     dvsa: path.resolve('src', 'public', 'js', 'dvsa', 'index.js'),
+    goBack: path.resolve('src', 'public', 'js', 'go-back.js'),
     cookieManager: path.resolve('src', 'public', 'js', 'cookie-manager.js'),
   },
   output: {
