@@ -4,4 +4,3 @@ import * as cookieControl from '../../server/cookie-management/cookie-control';
 
 cookieManager.init(cookieManagerConfig);
 cookieControl.setAnalyticsTracking();
-cookieControl.peferencesConfirmationBack();
