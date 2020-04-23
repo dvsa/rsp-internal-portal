@@ -3,7 +3,7 @@
   "version": "1.17.2",
   "description": "DVSA Internal Payment Portal For RSP",
   "engines": {
-    "node": "8.10"
+    "node": "10.18.0"
   },
   "main": "handler.js",
   "scripts": {
