@@ -2,7 +2,7 @@ service: dvsa-rsp-internal-portal
 
 provider:
   name: aws
-  runtime: nodejs8.10
+  runtime: nodejs10.18.0
   stage: dev
   region: eu-west-1
 
