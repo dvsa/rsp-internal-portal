@@ -78,7 +78,7 @@
     "webpack-node-externals": "^1.6.0"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.4.0",
+    "@babel/polyfill": "^7.12.1",
     "@dvsa/cookie-manager": "^1.0.9",
     "amazon-cognito-identity-js": "^2.0.1",
     "archiver": "^2.1.1",
