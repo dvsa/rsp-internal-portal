@@ -103,7 +103,7 @@
     "govuk_template_jinja": "^0.23.0",
     "helmet": "^3.11.0",
     "jwt-decode": "^2.2.0",
-    "lodash": "^4.17.5",
+    "lodash": "^4.17.21",
     "moment": "^2.20.1",
     "moment-timezone": "^0.5.21",
     "node-dir": "^0.1.17",
