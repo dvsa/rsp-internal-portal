@@ -76,6 +76,7 @@
   {
     "paymentCode": "5624r2wupfs",
     "isPenaltyGroup": true,
+    "invalidSlipNumber": false,
     "paymentStatus": "UNPAID",
     "penaltyGroupDetails": {
       "registrationNumber": "11DDD",
