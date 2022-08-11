@@ -64,4 +64,5 @@ dist/
 build/
 .serverless/
 
-.vscode
+.vscode/*
+!.vscode/launch.json

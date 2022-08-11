@@ -1,6 +1,8 @@
-import { expect, fail } from 'chai';
+import { expect } from 'chai';
 import nock from 'nock';
+import sinon from 'sinon';
 import HttpClient from '../../src/server/utils/httpclient';
+import config from '../../src/server/config';
 
 describe('httpclient', () => {
   let httpClient;
@@ -22,13 +24,13 @@ describe('httpclient', () => {
         .reply(200, 'OK');
     });
     it('should reject due to the 502', async () => {
+      let statusCode;
       try {
-        await httpClient.post('/test', {});
+        statusCode = (await httpClient.post('test', {})).status;
       } catch (err) {
-        expect(err.response.status).to.equal(502);
-        return;
+        statusCode = err.response.status;
       }
-      fail();
+      expect(statusCode).to.equal(502);
     });
   });
 
@@ -41,7 +43,7 @@ describe('httpclient', () => {
         .reply(200, 'OK');
     });
     it('should retry in order to get the 200 response', async () => {
-      const resp = await httpClient.post('/test', {}, 1);
+      const resp = await httpClient.post('test', {}, 1);
       expect(resp.status).to.equal(200);
     });
   });
@@ -57,8 +59,43 @@ describe('httpclient', () => {
         .reply(200, 'OK');
     });
     it('should retry in order to get the 200 response', async () => {
-      const resp = await httpClient.post('/test', {}, 2);
+      const resp = await httpClient.post('test', {}, 2);
       expect(resp.status).to.equal(200);
+    });
+  });
+
+  context('given extra // in path', () => {
+    beforeEach(() => {
+      nock('http://localhost')
+        .post('/test', {})
+        .reply(200, 'OK');
+    });
+    it('should still resolve correctly', async () => {
+      let statusCode;
+      try {
+        statusCode = (await httpClient.post('/test', {})).status;
+      } catch (err) {
+        statusCode = err.response.status;
+      }
+      expect(statusCode).to.equal(200);
+    });
+  });
+
+  context('given a get request without needing a signed request', () => {
+    beforeEach(() => {
+      sinon.stub(config, 'doSignedRequests').returns(false);
+      nock('http://localhost')
+        .get('/test')
+        .reply(200, 'OK');
+    });
+    it('should return response successfully ', async () => {
+      let statusCode;
+      try {
+        statusCode = (await httpClient.get('test', 'logGroup')).status;
+      } catch (err) {
+        statusCode = err.response.status;
+      }
+      expect(statusCode).to.equal(200);
     });
   });
 });
