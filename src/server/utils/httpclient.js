@@ -40,8 +40,8 @@ export default class SignedHttpClient {
         secretAccessKey: this.credentials.clientSecret,
       });
     }
-    const fullPath = `${this.baseUrlOb.href}${path}`;
-    return axios.get(fullPath, options).catch((err) => {
+    const fullPath = new URL(path, this.baseUrlOb.href);
+    return axios.get(fullPath.toString(), options).catch((err) => {
       logAxiosError(logName, this.serviceName, err);
       throw err;
     });
@@ -70,7 +70,9 @@ export default class SignedHttpClient {
       };
     }
 
-    return axios.post(`${this.baseUrlOb.href}${path}`, data, options).catch((err) => {
+    const url = new URL(path, this.baseUrlOb.href);
+
+    return axios.post(url.toString(), data, options).catch((err) => {
       logAxiosError(logName, this.serviceName, err, data);
       throw err;
     });
@@ -96,7 +98,8 @@ export default class SignedHttpClient {
         secretAccessKey: this.credentials.clientSecret,
       });
     }
-    return axios.delete(`${this.baseUrlOb.href}${path}`, request).catch((err) => {
+    const url = new URL(path, this.baseUrlOb.href);
+    return axios.delete(url, request).catch((err) => {
       logAxiosError(logName, this.serviceName, err, body);
       throw err;
     });

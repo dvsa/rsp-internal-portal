@@ -32,6 +32,7 @@
     "@babel/plugin-proposal-class-properties": "^7.4.0",
     "@babel/preset-env": "^7.4.2",
     "@babel/register": "^7.4.0",
+    "@types/nock": "^11.1.0",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.5",
     "blissfuljs": "1.0.3",
