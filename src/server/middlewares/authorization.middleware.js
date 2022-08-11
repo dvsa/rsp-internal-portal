@@ -4,7 +4,7 @@ import { intersection } from 'lodash';
 import config from '../config';
 import AuthService from '../services/auth.service';
 import formatUserRole from '../utils/formatUserRole';
-import { logError, logInfo, logDebug } from '../utils/logger';
+import { logError, logInfo } from '../utils/logger';
 
 const authService = new AuthService(config.cognitoUrl());
 const authorizedRoles = ['ContactCentre', 'BankingFinance', 'FrontLine'];
@@ -45,7 +45,7 @@ export default (req, res, next) => {
             res.redirect(`${config.urlRoot()}/logout`);
           });
         } else {
-          logError('CognitoExpress.Validate.Error', `Clearing cookies and redirecting to login.`);
+          logError('CognitoExpress.Validate.Error', 'Clearing cookies and redirecting to login.');
           res.clearCookie('rsp_access');
           return res.redirect(`${config.urlRoot()}/login`);
         }
@@ -69,7 +69,7 @@ export default (req, res, next) => {
               if (matchedRoles.length) return next();
             }
             // User doesn't have an authorized role, forbid access
-            logInfo('CognitoExpress.Validate', `Forbidden. User does not have a valid role.`);
+            logInfo('CognitoExpress.Validate', 'Forbidden. User does not have a valid role.');
             return res.render('main/forbidden', req.session);
           }
           logInfo('MissingUserRole', {
