@@ -41,10 +41,12 @@ module.exports = {
     ],
   },
   plugins: [
-    new CopyWebpackPlugin([
-      { from: 'build/server/views', to: 'views/' },
-      { from: 'build/public', to: 'public/' },
-    ]),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'build/server/views', to: 'views/' },
+        { from: 'build/public', to: 'public/' },
+      ]
+    }),
   ],
   stats: {
     colors: true,
@@ -52,4 +54,3 @@ module.exports = {
   devtool: 'source-map',
   mode: 'production',
 };
-

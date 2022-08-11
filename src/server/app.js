@@ -14,6 +14,7 @@ import validator from 'express-validator';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import session from 'cookie-session';
+import nocache from 'nocache';
 import config from './config';
 
 const SIXTY_DAYS_IN_SECONDS = 5184000;
@@ -79,7 +80,14 @@ export default async () => {
     maxAge: SIXTY_DAYS_IN_SECONDS,
   }));
 
-  app.use(helmet.noCache());
+  // From the Helmet docs:
+  /*
+     helmet.noCache was removed because it isn't directly relevant to security.
+     If you still need it, use the nocache npm package, which is still maintained by the Helmet organization.
+     Node cache: This Express middleware sets some HTTP response headers to try to disable client-side caching
+  */
+  //app.use(helmet.noCache());
+  app.use(nocache());
 
   // Add express to the nunjucks enviroment instance
   env.express(app);
@@ -108,7 +116,7 @@ export default async () => {
   app.use(compression());
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(validator());
+  app.use(express.json());
   // Always sanitizes the body
   app.use((req, res, next) => {
     Object.keys(req.body).forEach((item) => {
