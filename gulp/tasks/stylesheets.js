@@ -5,7 +5,7 @@ const cssnano = require('gulp-cssnano');
 const notify = require('gulp-notify');
 const path = require('path');
 const sourcemaps = require('gulp-sourcemaps');
-const sass = require('gulp-sass');
+const sass = require('gulp-sass')(require('sass'))
 const gulpIf = require('gulp-if');
 const CONFIG = require('./../constants').CONFIG;
 

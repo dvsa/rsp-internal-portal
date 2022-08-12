@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-import { validationResult } from 'express-validator/check';
+import { validationResult } from 'express-validator';
 import penaltyReferenceValidation from './../validation/penaltyReference';
 import PenaltyService from './../services/penalty.service';
 import config from '../config';

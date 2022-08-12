@@ -1,4 +1,4 @@
-import { check } from 'express-validator/check';
+import { check } from 'express-validator';
 
 export default [
   check('payment_code').isLength({ min: 11, max: 16 }),
