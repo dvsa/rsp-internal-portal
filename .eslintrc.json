@@ -7,7 +7,8 @@
         "no-unused-expressions": 0,
         "chai-friendly/no-unused-expressions": 2,
         "no-console": "off",
-        "import/prefer-default-export": "off"
+        "import/prefer-default-export": "off",
+        "max-len": "off"
     },
     "plugins": [
         "chai-friendly"

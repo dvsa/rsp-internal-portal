@@ -1,6 +1,5 @@
-import SignedHttpClient from './../utils/httpclient';
+import SignedHttpClient from '../utils/httpclient';
 import { ServiceName } from '../utils/logger';
-
 
 export default class PaymentService {
   constructor(serviceUrl) {

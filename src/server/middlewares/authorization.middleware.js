@@ -4,7 +4,7 @@ import { intersection } from 'lodash';
 import config from '../config';
 import AuthService from '../services/auth.service';
 import formatUserRole from '../utils/formatUserRole';
-import { logInfo } from '../utils/logger';
+import { logError, logInfo, logDebug } from '../utils/logger';
 
 const authService = new AuthService(config.cognitoUrl());
 const authorizedRoles = ['ContactCentre', 'BankingFinance', 'FrontLine'];
@@ -35,6 +35,7 @@ export default (req, res, next) => {
   } else {
     cognitoExpress.validate(req.cookies.rsp_access.accessToken, (err) => {
       if (err) {
+        logError('CognitoExpress.Validate.Error', `Error validating cognito session cookies. ${err}`);
         if (req.cookies.rsp_refresh) {
           authService.refreshAccessToken(req.cookies.rsp_refresh.refreshToken).then((token) => {
             res.cookie('rsp_access', { accessToken: token.access_token, idToken: token.id_token }, { maxAge: token.expires_in * 1000, httpOnly: true, secure: !config.isDevelopment() });
@@ -44,10 +45,12 @@ export default (req, res, next) => {
             res.redirect(`${config.urlRoot()}/logout`);
           });
         } else {
+          logError('CognitoExpress.Validate.Error', `Clearing cookies and redirecting to login.`);
           res.clearCookie('rsp_access');
           return res.redirect(`${config.urlRoot()}/login`);
         }
       } else {
+        logInfo('CognitoExpress.Validate', 'Validated cognito session cookies. Attempting to set user session.');
         // Get user information from the ID token
         const userInfo = jwtDecode(req.cookies.rsp_access.idToken);
         // Extract and clean up roles
@@ -66,6 +69,7 @@ export default (req, res, next) => {
               if (matchedRoles.length) return next();
             }
             // User doesn't have an authorized role, forbid access
+            logInfo('CognitoExpress.Validate', `Forbidden. User does not have a valid role.`);
             return res.render('main/forbidden', req.session);
           }
           logInfo('MissingUserRole', {
@@ -73,6 +77,7 @@ export default (req, res, next) => {
             res,
           });
         } else {
+          logInfo('CognitoExpress.doRoleChecks', 'Role checking disabled in config.');
           return next();
         }
       }

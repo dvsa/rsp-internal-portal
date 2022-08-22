@@ -7,7 +7,7 @@
 			"node": "16.16.0",
 		  },
 		  "useBuiltIns": "entry",
-		  "corejs": "2",
+		  "corejs": "3",
 		},
 	  ],
 	]

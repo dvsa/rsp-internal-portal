@@ -1,11 +1,11 @@
 /* eslint-disable no-use-before-define */
 import { intersection } from 'lodash';
 
-import PaymentService from './../services/payment.service';
-import PenaltyService from './../services/penalty.service';
-import CpmsService from './../services/cpms.service';
-import config from './../config';
-import { logError, logInfo } from './../utils/logger';
+import PaymentService from '../services/payment.service';
+import PenaltyService from '../services/penalty.service';
+import CpmsService from '../services/cpms.service';
+import config from '../config';
+import { logError, logInfo } from '../utils/logger';
 import PenaltyGroupService from '../services/penaltyGroup.service';
 
 const paymentService = new PaymentService(config.paymentServiceUrl());
@@ -27,8 +27,7 @@ function validPaymentTypeForPenaltyType(paymentType, penaltyType) {
   return true;
 }
 
-const validFormInputNumber = inputString =>
-  inputString !== undefined && Number.isNaN(Number(inputString));
+const validFormInputNumber = (inputString) => inputString !== undefined && Number.isNaN(Number(inputString));
 
 export const makePayment = async (req, res) => {
   const paymentCode = req.params.payment_code;
@@ -183,9 +182,9 @@ export const makeGroupPayment = async (req, res) => {
     }
 
     const penaltyGroup = await penaltyGroupService.getByPaymentCode(paymentCode);
-    const penaltiesOfType = penaltyGroup.penaltyDetails.find(p => p.type === penaltyType).penalties;
+    const penaltiesOfType = penaltyGroup.penaltyDetails.find((p) => p.type === penaltyType).penalties;
     const amountPaidForType = penaltyGroup.penaltyGroupDetails.splitAmounts
-      .find(s => s.type === penaltyType).amount;
+      .find((s) => s.type === penaltyType).amount;
     const redirectUrl = `${config.postPaymentRedirectBaseUrl()}/payment-code/${paymentCode}/${penaltyType}/receipt`;
 
     const paymentMethodMappings = {
@@ -226,7 +225,7 @@ export const makeGroupPayment = async (req, res) => {
         PaymentAmount: amountPaidForType,
         PaymentDate: Date.now() / 1000,
       },
-      PenaltyIds: penaltiesOfType.map(p => `${p.reference}_${penaltyType}`),
+      PenaltyIds: penaltiesOfType.map((p) => `${p.reference}_${penaltyType}`),
     });
 
     return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}/${penaltyType}/receipt`);
@@ -299,7 +298,7 @@ export const renderPaymentPage = async (req, res) => {
           penaltyDetails.type,
           penaltyDetails.amount,
           redirectUrl,
-        ).then(response => res.redirect(response.data.gateway_url))
+        ).then((response) => res.redirect(response.data.gateway_url))
           .catch(() => {
             res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
           });
@@ -326,7 +325,7 @@ export const renderGroupPaymentPage = async (req, res) => {
 
     if (paymentType === 'card') {
       const penaltyDetails = penaltyGroup.penaltyDetails
-        .find(typeGrp => typeGrp.type === penaltyType).penalties;
+        .find((typeGrp) => typeGrp.type === penaltyType).penalties;
       const redirectUrl = `${config.postPaymentRedirectBaseUrl()}/payment-code/${paymentCode}/${penaltyType}/confirmGroupPayment`;
       const cpmsResp = await cpmsService.createCardNotPresentGroupTransaction(
         penaltyGroup.paymentCode,
@@ -418,7 +417,7 @@ export const confirmGroupPayment = async (req, res) => {
       );
       await paymentService.recordGroupPayment(payload);
       return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}/${penaltyType}/receipt`);
-    } else if (cpmsCode === 807) {
+    } if (cpmsCode === 807) {
       return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
     }
     return res.render('payment/confirmError', req.session);
@@ -539,7 +538,7 @@ export const reverseGroupPayment = async (req, res) => {
 
 function buildGroupPaymentPayload(paymentCode, receiptReference, type, penaltyGroup, confirmResp) {
   const amountForType = penaltyGroup.penaltyGroupDetails.splitAmounts
-    .find(a => a.type === type).amount;
+    .find((a) => a.type === type).amount;
   return {
     PaymentCode: paymentCode,
     PenaltyType: type,
@@ -551,7 +550,7 @@ function buildGroupPaymentPayload(paymentCode, receiptReference, type, penaltyGr
       PaymentDate: Math.floor(Date.now() / 1000),
     },
     PenaltyIds: penaltyGroup.penaltyDetails
-      .find(penaltiesOfType => penaltiesOfType.type === type).penalties
-      .map(penalties => `${penalties.reference}_${type}`),
+      .find((penaltiesOfType) => penaltiesOfType.type === type).penalties
+      .map((penalties) => `${penalties.reference}_${type}`),
   };
 }

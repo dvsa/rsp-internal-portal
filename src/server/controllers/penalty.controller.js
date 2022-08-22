@@ -1,7 +1,7 @@
 /* eslint-disable no-use-before-define */
 import { validationResult } from 'express-validator';
-import penaltyReferenceValidation from './../validation/penaltyReference';
-import PenaltyService from './../services/penalty.service';
+import penaltyReferenceValidation from '../validation/penaltyReference';
+import PenaltyService from '../services/penalty.service';
 import config from '../config';
 import tryAddCancellationFlagToViewData from '../utils/tryAddCancellationFlagToViewData';
 import { logInfo, logError } from '../utils/logger';
@@ -30,9 +30,9 @@ export const getPenaltyDetails = [
           ...viewData,
           ...req.session,
           isCancellable:
-            penaltyDetails.status === 'UNPAID' &&
-            penaltyDetails.enabled === true &&
-            !recentPayment(penaltyDetails.paymentStartTime),
+            penaltyDetails.status === 'UNPAID'
+            && penaltyDetails.enabled === true
+            && !recentPayment(penaltyDetails.paymentStartTime),
         });
       }).catch(() => {
         res.redirect(`../?invalid${penaltyType}`);

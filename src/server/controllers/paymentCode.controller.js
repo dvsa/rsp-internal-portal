@@ -1,9 +1,9 @@
 /* eslint-disable no-use-before-define */
 import { validationResult } from 'express-validator';
-import paymentCodeValidation from './../validation/paymentCode';
-import PenaltyService from './../services/penalty.service';
-import config from './../config';
-import { logError, logInfo } from './../utils/logger';
+import paymentCodeValidation from '../validation/paymentCode';
+import PenaltyService from '../services/penalty.service';
+import config from '../config';
+import { logError, logInfo } from '../utils/logger';
 import PenaltyGroupService from '../services/penaltyGroup.service';
 import tryAddCancellationFlagToViewData from '../utils/tryAddCancellationFlagToViewData';
 

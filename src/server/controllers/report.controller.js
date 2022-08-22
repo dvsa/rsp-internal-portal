@@ -1,6 +1,6 @@
 import CpmsService from '../services/cpms.service';
 import config from '../config';
-import { logInfo } from './../utils/logger';
+import { logInfo } from '../utils/logger';
 import validDateRange from '../utils/validDateRange';
 
 const cpmsService = new CpmsService(config.cpmsServiceUrl());
@@ -8,7 +8,7 @@ const INVALID_DATE_RANGE = 'invalidDateRange';
 
 export const renderReportFilters = async (req, res) => {
   const reportTypes = await cpmsService.getReportTypes();
-  const invalidDateRange = Object.keys(req.query).some(param => param === INVALID_DATE_RANGE);
+  const invalidDateRange = Object.keys(req.query).some((param) => param === INVALID_DATE_RANGE);
   res.render('reports/generateReport', { types: reportTypes, ...req.session, invalidDateRange });
 };
 
