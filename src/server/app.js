@@ -1,6 +1,7 @@
 /* eslint-disable global-require */
 import '@babel/polyfill';
 import express from 'express';
+import { check } from 'express-validator';
 import bodyParser from 'body-parser';
 import compression from 'compression';
 import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
@@ -10,7 +11,6 @@ import _ from 'lodash';
 import errorhandler from 'errorhandler';
 import walkSync from 'walk-sync';
 import resolvePath from 'resolve-path';
-import validator from 'express-validator';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import session from 'cookie-session';
@@ -120,7 +120,7 @@ export default async () => {
   // Always sanitizes the body
   app.use((req, res, next) => {
     Object.keys(req.body).forEach((item) => {
-      req.sanitize(item).escape();
+      check(item).escape();
     });
     next();
   });
