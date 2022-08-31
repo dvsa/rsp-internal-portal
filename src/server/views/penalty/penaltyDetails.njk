@@ -115,6 +115,9 @@
         {% call components.form(action='/payment-code/'+paymentCode+'/reversePayment', method='POST', class='right')  %}
           {{ components.button(text='Reverse payment', type='submit', secondary='true') }}
         {%- endcall %}
+        {% elif isPaymentOverdue %}
+          <h2 class="heading-medium">Payment Details</h2>
+          <p>Payment can no longer be taken. The deadline for payment has passed.</p>
         {% elif enabled == true or enabled == undefined %}
           {% call components.form(action='/payment-code/'+paymentCode+'/payment', method='GET')  %}
             {% call components.formGroup() %}

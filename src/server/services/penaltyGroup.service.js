@@ -5,6 +5,9 @@ import PenaltyService from './penalty.service';
 import SignedHttpClient from '../utils/httpclient';
 import { MOMENT_DATE_TIME_FORMAT } from '../utils/dateTimeFormat';
 import { recentPayment } from '../utils/recentPayment';
+import isPaymentOverdue from '../utils/isPaymentOverdue';
+import { logError } from '../utils/logger';
+import config from '../config';
 
 export default class PenaltyGroupService {
   constructor(serviceUrl) {
@@ -14,6 +17,7 @@ export default class PenaltyGroupService {
   async getByPaymentCode(paymentCode) {
     const response = await this.httpClient.get(`penaltyGroup/${paymentCode}`, 'GetGroupByPaymentCode');
     if (isEmpty(response.data) || !response.data.ID) {
+      logError('getByPaymentCodeError', { error: 'Payment code not found' });
       throw new Error('Payment code not found');
     }
 
@@ -47,6 +51,7 @@ export default class PenaltyGroupService {
         registrationNumber: VehicleRegistration,
         location: Location,
         dateTime: moment.unix(Timestamp).format(MOMENT_DATE_TIME_FORMAT),
+        isPaymentOverdue: isPaymentOverdue(Timestamp, config.paymentLimitDays()),
         amount: TotalAmount,
         enabled: Enabled,
         splitAmounts,
@@ -89,7 +94,7 @@ export default class PenaltyGroupService {
     if (isEmpty(response.data) || !response.data.ID) {
       throw new Error('Payment code not found');
     }
-    const { Payments } = response.data;
+    const { Payments, Timestamp } = response.data;
     const pensOfType = Payments.filter((p) => p.PaymentCategory === type)[0].Penalties;
     const parsedPenalties = pensOfType.map((p) => PenaltyService.parsePenalty(p));
     return {
@@ -97,6 +102,7 @@ export default class PenaltyGroupService {
       penaltyType: type,
       totalAmount: pensOfType.reduce((total, pen) => total + pen.Value.penaltyAmount, 0),
       paymentStatus: parsedPenalties.every((p) => p.status === 'PAID') ? 'PAID' : 'UNPAID',
+      isPaymentOverdue: isPaymentOverdue(Timestamp, config.paymentLimitDays()),
     };
   }
 

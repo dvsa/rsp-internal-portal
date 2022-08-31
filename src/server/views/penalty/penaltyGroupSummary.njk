@@ -98,6 +98,9 @@
                   {% if amountPaid %}
                     PAID &nbsp;&nbsp;
                     <img src="{{ assets }}/images/icon-check.png" />
+                  {% elif penaltyGroupDetails.isPaymentOverdue %}
+                    OVERDUE &nbsp;
+                      <br><span class="text-secondary">Payment can no longer be taken</span>
                   {% else %}
                     UNPAID &nbsp;
                   {% endif %}
@@ -111,19 +114,27 @@
                   {%- endcall %}
                 {% else %}
                   {% if penaltyGroupDetails.enabled %}
-                    {% if amount.type == 'FPN' %}
-                      {% set paymentButtonTxt = 'Pay fixed penalties' %}
-                    {% elif amount.type == 'CDN' %}
-                      {% set paymentButtonTxt = 'Pay court deposits' %}
-                    {% elif amount.type == 'IM' %}
-                      {% set paymentButtonTxt = 'Pay immobilisation fee' %}
+                    {% if penaltyGroupDetails.isPaymentOverdue %}
+                        {% set showPayButton = false %}
+                    {% else %}
+                      {% set showPayButton = true %}
+                      {% if amount.type == 'FPN' %}
+                          {% set paymentButtonTxt = 'Pay fixed penalties' %}
+                      {% elif amount.type == 'CDN' %}
+                          {% set paymentButtonTxt = 'Pay court deposits' %}
+                      {% elif amount.type == 'IM' %}
+                          {% set paymentButtonTxt = 'Pay immobilisation fee' %}
+                      {% endif %}
                     {% endif %}
-                    <div>
-                      {{ components.button(text=paymentButtonTxt, url='/payment-code/' + paymentCode + '/' + amount.type + '/details') }}
-                    </div>
+                    {% if showPayButton %}
+                      <div>
+                        {{ components.button(text=paymentButtonTxt, url='/payment-code/' + paymentCode + '/' + amount.type + '/details') }}
+                      </div>
+                    {% endif %}
                   {% endif %}
                 {% endif %}
               </td>
+
             </tr>
           {% endfor %}
         </tbody>

@@ -10,7 +10,7 @@ import fakeEnrichedPenaltyGroups from '../data/penaltyGroup/fake-penalty-groups-
 import PaymentService from '../../src/server/services/payment.service';
 import penaltyServiceGetResponses from '../data/penaltyServiceGetResponses';
 
-const penaltyGroup = fakeEnrichedPenaltyGroups.find(g => g.paymentCode === '5624r2wupfs');
+const penaltyGroup = fakeEnrichedPenaltyGroups.find((g) => g.paymentCode === '5624r2wupfs');
 
 describe('PaymentController', () => {
   let penaltyGroupServiceStub;
@@ -51,6 +51,14 @@ describe('PaymentController', () => {
       it('should redirect back to the payment code', async () => {
         await PaymentController.renderGroupPaymentPage(request, response);
         sinon.assert.calledWith(redirectSpy, '/payment-code/4724r2wujeg');
+      });
+    });
+
+    context('when the penalties have passed payment due date', () => {
+      it('should redirect payments back to the payment code', async () => {
+        request.params.payment_code = '238gk2wnval';
+        await PaymentController.renderGroupPaymentPage(request, response);
+        sinon.assert.calledWith(redirectSpy, '/payment-code/238gk2wnval');
       });
     });
 
@@ -341,7 +349,7 @@ describe('PaymentController', () => {
     const requestParams = { payment_code: paymentCode };
     let penaltySvcStub;
     let cpmsServiceStub;
-    const expectedPaymentSvcPayloadForPaymentType = type => ({
+    const expectedPaymentSvcPayloadForPaymentType = (type) => ({
       PenaltyStatus: 'PAID',
       PenaltyType: 'IM',
       PenaltyReference: paddedImRefNumber,
@@ -356,7 +364,7 @@ describe('PaymentController', () => {
     beforeEach(() => {
       penaltySvcStub = sinon.stub(PenaltyService.prototype, 'getByPaymentCode');
       penaltySvcStub
-        .callsFake(c => Promise.resolve(penaltyServiceGetResponses.find(p => p.paymentCode === c)));
+        .callsFake((c) => Promise.resolve(penaltyServiceGetResponses.find((p) => p.paymentCode === c)));
       paymentServiceStub = sinon.stub(PaymentService.prototype, 'makePayment');
       request = { params: requestParams, session: { rsp_user_role: 'BankingFinance', rsp_user: { email: 'test_user@example.com' } } };
     });
@@ -399,8 +407,15 @@ describe('PaymentController', () => {
         cpmsServiceStub = sinon.stub(CpmsService.prototype, 'createChequeTransaction');
         cpmsServiceStub
           .withArgs(
-            paymentCode, vehicleReg, imReference, 'IM', 80, slipNumber,
-            chequeDate, chequeNumber, nameOnCheque,
+            paymentCode,
+            vehicleReg,
+            imReference,
+            'IM',
+            80,
+            slipNumber,
+            chequeDate,
+            chequeNumber,
+            nameOnCheque,
           )
           .resolves({ data: { receipt_reference: cpmsReceiptRef } });
         paymentServiceStub.resolves();
@@ -448,7 +463,7 @@ describe('PaymentController', () => {
     const paymentAmount = 120;
     let penaltySvcStub;
     let cpmsServiceStub;
-    const expectedPaymentSvcPayloadForPaymentType = type => ({
+    const expectedPaymentSvcPayloadForPaymentType = (type) => ({
       PenaltyStatus: 'PAID',
       PenaltyType: penaltyType,
       PaymentDetail: {
@@ -463,7 +478,7 @@ describe('PaymentController', () => {
     beforeEach(() => {
       penaltySvcStub = sinon.stub(PenaltyService.prototype, 'getByPaymentCode');
       penaltySvcStub
-        .callsFake(c => Promise.resolve(penaltyServiceGetResponses.find(p => p.paymentCode === c)));
+        .callsFake((c) => Promise.resolve(penaltyServiceGetResponses.find((p) => p.paymentCode === c)));
       paymentServiceStub = sinon.stub(PaymentService.prototype, 'makePayment');
       request = { params: requestParams, session: { rsp_user_role: 'BankingFinance', rsp_user: { email: 'test_user@example.com' } } };
     });
@@ -487,8 +502,15 @@ describe('PaymentController', () => {
         cpmsServiceStub = sinon.stub(CpmsService.prototype, 'createChequeTransaction');
         cpmsServiceStub
           .withArgs(
-            paymentCode, vehicleReg, fpnReference, penaltyType, paymentAmount, slipNumber,
-            chequeDate, chequeNumber, nameOnCheque,
+            paymentCode,
+            vehicleReg,
+            fpnReference,
+            penaltyType,
+            paymentAmount,
+            slipNumber,
+            chequeDate,
+            chequeNumber,
+            nameOnCheque,
           )
           .resolves({ data: { receipt_reference: cpmsReceiptRef } });
         paymentServiceStub.resolves();
@@ -510,7 +532,12 @@ describe('PaymentController', () => {
         cpmsServiceStub = sinon.stub(CpmsService.prototype, 'createPostalOrderTransaction');
         cpmsServiceStub
           .withArgs(
-            paymentCode, vehicleReg, fpnReference, penaltyType, paymentAmount, slipNumber,
+            paymentCode,
+            vehicleReg,
+            fpnReference,
+            penaltyType,
+            paymentAmount,
+            slipNumber,
             postalOrderNumber,
           )
           .resolves({ data: { receipt_reference: cpmsReceiptRef } });
@@ -523,6 +550,102 @@ describe('PaymentController', () => {
         await PaymentController.makePayment(request, response);
         sinon.assert.calledWith(paymentServiceStub, expectedPaymentSvcPayloadForPaymentType('POSTAL'));
         sinon.assert.calledWith(redirectSpy, `/payment-code/${paymentCode}`);
+      });
+    });
+  });
+
+  describe('renderPaymentPage', () => {
+    let penaltySvcStub;
+    beforeEach(() => {
+      penaltySvcStub = sinon.stub(PenaltyService.prototype, 'getByPaymentCode');
+      penaltySvcStub.callsFake((c) => Promise.resolve(penaltyServiceGetResponses.find((p) => p.paymentCode === c)));
+      sinon.stub(config, 'postPaymentRedirectBaseUrl').returns('http://localhost:3000');
+      request = {
+        params: { payment_code: '3cc571fbf9459417', type: 'FPN' },
+        query: { paymentType: 'card' },
+      };
+    });
+    afterEach(() => {
+      PenaltyService.prototype.getByPaymentCode.restore();
+      config.postPaymentRedirectBaseUrl.restore();
+    });
+
+    context('when the penalties have been paid', () => {
+      beforeEach(() => {
+        request.params.payment_code = '4ee571fbf9458528';
+      });
+      it('should redirect back to the payment code', async () => {
+        await PaymentController.renderPaymentPage(request, response);
+        sinon.assert.calledWith(redirectSpy, '/payment-code/4ee571fbf9458528');
+      });
+    });
+
+    context('when the penalties have passed payment due date', () => {
+      it('should redirect back to the payment code', async () => {
+        request.params.payment_code = '4ty571naf9458FPN';
+        await PaymentController.renderPaymentPage(request, response);
+        sinon.assert.calledWith(redirectSpy, '/payment-code/4ty571naf9458FPN');
+      });
+    });
+
+    context('when the payment type is card', () => {
+      let cpmsServiceStub;
+      beforeEach(() => {
+        cpmsServiceStub = sinon.stub(CpmsService.prototype, 'createCardNotPresentTransaction');
+        cpmsServiceStub.resolves({ data: { gateway_url: 'https://cpms.url' } });
+      });
+      afterEach(() => {
+        CpmsService.prototype.createCardNotPresentTransaction.restore();
+      });
+      it('should create a card not present transaction and redirect to CPMS', async () => {
+        await PaymentController.renderPaymentPage(request, response);
+        sinon.assert.calledWith(redirectSpy, 'https://cpms.url');
+      });
+    });
+
+    context('when the payment type is cash', () => {
+      beforeEach(() => {
+        request.query.paymentType = 'cash';
+      });
+      it('should render the cash group payment page', async () => {
+        await PaymentController.renderPaymentPage(request, response);
+        sinon.assert.calledWith(renderSpy, 'payment/cash', sinon.match.object);
+      });
+    });
+
+    context('when the payment type is cheque', () => {
+      beforeEach(() => {
+        request.query.paymentType = 'cheque';
+      });
+      it('should render the cheque group payment page', async () => {
+        await PaymentController.renderPaymentPage(request, response);
+        sinon.assert.calledWith(renderSpy, 'payment/cheque', sinon.match.object);
+      });
+    });
+
+    context('when the payment type is postal', () => {
+      beforeEach(() => {
+        request.query.paymentType = 'postal';
+      });
+      it('should render the postal order group payment page', async () => {
+        await PaymentController.renderPaymentPage(request, response);
+        sinon.assert.calledWith(renderSpy, 'payment/postal', sinon.match.object);
+      });
+    });
+
+    context('when the payment type is invalid', () => {
+      let cpmsServiceStub;
+      beforeEach(() => {
+        request.query.paymentType = 'notvalidtype';
+        cpmsServiceStub = sinon.stub(CpmsService.prototype, 'createCardNotPresentTransaction');
+        cpmsServiceStub.resolves({ data: { gateway_url: 'https://cpms.url' } });
+      });
+      afterEach(() => {
+        CpmsService.prototype.createCardNotPresentTransaction.restore();
+      });
+      it('should default to card holder not present type', async () => {
+        await PaymentController.renderPaymentPage(request, response);
+        sinon.assert.calledWith(redirectSpy, 'https://cpms.url');
       });
     });
   });
