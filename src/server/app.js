@@ -38,7 +38,7 @@ export default async () => {
 
   // Gets absolute path of each macro file
   const macros = walkSync(marcosPath, { directories: false })
-    .map(file => resolvePath(marcosPath, file));
+    .map((file) => resolvePath(marcosPath, file));
 
   env.addGlobal('macroFilePaths', macros);
   env.addGlobal('assets', config.isDevelopment() ? '' : config.publicAssets());
@@ -86,7 +86,7 @@ export default async () => {
      If you still need it, use the nocache npm package, which is still maintained by the Helmet organization.
      Node cache: This Express middleware sets some HTTP response headers to try to disable client-side caching
   */
-  //app.use(helmet.noCache());
+  // app.use(helmet.noCache());
   app.use(nocache());
 
   // Add express to the nunjucks enviroment instance

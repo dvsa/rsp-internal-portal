@@ -2,7 +2,7 @@ import { isEmpty, has } from 'lodash';
 import moment from 'moment';
 import { isObject } from 'util';
 
-import SignedHttpClient from './../utils/httpclient';
+import SignedHttpClient from '../utils/httpclient';
 import { MOMENT_DATE_FORMAT, MOMENT_DATE_TIME_FORMAT } from '../utils/dateTimeFormat';
 import { ServiceName } from '../utils/logger';
 
@@ -41,15 +41,15 @@ export default class PenaltyService {
       status: rawPenalty.paymentStatus,
       type: rawPenalty.penaltyType,
       typeDescription: PenaltyService.getPenaltyTypeDescription(rawPenalty.penaltyType),
-      paymentDate: rawPenalty.paymentDate ?
-        moment.unix(rawPenalty.paymentDate).format(MOMENT_DATE_FORMAT)
+      paymentDate: rawPenalty.paymentDate
+        ? moment.unix(rawPenalty.paymentDate).format(MOMENT_DATE_FORMAT)
         : undefined,
       paymentAuthCode: rawPenalty.paymentAuthCode,
       paymentRef: rawPenalty.paymentRef,
       paymentMethod: rawPenalty.paymentMethod,
       enabled: data.Enabled,
-      paymentCodeIssueDateTime: rawPenalty.paymentCodeDateTime ?
-        moment.unix(rawPenalty.paymentCodeDateTime).format(MOMENT_DATE_TIME_FORMAT)
+      paymentCodeIssueDateTime: rawPenalty.paymentCodeDateTime
+        ? moment.unix(rawPenalty.paymentCodeDateTime).format(MOMENT_DATE_TIME_FORMAT)
         : undefined,
       paymentStartTime: rawPenalty.paymentStartTime,
     };
