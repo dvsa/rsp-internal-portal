@@ -7,15 +7,16 @@ on:
 
 jobs:
 
-  # See ticket for fixing linting errors before including lint step in pipeline
-  # lint:
-  #  uses: dvsa/.github/.github/workflows/nodejs-lint.yaml@main
+  lint:
+    uses: dvsa/.github/.github/workflows/nodejs-lint.yaml@main
 
   test:
     uses: dvsa/.github/.github/workflows/nodejs-test.yaml@main
 
   security:
     uses: dvsa/.github/.github/workflows/nodejs-security.yaml@main
+    with:
+      args: '--dev --all-projects --policy-path=/github/workspace/.snyk'
     secrets:
       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
