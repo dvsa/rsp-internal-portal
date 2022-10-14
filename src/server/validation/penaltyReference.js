@@ -1,4 +1,4 @@
-import { check } from 'express-validator/check';
+import { check } from 'express-validator';
 
 export default [
   check('penalty_id').isLength({ min: 8, max: 18 }),

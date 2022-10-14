@@ -1,5 +1,5 @@
 import { isEmpty } from 'lodash';
-import SignedHttpClient from './../utils/httpclient';
+import SignedHttpClient from '../utils/httpclient';
 import { ServiceName } from '../utils/logger';
 
 export default class PaymentService {
@@ -20,7 +20,7 @@ export default class PaymentService {
   }
 
   createCardNotPresentGroupTransaction(penGrpId, penGrpDetails, type, penalties, redirectUrl) {
-    const total = penGrpDetails.splitAmounts.find(a => a.type === type).amount;
+    const total = penGrpDetails.splitAmounts.find((a) => a.type === type).amount;
     const payload = {
       TotalAmount: total,
       PaymentMethod: 'CNP',
@@ -28,7 +28,7 @@ export default class PaymentService {
       PenaltyGroupId: penGrpId,
       PenaltyType: type,
       RedirectUrl: redirectUrl,
-      Penalties: penalties.map(p => ({
+      Penalties: penalties.map((p) => ({
         PenaltyReference: p.formattedReference,
         PenaltyAmount: p.amount,
         VehicleRegistration: p.vehicleReg,
@@ -52,8 +52,8 @@ export default class PaymentService {
   }
 
   createGroupCashTransaction(penGrpId, penGrpDetails, type, penalties, redirectUrl, slipNumber) {
-    const total = penGrpDetails.splitAmounts.find(a => a.type === type).amount;
-    const penaltiesOfType = penalties.find(p => p.type === type).penalties;
+    const total = penGrpDetails.splitAmounts.find((a) => a.type === type).amount;
+    const penaltiesOfType = penalties.find((p) => p.type === type).penalties;
 
     const payload = {
       TotalAmount: total,
@@ -65,7 +65,7 @@ export default class PaymentService {
       SlipNumber: slipNumber,
       ReceiptDate: new Date().toISOString().split('T')[0],
       BatchNumber: slipNumber,
-      Penalties: penaltiesOfType.map(p => ({
+      Penalties: penaltiesOfType.map((p) => ({
         PenaltyReference: p.formattedReference,
         PenaltyAmount: p.amount,
         VehicleRegistration: p.vehicleReg,
@@ -75,8 +75,15 @@ export default class PaymentService {
   }
 
   createChequeTransaction(
-    paymentCode, vehicleReg, penaltyReference, penaltyType, amount,
-    slipNumber, chequeDate, chequeNumber, nameOnCheque,
+    paymentCode,
+    vehicleReg,
+    penaltyReference,
+    penaltyType,
+    amount,
+    slipNumber,
+    chequeDate,
+    chequeNumber,
+    nameOnCheque,
   ) {
     const payload = {
       payment_code: paymentCode,
@@ -105,8 +112,8 @@ export default class PaymentService {
     chequeDate,
     nameOnCheque,
   ) {
-    const total = penGrpDetails.splitAmounts.find(a => a.type === type).amount;
-    const penaltiesOfType = penalties.find(p => p.type === type).penalties;
+    const total = penGrpDetails.splitAmounts.find((a) => a.type === type).amount;
+    const penaltiesOfType = penalties.find((p) => p.type === type).penalties;
     const payload = {
       TotalAmount: total,
       PaymentMethod: 'CHEQUE',
@@ -120,7 +127,7 @@ export default class PaymentService {
       ChequeNumber: chequeNumber,
       ChequeDate: chequeDate,
       NameOnCheque: nameOnCheque,
-      Penalties: penaltiesOfType.map(p => ({
+      Penalties: penaltiesOfType.map((p) => ({
         PenaltyReference: p.formattedReference,
         PenaltyAmount: p.amount,
         VehicleRegistration: p.vehicleReg,
@@ -130,8 +137,13 @@ export default class PaymentService {
   }
 
   createPostalOrderTransaction(
-    paymentCode, vehicleReg, penaltyReference, penaltyType, amount,
-    slipNumber, postalOrderNumber,
+    paymentCode,
+    vehicleReg,
+    penaltyReference,
+    penaltyType,
+    amount,
+    slipNumber,
+    postalOrderNumber,
   ) {
     const payload = {
       payment_code: paymentCode,
@@ -156,8 +168,8 @@ export default class PaymentService {
     slipNumber,
     postalOrderNumber,
   ) {
-    const total = penGrpDetails.splitAmounts.find(a => a.type === type).amount;
-    const penaltiesOfType = penalties.find(p => p.type === type).penalties;
+    const total = penGrpDetails.splitAmounts.find((a) => a.type === type).amount;
+    const penaltiesOfType = penalties.find((p) => p.type === type).penalties;
     const payload = {
       TotalAmount: total,
       PaymentMethod: 'POSTAL_ORDER',
@@ -169,7 +181,7 @@ export default class PaymentService {
       SlipNumber: slipNumber,
       PostalOrderNumber: postalOrderNumber,
       BatchNumber: slipNumber,
-      Penalties: penaltiesOfType.map(p => ({
+      Penalties: penaltiesOfType.map((p) => ({
         PenaltyReference: p.formattedReference,
         PenaltyAmount: p.amount,
         VehicleRegistration: p.vehicleReg,

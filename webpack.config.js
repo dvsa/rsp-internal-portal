@@ -1,11 +1,10 @@
 const path = require('path');
-const nodeExternals = require('webpack-node-externals');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: {
     handler: './src/handler.js',
-    app: './src/server/app.local.js',
+    app: './src/server/app.js',
   },
   output: {
     filename: '[name].js',
@@ -13,43 +12,41 @@ module.exports = {
     libraryTarget: 'commonjs2',
     path: path.resolve(__dirname, 'dist'),
   },
-  target: 'node',
+  resolve: {
+      extensions: ['.js']
+  },
+  target: 'node16.16',
   node: {
     __dirname: false,
     __filename: false,
   },
-  externals: [nodeExternals()],
+  externals: [{ fsevents: "require('fsevents')" }],
   module: {
     rules: [
       {
-        test: /\.js$/,
-        enforce: 'pre',
+        test: /\.m?js$/,
         exclude: /node_modules/,
-        loader: 'eslint-loader',
-        options: {
-          emitError: true,
-          emitWarning: true,
-          failOnError: true,
-          failOnWarning: false,
-        },
-      },
-      {
-        test: /\.js$/,
-        loader: 'babel-loader',
-        exclude: /node_modules/,
-      },
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              ['@babel/preset-env', { targets: { "node" : "16.16.0"}, "useBuiltIns": "entry", "corejs": "3" }]
+            ]
+          }
+        }
+      }
     ],
   },
   plugins: [
-    new CopyWebpackPlugin([
-      { from: 'build/server/views', to: 'views/' },
-      { from: 'build/public', to: 'public/' },
-    ]),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'build/server/views', to: 'views/' },
+        { from: 'build/public', to: 'public/' },
+      ]
+    }),
   ],
   stats: {
     colors: true,
   },
-  devtool: 'source-map',
   mode: 'production',
 };
-

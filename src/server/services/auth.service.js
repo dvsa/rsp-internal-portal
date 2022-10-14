@@ -44,7 +44,7 @@ export default class AuthService {
     const promise = new Promise((resolve, reject) => {
       this.httpClient.post('/oauth2/token', queryString.stringify(payload)).then((result) => {
         resolve(result.data);
-      }).catch(error => reject(error));
+      }).catch((error) => reject(error));
     });
 
     return promise;

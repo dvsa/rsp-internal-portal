@@ -5,6 +5,7 @@ import merge from 'webpack-merge';
 import webpack from 'webpack';
 
 module.exports = merge(common, {
+  mode: 'production',
   output: {
     filename: '[name].bundle.js',
     path: path.resolve('dist', 'public', 'javascripts'),

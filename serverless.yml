@@ -2,7 +2,7 @@ service: dvsa-rsp-internal-portal
 
 provider:
   name: aws
-  runtime: nodejs10.18.0
+  runtime: nodejs16.x
   stage: dev
   region: eu-west-1
 
@@ -11,4 +11,4 @@ functions:
     handler: handler.serveExpressApp
     events:
       - http: ANY /
-      - http: "ANY {proxy+}"
+      - http: "ANY /{proxy+}"

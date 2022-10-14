@@ -1,7 +1,6 @@
 import moment from 'moment';
 import config from '../config';
 
-
 export const recentPayment = (timeSeconds) => {
   if (timeSeconds) {
     const now = moment(moment.now());

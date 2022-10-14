@@ -1,5 +1,7 @@
 /* eslint-disable no-use-before-define */
-import { flatten, groupBy, isEmpty, isString, omitBy, padStart, trim } from 'lodash';
+import {
+  flatten, groupBy, isEmpty, isString, omitBy, padStart, trim,
+} from 'lodash';
 import moment from 'moment-timezone';
 
 import AuthService from '../services/auth.service';
@@ -19,11 +21,11 @@ export const robots = (req, res) => {
 
 // Index Route
 export const index = (req, res) => {
-  const invalidPaymentCode = Object.keys(req.query).some(param => param === 'invalidPaymentCode');
-  const invalidCDN = Object.keys(req.query).some(param => param === 'invalidCDN');
-  const invalidFPN = Object.keys(req.query).some(param => param === 'invalidFPN');
-  const invalidIM = Object.keys(req.query).some(param => param === 'invalidIM');
-  const invalidReg = Object.keys(req.query).some(param => param === 'invalidReg');
+  const invalidPaymentCode = Object.keys(req.query).some((param) => param === 'invalidPaymentCode');
+  const invalidCDN = Object.keys(req.query).some((param) => param === 'invalidCDN');
+  const invalidFPN = Object.keys(req.query).some((param) => param === 'invalidFPN');
+  const invalidIM = Object.keys(req.query).some((param) => param === 'invalidIM');
+  const invalidReg = Object.keys(req.query).some((param) => param === 'invalidReg');
 
   const viewData = {
     invalidPaymentCode,
@@ -113,7 +115,7 @@ export const searchVehicleReg = async (req, res) => {
 };
 
 const generateSearchResultViewData = (vehicleReg, penalties, penaltyGroups) => {
-  const penaltyGroupsMapping = penaltyGroups.map(penaltyGroup => ({
+  const penaltyGroupsMapping = penaltyGroups.map((penaltyGroup) => ({
     paymentCode: penaltyGroup.ID,
     paymentStatus: penaltyGroup.Enabled ? penaltyGroup.PaymentStatus : 'CANCELLED',
     summary: summarisePenaltyGroup(penaltyGroup),
@@ -123,7 +125,7 @@ const generateSearchResultViewData = (vehicleReg, penalties, penaltyGroups) => {
       MOMENT_TIMEZONE,
     ).format(MOMENT_DATE_TIME_FORMAT),
   }));
-  const penaltyMapping = penalties.map(penalty => ({
+  const penaltyMapping = penalties.map((penalty) => ({
     paymentCode: penalty.Value.paymentToken,
     paymentStatus: penalty.Enabled ? penalty.Value.paymentStatus || 'UNPAID' : 'CANCELLED',
     summary: summarisePenalty(penalty),

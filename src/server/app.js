@@ -1,19 +1,19 @@
 /* eslint-disable global-require */
 import '@babel/polyfill';
 import express from 'express';
+import { check } from 'express-validator';
 import bodyParser from 'body-parser';
 import compression from 'compression';
 import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
 import nunjucks from 'nunjucks';
 import path from 'path';
 import _ from 'lodash';
-import errorhandler from 'errorhandler';
 import walkSync from 'walk-sync';
 import resolvePath from 'resolve-path';
-import validator from 'express-validator';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import session from 'cookie-session';
+import nocache from 'nocache';
 import config from './config';
 
 const SIXTY_DAYS_IN_SECONDS = 5184000;
@@ -37,7 +37,7 @@ export default async () => {
 
   // Gets absolute path of each macro file
   const macros = walkSync(marcosPath, { directories: false })
-    .map(file => resolvePath(marcosPath, file));
+    .map((file) => resolvePath(marcosPath, file));
 
   env.addGlobal('macroFilePaths', macros);
   env.addGlobal('assets', config.isDevelopment() ? '' : config.publicAssets());
@@ -53,6 +53,8 @@ export default async () => {
   app.use(helmet.noSniff());
 
   app.use(helmet.xssFilter({ setOnOldIE: true }));
+
+  app.use(helmet.crossOriginEmbedderPolicy({ policy: "credentialless" }));
 
   const assetsUrl = config.isDevelopment() ? 'http://localhost:3000/' : `${config.publicAssets()}/`;
 
@@ -79,7 +81,14 @@ export default async () => {
     maxAge: SIXTY_DAYS_IN_SECONDS,
   }));
 
-  app.use(helmet.noCache());
+  // From the Helmet docs:
+  /*
+     helmet.noCache was removed because it isn't directly relevant to security.
+     If you still need it, use the nocache npm package, which is still maintained by the Helmet organization.
+     Node cache: This Express middleware sets some HTTP response headers to try to disable client-side caching
+  */
+  // app.use(helmet.noCache());
+  app.use(nocache());
 
   // Add express to the nunjucks enviroment instance
   env.express(app);
@@ -108,11 +117,11 @@ export default async () => {
   app.use(compression());
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(validator());
+  app.use(express.json());
   // Always sanitizes the body
   app.use((req, res, next) => {
     Object.keys(req.body).forEach((item) => {
-      req.sanitize(item).escape();
+      check(item).escape();
     });
     next();
   });
@@ -121,6 +130,5 @@ export default async () => {
   app.use(awsServerlessExpressMiddleware.eventContext());
   app.use('/', require('./routes').default);
 
-  app.use(errorhandler());
   return app;
 };
