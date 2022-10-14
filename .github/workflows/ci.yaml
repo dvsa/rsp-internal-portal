@@ -50,7 +50,7 @@ jobs:
 
   upload-s3:
     if: startsWith( github.ref, 'refs/heads/feature/') || startsWith( github.ref, 'refs/heads/fix/') || ${{ github.ref_name == 'main' }}
-    uses: dvsa/.github/.github/workflows/upload-to-s3.yaml@feature/new-upload-s3-workflow
+    uses: dvsa/.github/.github/workflows/upload-to-s3.yaml@main
     needs: [ build-names, build ]
     with:
       environment: nonprod
