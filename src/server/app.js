@@ -54,7 +54,7 @@ export default async () => {
 
   app.use(helmet.xssFilter({ setOnOldIE: true }));
 
-  app.use(helmet.crossOriginEmbedderPolicy({ policy: "credentialless" }));
+  app.use(helmet.crossOriginEmbedderPolicy({ policy: 'credentialless' }));
 
   const assetsUrl = config.isDevelopment() ? 'http://localhost:3000/' : `${config.publicAssets()}/`;
 
