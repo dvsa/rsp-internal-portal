@@ -7,18 +7,18 @@ on:
 
 jobs:
 
-  #lint:
-  #  uses: dvsa/.github/.github/workflows/nodejs-lint.yaml@main
+  lint:
+    uses: dvsa/.github/.github/workflows/nodejs-lint.yaml@main
 
-  #test:
-  #  uses: dvsa/.github/.github/workflows/nodejs-test.yaml@main
+  test:
+    uses: dvsa/.github/.github/workflows/nodejs-test.yaml@main
 
-  #security:
-  #  uses: dvsa/.github/.github/workflows/nodejs-security.yaml@main
-  #  with:
-  #    args: '--dev --all-projects --policy-path=/github/workspace/.snyk'
-  #  secrets:
-  #    SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+  security:
+    uses: dvsa/.github/.github/workflows/nodejs-security.yaml@main
+    with:
+      args: '--dev --all-projects --policy-path=/github/workspace/.snyk'
+    secrets:
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
   build-names:
     runs-on: ubuntu-latest
@@ -30,43 +30,38 @@ jobs:
       - uses: actions/checkout@v3
       - name: Set short sha output
         id: sha
-        #run: echo "::set-output name=short_sha::$(git rev-parse --short=11 HEAD)"
         run: echo "SHORT_SHA=$(git rev-parse --short=11 HEAD)" >> $GITHUB_OUTPUT
       - name: Set archive name output
         id: archive
         run: |
           export PRETTY_BRANCH_NAME=$(tr '/' '-' <<< ${{ github.ref_name }})
           echo "ARCHIVE_NAME=${PRETTY_BRANCH_NAME}.zip" >> $GITHUB_OUTPUT
-      - name: Test outputs
-        run: |
-          echo "The archive name is ${{ steps.archive.outputs.ARCHIVE_NAME }}"
-          echo "The short sha is ${{ steps.sha.outputs.SHORT_SHA }}"
 
-  #build:
-  #  if: startsWith( github.ref, 'refs/heads/feature/') || startsWith( github.ref, 'refs/heads/fix/') || ${{ github.ref_name == 'main' }}
-  #  uses: dvsa/.github/.github/workflows/nodejs-build.yaml@main
-  #  needs: [ build-names ]
-  #  with:
-  #    upload-artifact: true
-  #    artifact-name: ${{ needs.build-names.outputs.archive_name }}
-  #    dist-folder: dist/package.zip
-  #    retention-days: 2
-  #    build-command: package
+  build:
+    if: startsWith( github.ref, 'refs/heads/feature/') || startsWith( github.ref, 'refs/heads/fix/') || ${{ github.ref_name == 'main' }}
+    uses: dvsa/.github/.github/workflows/nodejs-build.yaml@main
+    needs: [ build-names ]
+    with:
+      upload-artifact: true
+      artifact-name: ${{ needs.build-names.outputs.archive_name }}
+      dist-folder: dist/package.zip
+      retention-days: 2
+      build-command: package
 
-  #upload-s3:
-  #  if: startsWith( github.ref, 'refs/heads/feature/') || startsWith( github.ref, 'refs/heads/fix/') || ${{ github.ref_name == 'main' }}
-  #  uses: dvsa/.github/.github/workflows/upload-to-s3.yaml@main
-  #  needs: [ build-names, build ]
-  #  with:
-  #    environment: nonprod
-  #    short_commit: ${{ needs.build-names.outputs.short_sha }}
-  #    artifact_name: ${{ needs.build-names.outputs.archive_name }}
-  #    dist-folder: package.zip
-  #  permissions:
-  #    id-token: write
-  #  secrets:
-  #    AWS_ACCOUNT: ${{ secrets.RSP_AWS_ACCOUNT }}
-  #    AWS_REGION: ${{ secrets.RSP_AWS_REGION }}
-  #    BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
-  #    BUCKET_PATH: ${{ secrets.BUCKET_PATH }}
+  upload-s3:
+    if: startsWith( github.ref, 'refs/heads/feature/') || startsWith( github.ref, 'refs/heads/fix/') || ${{ github.ref_name == 'main' }}
+    uses: dvsa/.github/.github/workflows/upload-to-s3.yaml@main
+    needs: [ build-names, build ]
+    with:
+      environment: nonprod
+      short_commit: ${{ needs.build-names.outputs.short_sha }}
+      artifact_name: ${{ needs.build-names.outputs.archive_name }}
+      dist-folder: package.zip
+    permissions:
+      id-token: write
+    secrets:
+      AWS_ACCOUNT: ${{ secrets.RSP_AWS_ACCOUNT }}
+      AWS_REGION: ${{ secrets.RSP_AWS_REGION }}
+      BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
+      BUCKET_PATH: ${{ secrets.BUCKET_PATH }}
 
