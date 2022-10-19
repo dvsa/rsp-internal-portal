@@ -8,13 +8,13 @@ on:
 jobs:
 
   lint:
-    uses: dvsa/.github/.github/workflows/nodejs-lint.yaml@main
+    uses: dvsa/.github/.github/workflows/nodejs-lint.yaml@feature/upgrade-npm-cache
 
   test:
-    uses: dvsa/.github/.github/workflows/nodejs-test.yaml@main
+    uses: dvsa/.github/.github/workflows/nodejs-test.yaml@feature/upgrade-npm-cache
 
   security:
-    uses: dvsa/.github/.github/workflows/nodejs-security.yaml@main
+    uses: dvsa/.github/.github/workflows/nodejs-security.yaml@feature/upgrade-npm-cache
     with:
       args: '--dev --all-projects --policy-path=/github/workspace/.snyk'
     secrets:
@@ -39,7 +39,7 @@ jobs:
 
   build:
     if: startsWith( github.ref, 'refs/heads/feature/') || startsWith( github.ref, 'refs/heads/fix/') || ${{ github.ref_name == 'main' }}
-    uses: dvsa/.github/.github/workflows/nodejs-build.yaml@main
+    uses: dvsa/.github/.github/workflows/nodejs-build.yaml@feature/upgrade-npm-cache
     needs: [ build-names ]
     with:
       upload-artifact: true
@@ -50,7 +50,7 @@ jobs:
 
   upload-s3:
     if: startsWith( github.ref, 'refs/heads/feature/') || startsWith( github.ref, 'refs/heads/fix/') || ${{ github.ref_name == 'main' }}
-    uses: dvsa/.github/.github/workflows/upload-to-s3.yaml@main
+    uses: dvsa/.github/.github/workflows/upload-to-s3.yaml@feature/upgrade-npm-cache
     needs: [ build-names, build ]
     with:
       environment: nonprod
