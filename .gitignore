@@ -66,3 +66,6 @@ build/
 
 .vscode/*
 !.vscode/launch.json
+
+# Mac stuff
+.DS_Store
