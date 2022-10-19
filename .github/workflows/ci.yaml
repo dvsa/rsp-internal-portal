@@ -31,12 +31,16 @@ jobs:
       - name: Set short sha output
         id: sha
         #run: echo "::set-output name=short_sha::$(git rev-parse --short=11 HEAD)"
-        run: echo "short_sha=$(git rev-parse --short=11 HEAD)" >> $GITHUB_ENV
+        run: echo "SHORT_SHA=$(git rev-parse --short=11 HEAD)" >> $GITHUB_OUTPUT
       - name: Set archive name output
         id: archive
         run: |
           export PRETTY_BRANCH_NAME=$(tr '/' '-' <<< ${{ github.ref_name }})
-          echo "archive_name=${PRETTY_BRANCH_NAME}.zip"
+          echo "ARCHIVE_NAME=${PRETTY_BRANCH_NAME}.zip" >> $GITHUB_OUTPUT
+      - name: Test outputs
+        run: |
+          echo "The archive name is ${{ steps.archive.outputs.ARCHIVE_NAME }}"
+          echo "The short sha is ${{ steps.sha.outputs.SHORT_SHA }}"
 
   #build:
   #  if: startsWith( github.ref, 'refs/heads/feature/') || startsWith( github.ref, 'refs/heads/fix/') || ${{ github.ref_name == 'main' }}
