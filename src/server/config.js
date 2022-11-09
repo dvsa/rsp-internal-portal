@@ -129,7 +129,7 @@ function penaltyServiceUrl() {
 
 function port() {
   const portVar = configuration[configMetadata.port];
-  return portVar ? Number(portVar) : 3000;
+  return portVar ? Number(portVar) : 3002;
 }
 
 function postPaymentRedirectBaseUrl() {

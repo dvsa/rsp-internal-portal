@@ -15,7 +15,8 @@ const cognitoExpress = new CognitoExpress({
   tokenExpiration: 3600000,
 });
 
-export default (req, res, next) => {
+export default (req, res, next) => next();
+/*
   if (!req.cookies.rsp_access) {
     // If there's a refresh token on the cookies try to use that to get a new access token
     if (req.cookies.rsp_refresh) {
@@ -85,3 +86,4 @@ export default (req, res, next) => {
     });
   }
 };
+*/
