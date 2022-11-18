@@ -8,7 +8,7 @@ provider:
 
 functions:
   serveExpressApp:
-    handler: handler.serveExpressApp
+    handler: handler.handler
     events:
       - http: ANY /
       - http: "ANY /{proxy+}"

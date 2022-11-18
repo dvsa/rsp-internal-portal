@@ -1,3 +1,4 @@
-import serveExpressApp from './lambdas/serveExpressApp';
+// eslint-disable-next-line import/no-named-as-default
+import handler from './lambdas/serveExpressApp';
 
-exports.serveExpressApp = serveExpressApp;
+export { handler };

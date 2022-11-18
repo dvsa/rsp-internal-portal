@@ -8,12 +8,11 @@ module.exports = {
   },
   output: {
     filename: '[name].js',
-    library: '[name]',
     libraryTarget: 'commonjs2',
     path: path.resolve(__dirname, 'dist'),
   },
   resolve: {
-      extensions: ['.js']
+    extensions: ['.js'],
   },
   target: 'node16.16',
   node: {
@@ -30,11 +29,11 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: [
-              ['@babel/preset-env', { targets: { "node" : "16.16.0"}, "useBuiltIns": "entry", "corejs": "3" }]
-            ]
-          }
-        }
-      }
+              ['@babel/preset-env', { targets: { node: '16.16.0' }, useBuiltIns: 'entry', corejs: '3' }],
+            ],
+          },
+        },
+      },
     ],
   },
   plugins: [
@@ -42,7 +41,7 @@ module.exports = {
       patterns: [
         { from: 'build/server/views', to: 'views/' },
         { from: 'build/public', to: 'public/' },
-      ]
+      ],
     }),
   ],
   stats: {
