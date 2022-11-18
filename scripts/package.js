@@ -16,7 +16,7 @@ const archive = archiver('zip', {
 
 archive.pipe(output);
 
-archive.append(fs.readFileSync(handlerPath), { name: 'handler.js' });
+archive.append(fs.readFileSync(handlerPath), { name: 'app.js' });
 archive.directory(assetsPath, 'public');
 archive.directory(viewsPath, 'views');
 

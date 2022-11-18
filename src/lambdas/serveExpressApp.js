@@ -33,7 +33,7 @@ function isProd() {
 }
 
 let lambdaExpressServer;
-export default async (event, context) => {
+export const handler = async (event, context) => {
   if (!lambdaExpressServer) {
     const expressApp = await app();
     lambdaExpressServer = awsServerlessExpress.createServer(expressApp, null, binaryMimeTypes);
@@ -43,3 +43,5 @@ export default async (event, context) => {
   }
   return awsServerlessExpress.proxy(lambdaExpressServer, event, context, 'PROMISE').promise;
 };
+
+export default handler;
