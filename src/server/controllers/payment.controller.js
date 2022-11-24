@@ -475,6 +475,7 @@ export const reversePayment = async (req, res) => {
   }
 
   try {
+    logInfo('ReversePayment', { penaltyId, paymentCode });
     await paymentService.reversePayment(penaltyId);
     return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
   } catch (error) {
@@ -520,7 +521,7 @@ export const reverseGroupPayment = async (req, res) => {
       ...logMesssage,
       error: cpmsError.message,
     });
-    return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
+    return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}?reverse=failed`);
   }
 
   try {
@@ -532,7 +533,7 @@ export const reverseGroupPayment = async (req, res) => {
       ...logMesssage,
       error: error.message,
     });
-    return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
+    return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}?reverse=failed`);
   }
 };
 

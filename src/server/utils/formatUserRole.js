@@ -1,5 +1,5 @@
 export default (rawRole) => {
-  if(!rawRole){
+  if (!rawRole) {
     return null;
   }
   const isSingleRole = rawRole.indexOf('[') === -1;

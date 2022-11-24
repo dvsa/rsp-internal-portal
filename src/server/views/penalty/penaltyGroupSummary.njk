@@ -29,6 +29,14 @@
         </div>
       {% endif %}
 
+      {% if reverseFailed %}
+        <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-reverse-failed" tabindex="-1">
+          <h2 class="heading-medium error-summary-heading">
+            The reverse payment failed.
+          </h2>
+        </div>
+      {% endif %}
+
       {% if penaltyGroupDetails.enabled == false %}
         <p>
           {{ components.notice(text='This payment code has been cancelled') }} 

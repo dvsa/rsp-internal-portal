@@ -4,9 +4,9 @@ import aws4 from 'aws4';
 import { isNumber } from 'lodash';
 import URL from 'url-parse';
 import { isObject } from 'util';
+import { logAxiosError } from './logger';
 
 import config from '../config';
-import { logAxiosError } from './logger';
 
 export const createUnsignedHttpClient = (baseURL, headers = { Authorization: 'allow' }) => axios.create({
   baseURL,
@@ -99,7 +99,7 @@ export default class SignedHttpClient {
       });
     }
     const url = new URL(path, this.baseUrlOb.href);
-    return axios.delete(url, request).catch((err) => {
+    return axios.delete(url.href, request).catch((err) => {
       logAxiosError(logName, this.serviceName, err, body);
       throw err;
     });

@@ -85,8 +85,10 @@ export const cancelPaymentCode = async (req, res) => {
   });
   try {
     await penaltyGroupService.cancel(paymentCode);
+    logInfo('cancelPaymentCodeSuccess', { paymentCode });
     res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
   } catch (error) {
+    logError('cancelPaymentCodeError', { paymentCode, error });
     res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}?cancellation=failed`);
   }
 };
