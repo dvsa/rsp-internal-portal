@@ -16,7 +16,6 @@ on:
 jobs:
   update-lambda-code:
     uses: dvsa/.github/.github/workflows/update-lambda-function.yaml@v2.2
-    needs: [ build-names, build, upload-s3 ]
     with:
       environment: ${{ github.event.inputs.environment }}
       lambda_function_name: rsp-nonprod-apis-internal-portal-serveExpressApp
