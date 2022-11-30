@@ -1,5 +1,5 @@
 import SignedHttpClient from '../utils/httpclient';
-import { ServiceName } from '../utils/logger';
+import { logInfo, ServiceName } from '../utils/logger';
 
 export default class PaymentService {
   constructor(serviceUrl) {
@@ -19,10 +19,11 @@ export default class PaymentService {
   }
 
   reverseGroupPayment(paymentId, penaltyType) {
-    return this.httpClient.delete(`groupPayments/${paymentId}/${penaltyType}`, 'ReverseGroupPayment');
+    return this.httpClient.delete(`groupPayments/${paymentId}/${penaltyType}`, {}, 'ReverseGroupPayment');
   }
 
   reversePayment(paymentId) {
-    return this.httpClient.delete(`payments/${paymentId}`, 'ReversePayment');
+    logInfo('PaymentServiceReversePayment', { paymentId });
+    return this.httpClient.delete(`payments/${paymentId}`, {}, 'ReversePayment');
   }
 }
