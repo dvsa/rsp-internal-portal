@@ -1,0 +1,25 @@
+name: Release
+
+on:
+  push
+
+jobs:
+
+  promote:
+    runs-on: ubuntu-latest
+    environment: nonprod
+    permissions:
+      id-token: write
+    steps:
+      - name: Configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.RSP_AWS_ACCOUNT }}:role/GithubActionsRole
+          role-session-name: GithubActionsSession
+          aws-region: ${{ secrets.RSP_AWS_REGION }}
+      - name: Upload to s3
+        run: >
+          aws s3api copy-object
+          --copy-source ${{ secrets.S3_BUCKET_NAME }}/internal-portal/serveExpressApp/master.zip
+          --key internal-portal/serveExpressApp/test.zip
+          --bucket ${{ secrets.RSP_PROD_S3_BUCKET_NAME }}
