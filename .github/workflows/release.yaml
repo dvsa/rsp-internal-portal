@@ -7,7 +7,6 @@ jobs:
 
   promote:
     runs-on: ubuntu-latest
-    environment: nonprod
     permissions:
       id-token: write
     steps:
@@ -20,6 +19,6 @@ jobs:
       - name: Upload to s3
         run: >
           aws s3api copy-object
-          --copy-source ${{ secrets.S3_BUCKET_NAME }}/internal-portal/serveExpressApp/master.zip
+          --copy-source ${{ secrets.RSP_NONPROD_S3_BUCKET_NAME }}/internal-portal/serveExpressApp/master.zip
           --key internal-portal/serveExpressApp/test.zip
-          --bucket ${{ secrets.RSP_PROD_S3_BUCKET_NAME }}
+          --bucket ${{ secrets.RSP_NONPROD_S3_BUCKET_NAME }}
