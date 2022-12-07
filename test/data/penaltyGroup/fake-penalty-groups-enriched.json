@@ -3,6 +3,7 @@
     "paymentCode": "4724r2wujeg",
     "isPenaltyGroup": true,
     "paymentStatus": "PAID",
+    "isPaymentOverdue": false,
     "penaltyGroupDetails": {
       "registrationNumber": "11DDD",
       "location": "Bury St Edmunds Sector Office(Bury St Edmunds - E. Anglia)",
@@ -78,6 +79,7 @@
     "isPenaltyGroup": true,
     "invalidSlipNumber": false,
     "paymentStatus": "UNPAID",
+    "isPaymentOverdue": true,
     "penaltyGroupDetails": {
       "registrationNumber": "11DDD",
       "location": "Bury St Edmunds Sector Office(Bury St Edmunds - E. Anglia)",
@@ -147,5 +149,31 @@
         ]
       }
     ]
+  },
+  {
+    "paymentCode": "238gk2wnval",
+    "isPenaltyGroup": true,
+    "invalidSlipNumber": false,
+    "paymentStatus": "UNPAID",
+    "isPaymentOverdue": true,
+    "penaltyGroupDetails": {
+      "registrationNumber": "22DDD",
+      "location": "Bury St Edmunds Sector Office(Bury St Edmunds - E. Anglia)",
+      "date": "13/08/2018",
+      "amount": 200,
+      "splitAmounts": [
+        {
+          "type": "FPN",
+          "amount": 120,
+          "status": "UNPAID"
+        },
+        {
+          "type": "IM",
+          "amount": 80,
+          "status": "PAID"
+        }
+      ]
+    },
+    "penaltyDetails": []
   }
 ]

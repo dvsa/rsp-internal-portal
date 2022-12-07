@@ -262,6 +262,14 @@ export const renderPaymentPage = async (req, res) => {
     if (penaltyDetails.status === 'PAID') {
       return res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
     }
+
+    if (penaltyDetails.isPaymentOverdue) {
+      logInfo('renderPaymentPage', {
+        message: 'Payment overdue. Redirect to penalty details page',
+      });
+      return res.redirect(`${config.urlRoot()}/payment-code/${penaltyDetails.paymentCode}`);
+    }
+
     // Payment Type is expected to come from the query string, otherwise the default is used
     const paymentType = req.query.paymentType ? req.query.paymentType : 'card';
     const { paymentCode } = penaltyDetails;
@@ -316,6 +324,13 @@ export const renderGroupPaymentPage = async (req, res) => {
     const penaltyGroup = await penaltyGroupService.getByPaymentCode(paymentCode);
 
     if (penaltyGroup.paymentStatus === 'PAID') {
+      return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
+    }
+
+    if (penaltyGroup.penaltyGroupDetails.isPaymentOverdue) {
+      logInfo('renderGroupPaymentPage', {
+        message: 'Payment overdue. Redirect to penalty details page',
+      });
       return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
     }
 

@@ -53,14 +53,19 @@ export const getPenaltyDetails = [
         };
       }
     } catch (error) {
-      res.redirect('../?invalidPaymentCode');
+      logError('getPenaltyDetails', {
+        message: 'Error getting penalty details by code',
+        paymentCode,
+        error: error.message,
+      });
+      return res.redirect(`${config.urlRoot()}/?invalidPaymentCode`);
     }
 
     const finalViewData = {
       ...tryAddCancellationFlagToViewData(req, viewData),
       ...req.session,
     };
-    res.render(view, finalViewData);
+    return res.render(view, finalViewData);
   },
 ];
 
@@ -69,9 +74,18 @@ export const getPenaltyGroupBreakdownForType = [
     const paymentCode = req.params.payment_code;
     const { type } = req.params;
     penaltyGroupService.getPaymentsByCodeAndType(paymentCode, type).then((penaltiesForType) => {
-      res.render('payment/penaltyGroupTypeBreakdown', { paymentCode, ...penaltiesForType, ...req.session });
-    }).catch(() => {
-      res.redirect('../payment-code?invalidPaymentCode');
+      if (penaltiesForType.isPaymentOverdue) {
+        logInfo('getPenaltyGroupBreakdownForType', {
+          message: 'Payment is overdue. Redirect to penalty details page.',
+        });
+        return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
+      }
+      return res.render('payment/penaltyGroupTypeBreakdown', { paymentCode, ...penaltiesForType, ...req.session });
+    }).catch((err) => {
+      logError('getPenaltyGroupBreakdownForTypeError', {
+        error: err.message,
+      });
+      return res.redirect(`${config.urlRoot()}/payment-code?invalidPaymentCode`);
     });
   },
 ];

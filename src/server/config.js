@@ -27,6 +27,7 @@ const configMetadata = {
   region: 'REGION',
   urlRoot: 'URL_ROOT',
   views: 'VIEWS',
+  paymentLimitDays: 'PAYMENT_LIMIT_DAYS',
 };
 
 let configuration = {};
@@ -156,6 +157,15 @@ function views() {
   return configuration[configMetadata.views] || path.resolve(__dirname, 'views');
 }
 
+function paymentLimitDays() {
+  const defaultDays = 42;
+  const days = configuration[configMetadata.paymentLimitDays];
+  if (days) {
+    return Number.isNaN(Number(days)) ? defaultDays : Number(days);
+  }
+  return defaultDays;
+}
+
 const config = {
   bootstrap,
   clientId,
@@ -180,6 +190,7 @@ const config = {
   region,
   urlRoot,
   views,
+  paymentLimitDays,
 };
 
 export default config;

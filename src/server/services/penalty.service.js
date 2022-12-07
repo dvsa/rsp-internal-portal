@@ -1,10 +1,11 @@
 import { isEmpty, has } from 'lodash';
 import moment from 'moment';
 import { isObject } from 'util';
-
+import isPaymentOverdue from '../utils/isPaymentOverdue';
+import config from '../config';
 import SignedHttpClient from '../utils/httpclient';
 import { MOMENT_DATE_FORMAT, MOMENT_DATE_TIME_FORMAT } from '../utils/dateTimeFormat';
-import { logInfo, ServiceName } from '../utils/logger';
+import { logDebug, ServiceName } from '../utils/logger';
 
 export default class PenaltyService {
   constructor(serviceUrl) {
@@ -51,13 +52,14 @@ export default class PenaltyService {
       paymentCodeIssueDateTime: rawPenalty.paymentCodeDateTime
         ? moment.unix(rawPenalty.paymentCodeDateTime).format(MOMENT_DATE_TIME_FORMAT)
         : undefined,
+      isPaymentOverdue: isPaymentOverdue(rawPenalty.paymentCodeDateTime, config.paymentLimitDays()),
       paymentStartTime: rawPenalty.paymentStartTime,
     };
     return penaltyDetails;
   }
 
   async getByPaymentCode(paymentCode) {
-    logInfo('getByPaymentCode', {
+    logDebug('getByPaymentCode', {
       message: 'Get penalty by payment code',
       paymentCode,
     });
