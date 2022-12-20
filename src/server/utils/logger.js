@@ -28,7 +28,7 @@ export function logDebug(logName, message) {
   }, null, 2));
 }
 
-function errorMessageFromAxiosError(error) {
+export function errorMessageFromAxiosError(error) {
   if (error.response) {
     // The request was made and the server responded with a status code
     // that falls out of the range of 2xx

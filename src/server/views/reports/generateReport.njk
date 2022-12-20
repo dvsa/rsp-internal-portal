@@ -17,7 +17,9 @@
             <h2 class="heading-medium error-summary-heading" id="error-summary-generate-report">
               There was a problem
             </h2>
-            The date range you entered was invalid.
+            <p>
+              {{ dateValidationMessage }}
+            </p>
           </div>
         {% endif %}
         {% call components.form(action='', method='POST') %}

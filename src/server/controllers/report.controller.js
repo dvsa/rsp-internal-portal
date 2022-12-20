@@ -2,21 +2,26 @@ import CpmsService from '../services/cpms.service';
 import config from '../config';
 import { logInfo } from '../utils/logger';
 import validDateRange from '../utils/validDateRange';
+import { errorMessages, errorTypes } from '../validation/reports';
 
 const cpmsService = new CpmsService(config.cpmsServiceUrl());
-const INVALID_DATE_RANGE = 'invalidDateRange';
+const FAILURE = 'failure';
+const ERROR_TYPE = 'type';
 
 export const renderReportFilters = async (req, res) => {
   const reportTypes = await cpmsService.getReportTypes();
-  const invalidDateRange = Object.keys(req.query).some((param) => param === INVALID_DATE_RANGE);
-  res.render('reports/generateReport', { types: reportTypes, ...req.session, invalidDateRange });
+  const invalidDateRange = Object.keys(req.query).some((param) => param === FAILURE);
+  const errorType = Object.keys(req.query).some((param) => param === ERROR_TYPE) ? req.query.type : undefined;
+  res.render('reports/generateReport', { types: reportTypes, ...req.session, invalidDateRange, dateValidationMessage: errorMessages[errorType] });
 };
 
 export const generateReport = async (req, res) => {
   const reportFilters = { ...req.body };
 
-  if (!validDateRange(reportFilters.dateFrom, reportFilters.dateTo)) {
-    res.redirect(`reports?${INVALID_DATE_RANGE}`);
+  const validation = validDateRange(reportFilters.dateFrom, reportFilters.dateTo);
+
+  if (validation.isValid === false) {
+    res.redirect(`reports?${FAILURE}&type=${validation.type}`);
     return;
   }
 
@@ -26,15 +31,19 @@ export const generateReport = async (req, res) => {
     reportFilters,
   });
 
-  const response = await cpmsService.requestReport(
-    reportFilters.penaltyType,
-    reportFilters.reportCode,
-    `${reportFilters.dateFrom} 00:00:00`,
-    `${reportFilters.dateTo} 23:59:00`,
-  );
+  try {
+    const response = await cpmsService.requestReport(
+      reportFilters.penaltyType,
+      reportFilters.reportCode,
+      `${reportFilters.dateFrom} 00:00:00`,
+      `${reportFilters.dateTo} 23:59:00`,
+    );
 
-  if (response.code === '000') {
-    res.render('reports/generatingReport', { reportReference: response.reference, penaltyType: reportFilters.penaltyType, ...req.session });
+    if (response.code === '000') {
+      res.render('reports/generatingReport', { reportReference: response.reference, penaltyType: reportFilters.penaltyType, ...req.session });
+    }
+  } catch (error) {
+    res.redirect(`reports?${FAILURE}&type=${errorTypes.cpmsError}`);
   }
 };
 
