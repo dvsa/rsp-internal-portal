@@ -8,13 +8,13 @@ on:
 jobs:
 
   lint:
-    uses: dvsa/.github/.github/workflows/nodejs-lint.yaml@v2
+    uses: dvsa/.github/.github/workflows/nodejs-lint.yaml@v2.3
 
   test:
-    uses: dvsa/.github/.github/workflows/nodejs-test.yaml@v2
+    uses: dvsa/.github/.github/workflows/nodejs-test.yaml@v2.3
 
   security:
-    uses: dvsa/.github/.github/workflows/nodejs-security.yaml@v2
+    uses: dvsa/.github/.github/workflows/nodejs-security.yaml@v2.3
     with:
       args: '--all-projects'
     secrets:
@@ -39,13 +39,13 @@ jobs:
 
   build:
     if: startsWith( github.ref, 'refs/heads/feature/') || startsWith( github.ref, 'refs/heads/fix/') || ${{ github.ref_name == 'master' }}
-    uses: dvsa/.github/.github/workflows/nodejs-build.yaml@v2
+    uses: dvsa/.github/.github/workflows/nodejs-build.yaml@v2.3
     with:
       upload_artifact: true
 
   upload-s3:
     if: startsWith( github.ref, 'refs/heads/feature/') || startsWith( github.ref, 'refs/heads/fix/') || ${{ github.ref_name == 'master' }}
-    uses: dvsa/.github/.github/workflows/upload-to-s3.yaml@v2
+    uses: dvsa/.github/.github/workflows/upload-to-s3.yaml@v2.3
     needs: [ build-names, build ]
     with:
       environment: nonprod
@@ -61,7 +61,7 @@ jobs:
 
   update-lambda-code:
     if: ${{ github.ref_name == github.event.repository.default_branch }}
-    uses: dvsa/.github/.github/workflows/update-lambda-function.yaml@v2.2
+    uses: dvsa/.github/.github/workflows/update-lambda-function.yaml@v2.3
     needs: [ build-names, build, upload-s3 ]
     with:
       environment: nonprod
