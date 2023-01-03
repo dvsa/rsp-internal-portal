@@ -24,13 +24,12 @@ module.exports = {
                 targets: {
                   browsers: [
                     'last 3 versions',
-                    'ie >= 8',
                     'last 3 iOS major versions',
                   ],
                 },
                 debug: false,
                 useBuiltIns: 'entry',
-                corejs: '2',
+                corejs: '3',
               }],
             ],
             plugins: [

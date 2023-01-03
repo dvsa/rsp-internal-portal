@@ -10,7 +10,4 @@ module.exports = merge(common, {
     filename: '[name].bundle.js',
     path: path.resolve('dist', 'public', 'javascripts'),
   },
-  plugins: [
-    new webpack.optimize.UglifyJsPlugin()
-  ],
 });
