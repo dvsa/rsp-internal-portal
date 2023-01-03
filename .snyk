@@ -1,91 +1,19 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.22.1
+version: v1.23.0
 ignore:
-  SNYK-JS-FILETYPE-2958042:
+  SNYK-JS-JSONWEBTOKEN-3180020:
     - '*' :
-      reason: 'Known gulp vulnerability'
-      expires: '2023-10-13T09:00:00.000Z'
-  SNYK-JS-NTHCHECK-1586032:
+      reason: 'Known cognito-express vulnerability'
+      expires: '2023-01-31T09:00:00.000Z'
+  SNYK-JS-JSONWEBTOKEN-3180022:
     - '*' :
-      reason: 'Known gulp vulnerability'
-      expires: '2023-10-13T09:00:00.000Z'
-  SNYK-JS-ANSIREGEX-1583908:
+      reason: 'Known cognito-express vulnerability'
+      expires: '2023-01-31T09:00:00.000Z'
+  SNYK-JS-JSONWEBTOKEN-3180024:
     - '*' :
-      reason: 'Known gulp vulnerability'
-      expires: '2023-10-13T09:00:00.000Z'
-  SNYK-JS-BROWSERSLIST-1090194:
+      reason: 'Known cognito-express vulnerability'
+      expires: '2023-01-31T09:00:00.000Z'
+  SNYK-JS-JSONWEBTOKEN-3180026:
     - '*' :
-      reason: 'Known gulp vulnerability'
-      expires: '2023-10-13T09:00:00.000Z'
-  SNYK-JS-COLORSTRING-1082939:
-    - '*' :
-      reason: 'Known gulp vulnerability'
-      expires: '2023-10-13T09:00:00.000Z'
-  SNYK-JS-GLOBPARENT-1016905:
-    - '*' :
-      reason: 'Known gulp vulnerability'
-      expires: '2023-10-13T09:00:00.000Z'
-  SNYK-JS-GOT-2932019:
-    - '*' :
-      reason: 'Known gulp vulnerability'
-      expires: '2023-10-13T09:00:00.000Z'
-  SNYK-JS-ISSVG-1085627:
-    - '*' :
-      reason: 'Known gulp vulnerability'
-      expires: '2023-10-13T09:00:00.000Z'
-  SNYK-JS-ISSVG-1243891:
-    - '*' :
-      reason: 'Known gulp vulnerability'
-      expires: '2023-10-13T09:00:00.000Z'
-  SNYK-JS-JSYAML-173999:
-    - '*' :
-      reason: 'Known gulp vulnerability'
-      expires: '2023-10-13T09:00:00.000Z'
-  SNYK-JS-JSYAML-174129:
-    - '*' :
-      reason: 'Known gulp vulnerability'
-      expires: '2023-10-13T09:00:00.000Z'
-  SNYK-JS-LODASHTEMPLATE-1088054:
-    - '*' :
-      reason: 'Known gulp vulnerability'
-      expires: '2023-10-13T09:00:00.000Z'
-  SNYK-JS-POSTCSS-1255640:
-    - '*' :
-      reason: 'Known gulp vulnerability'
-      expires: '2023-10-13T09:00:00.000Z'
-  SNYK-JS-SEMVERREGEX-1047770:
-    - '*' :
-      reason: 'Known gulp vulnerability'
-      expires: '2023-10-13T09:00:00.000Z'
-  SNYK-JS-SEMVERREGEX-1584358:
-    - '*' :
-      reason: 'Known gulp vulnerability'
-      expires: '2023-10-13T09:00:00.000Z'
-  SNYK-JS-SEMVERREGEX-1585624:
-    - '*' :
-      reason: 'Known gulp vulnerability'
-      expires: '2023-10-13T09:00:00.000Z'
-  SNYK-JS-SEMVERREGEX-2824151:
-    - '*' :
-      reason: 'Known gulp vulnerability'
-      expires: '2023-10-13T09:00:00.000Z'
-  SNYK-JS-UNSETVALUE-2400660:
-    - '*' :
-      reason: 'Known gulp vulnerability'
-      expires: '2023-10-13T09:00:00.000Z'
-  SNYK-JS-TRIMNEWLINES-1298042:
-    - '*' :
-      reason: 'Known gulp vulnerability'
-      expires: '2023-10-13T09:00:00.000Z'
-  SNYK-JS-DECOMPRESSTAR-559095:
-    - '*' :
-      reason: 'Serverless, no patch available.'
-      expires: '2022-11-13T09:00:00.000Z'
-  SNYK-JS-MOCHA-2863123:
-    - '*' :
-      reason: 'Mocha vulnerability. No patch available.'
-      expires: '2022-11-13T09:00:00.000Z'
-  SNYK-JS-SERVERLESSOFFLINE-1540299:
-    - '*' :
-      reason: 'Serverless vulnerability. No patch available'
-      expires: '2022-11-13T09:00:00.000Z'
+      reason: 'Known cognito-express vulnerability'
+      expires: '2023-01-31T09:00:00.000Z'
