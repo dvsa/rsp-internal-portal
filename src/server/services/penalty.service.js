@@ -6,6 +6,7 @@ import config from '../config';
 import SignedHttpClient from '../utils/httpclient';
 import { MOMENT_DATE_FORMAT, MOMENT_DATE_TIME_FORMAT } from '../utils/dateTimeFormat';
 import { logDebug, ServiceName } from '../utils/logger';
+import { isCancellable } from '../utils/isCancellable';
 
 export default class PenaltyService {
   constructor(serviceUrl) {
@@ -54,6 +55,7 @@ export default class PenaltyService {
         : undefined,
       isPaymentOverdue: isPaymentOverdue(rawPenalty.paymentCodeDateTime, config.paymentLimitDays()),
       paymentStartTime: rawPenalty.paymentStartTime,
+      isCancellable: isCancellable(rawPenalty.paymentStatus, data.Enabled, rawPenalty.paymentStartTime),
     };
     return penaltyDetails;
   }
@@ -64,7 +66,6 @@ export default class PenaltyService {
       paymentCode,
     });
     const response = await this.httpClient.get(`documents/tokens/${paymentCode}`, 'GetByPaymentCode');
-
     if (isEmpty(response.data)) {
       throw new Error('Payment code not found');
     }
