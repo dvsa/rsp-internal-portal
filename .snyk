@@ -17,3 +17,7 @@ ignore:
     - '*' :
       reason: 'Known cognito-express vulnerability'
       expires: '2023-01-31T09:00:00.000Z'
+  SNYK-JS-DEBUG-3227433:
+    - '*' :
+      reason: 'Known debug vulnerability'
+      expires: '2023-01-31T09:00:00.000Z'
