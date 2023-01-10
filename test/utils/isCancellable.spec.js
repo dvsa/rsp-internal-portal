@@ -60,4 +60,14 @@ describe('isCancellable', () => {
       expect(cancellable).to.be.false;
     });
   });
+
+  context('fine is cancellable as there has never been a payment attempt', () => {
+    it.only('returns true', () => {
+      const paymentStatus = 'UNPAID';
+      const activePenalty = true;
+      let paymentStartTime;
+      const cancellable = isCancellable(paymentStatus, activePenalty, paymentStartTime);
+      expect(cancellable).to.be.true;
+    });
+  });
 });
