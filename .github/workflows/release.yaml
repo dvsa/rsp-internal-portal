@@ -1,16 +1,36 @@
 name: Release
 
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
 
 env:
   COPY_SOURCE: internal-portal/serveExpressApp/master.zip
   KEY_PATH: internal-portal/serveExpressApp
 
 jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      tag_name: ${{ steps.release.outputs.tag_name }}
+      release_created: ${{ steps.release.outputs.release_created }}
+    steps:
+      - uses: google-github-actions/release-please-action@v3
+        id: release
+        with:
+          release-type: node
+          package-name: rsp-internal-portal
 
   promote:
+    if: ${{ needs.release-please.outputs.release_created }}
+    needs: release-please
     runs-on: ubuntu-latest
     permissions:
       id-token: write
