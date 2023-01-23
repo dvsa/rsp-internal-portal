@@ -79,7 +79,7 @@
           </div>
           <!-- Vehicle reg -->
           <div class="multiple-choice" data-target="search-vehicle-reg">
-            <input id="search-by-vehicle-reg" type="radio" name="search-by" value='vehicle-reg' {% if invalidReg or invalid == false %} checked {% endif %}>
+            <input id="search-by-vehicle-reg" type="radio" name="search-by" value='vehicle-reg' data-test-id="search-by-reg-container" {% if invalidReg or invalid == false %} checked {% endif %}>
             <label class="{{ 'error' if invalidReg }}" for="search-by-vehicle-reg"><strong>Vehicle registration</strong></label>
           </div>
           <div class="panel panel-border-narrow js-hidden {{ 'form-group-error' if invalidReg }}" id="search-vehicle-reg">
@@ -94,7 +94,7 @@
           </div>
           <!-- Payment Code -->
           <div class="multiple-choice" data-target="search-payment-code">
-            <input id="search-by-payment-code" type="radio" name="search-by" value='code' {% if invalidPaymentCode %} checked {% endif %}>
+            <input id="search-by-payment-code" type="radio" name="search-by" value='code' data-test-id="payment-code-container" {% if invalidPaymentCode %} checked {% endif %}>
             <label class="{{ 'error' if invalidPaymentCode }}" for="search-by-payment-code"><strong>Payment code</strong></label>
           </div>
           <div class="panel panel-border-narrow js-hidden {{ 'form-group-error' if invalidPaymentCode }}" id="search-payment-code">
