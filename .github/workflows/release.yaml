@@ -1,17 +1,44 @@
 name: Release
 
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - master
 
 env:
-  COPY_SOURCE: internal-portal/serveExpressApp/master.zip
-  KEY_PATH: internal-portal/serveExpressApp
+  COPY_SOURCE: master.zip
 
 jobs:
-
+  release-please:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      tag_name: ${{ steps.release.outputs.tag_name }}
+      release_created: ${{ steps.release.outputs.release_created }}
+    steps:
+      - uses: google-github-actions/release-please-action@v3
+        id: release
+        with:
+          release-type: node
+          package-name: ${{ github.event.repository.name }}
+  lambdas:
+    if: ${{ needs.release-please.outputs.release_created }}
+    needs: release-please
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.json.outputs.MATRIX }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Read in lambdas names from JSON
+        id: json
+        run: |
+          echo "MATRIX=$(jq -c . < ./lambdas.json)" >> $GITHUB_OUTPUT
   promote:
     runs-on: ubuntu-latest
+    if: ${{ needs.release-please.outputs.release_created }}
+    needs: [lambdas, release-please]
     permissions:
       id-token: write
     steps:
@@ -27,5 +54,5 @@ jobs:
           --tagging-directive REPLACE
           --tagging promote=YES
           --copy-source ${{ secrets.RSP_NONPROD_S3_BUCKET_NAME }}/${{ env.COPY_SOURCE }}
-          --key ${{ env.KEY_PATH }}/release-${{ github.ref_name }}.zip
+          --key ${{ secrets.S3_KEY_PATH }}/release-${{ needs.release-please.outputs.tag_name }}.zip
           --bucket ${{ secrets.RSP_NONPROD_S3_BUCKET_NAME }}
