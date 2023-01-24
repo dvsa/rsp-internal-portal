@@ -44,7 +44,7 @@ describe('isCancellable', () => {
     it('returns false', () => {
       const paymentStatus = 'UNPAID';
       const activePenalty = true;
-      setToday('2023-01-09 09:05'); // 0905 9th Januay 2023
+      setToday('2023-01-09 09:05'); // 0905 9th January 2023
       const paymentStartTime = 1673254800; // 0900 9th January 2023
       const cancellable = isCancellable(paymentStatus, activePenalty, paymentStartTime);
       expect(cancellable).to.be.false;
@@ -62,7 +62,7 @@ describe('isCancellable', () => {
   });
 
   context('fine is cancellable as there has never been a payment attempt', () => {
-    it.only('returns true', () => {
+    it('returns true', () => {
       const paymentStatus = 'UNPAID';
       const activePenalty = true;
       let paymentStartTime;

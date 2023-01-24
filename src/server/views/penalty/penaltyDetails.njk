@@ -38,7 +38,7 @@
           <h2 class="heading-medium error-summary-heading">
             The reverse payment failed.
           </h2>
-          <p>Please note: if payment has been made within the last 24 hours, payment reversal will fail.</p>
+          <p>Please note: payments cannot be reversed on the same day they were made. You must wait until the next day to do this.</p>
         </div>
       {% endif %}
 
@@ -112,10 +112,16 @@
             </tbody>
           </table>
         </p>
+         {% if not isReversible %}
+          {{ components.notice(text='You cannot reverse this at this time because payments cannot be reversed on the same day they were made. You must wait until the next day to do this.')}}
+          <br>
+        {% endif %}
         {{ components.button(text='Pay another penalty', url='/') }}
-        {% call components.form(action='/payment-code/'+paymentCode+'/reversePayment', method='POST', class='right')  %}
-          {{ components.button(text='Reverse payment', type='submit', secondary='true') }}
-        {%- endcall %}
+        {% if isReversible %}
+          {% call components.form(action='/payment-code/'+paymentCode+'/reversePayment', method='POST', class='right')  %}
+            {{ components.button(text='Reverse payment', type='submit', secondary='true') }}
+          {%- endcall %}
+        {% endif %}
         {% elif isPaymentOverdue %}
           <h2 class="heading-medium">Payment Details</h2>
           <p>Payment can no longer be taken. The deadline for payment has passed.</p>
@@ -147,7 +153,6 @@
       </aside>
       {%- endcall %}
     {% endif %}
-
   {%- endcall %}
   
 {% endblock %}
