@@ -12,7 +12,9 @@ export const renderReportFilters = async (req, res) => {
   const reportTypes = await cpmsService.getReportTypes();
   const invalidDateRange = Object.keys(req.query).some((param) => param === FAILURE);
   const errorType = Object.keys(req.query).some((param) => param === ERROR_TYPE) ? req.query.type : undefined;
-  res.render('reports/generateReport', { types: reportTypes, ...req.session, invalidDateRange, dateValidationMessage: errorMessages[errorType] });
+  res.render('reports/generateReport', {
+    types: reportTypes, ...req.session, invalidDateRange, dateValidationMessage: errorMessages[errorType],
+  });
 };
 
 export const generateReport = async (req, res) => {
