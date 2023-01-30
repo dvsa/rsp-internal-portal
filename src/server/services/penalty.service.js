@@ -57,7 +57,7 @@ export default class PenaltyService {
       isPaymentOverdue: isPaymentOverdue(rawPenalty.paymentCodeDateTime, config.paymentLimitDays()),
       paymentStartTime: rawPenalty.paymentStartTime,
       isCancellable: isCancellable(rawPenalty.paymentStatus, data.Enabled, rawPenalty.paymentStartTime),
-      isReversible: isReversible(rawPenalty.paymentStatus, rawPenalty.paymentDate),
+      isReversible: isReversible(rawPenalty.paymentStatus, rawPenalty.paymentDate, rawPenalty.paymentMethod),
     };
     return penaltyDetails;
   }
