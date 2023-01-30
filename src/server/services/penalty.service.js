@@ -7,6 +7,7 @@ import SignedHttpClient from '../utils/httpclient';
 import { MOMENT_DATE_FORMAT, MOMENT_DATE_TIME_FORMAT } from '../utils/dateTimeFormat';
 import { logDebug, ServiceName } from '../utils/logger';
 import { isCancellable } from '../utils/isCancellable';
+import { isReversible } from '../utils/isReversible';
 
 export default class PenaltyService {
   constructor(serviceUrl) {
@@ -56,6 +57,7 @@ export default class PenaltyService {
       isPaymentOverdue: isPaymentOverdue(rawPenalty.paymentCodeDateTime, config.paymentLimitDays()),
       paymentStartTime: rawPenalty.paymentStartTime,
       isCancellable: isCancellable(rawPenalty.paymentStatus, data.Enabled, rawPenalty.paymentStartTime),
+      isReversible: isReversible(rawPenalty.paymentStatus, rawPenalty.paymentDate),
     };
     return penaltyDetails;
   }
