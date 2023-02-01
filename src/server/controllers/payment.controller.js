@@ -441,7 +441,7 @@ export const confirmGroupPayment = async (req, res) => {
   }
 };
 
-const paymentMethods = ['CARD', 'CNP', 'CHEQUE', 'POSTAL', 'CASH'];
+const paymentMethods = ['CARD', 'CNP', 'CHEQUE', 'POSTAL_ORDER', 'POSTAL', 'CASH'];
 
 export const reversePayment = async (req, res) => {
   // Get penalty details
@@ -461,6 +461,7 @@ export const reversePayment = async (req, res) => {
   } = penaltyDetails;
 
   if (penaltyDetails.status === 'UNPAID' || !paymentMethods.includes(paymentMethod)) {
+    logInfo('ReversePayment', { penaltyStatus: penaltyDetails.status, paymentMethod, redirect: 'Redirecting to payment code page. Payment is UNPAID or payment method not recognized' });
     return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
   }
 
@@ -477,10 +478,11 @@ export const reversePayment = async (req, res) => {
   try {
     if (paymentMethod === 'CARD' || paymentMethod === 'CNP') {
       await cpmsService.reverseCardPayment(paymentRef, type, paymentCode);
+      logInfo('ReversePaymentCPMSSuccess', logMessage);
     } else if (paymentMethod === 'CHEQUE') {
       await cpmsService.reverseChequePayment(paymentRef, type, paymentCode);
+      logInfo('ReversePaymentCPMSSuccess', logMessage);
     }
-    logInfo('ReversePaymentCPMSSuccess', logMessage);
   } catch (cpmsError) {
     logError('ReversePaymentCPMSError', {
       ...logMessage,
@@ -511,10 +513,11 @@ export const reverseGroupPayment = async (req, res) => {
 
   if (!paymentMethods.includes(PaymentMethod)) {
     // If we don't know the payment method we can't reverse it
+    logInfo('ReverseGroupPayment', { paymentMethod: PaymentMethod, redirect: 'Redirecting to payment code page. Payment method not recognized' });
     return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
   }
 
-  const logMesssage = {
+  const logMessage = {
     userEmail: req.session.rsp_user.email,
     userRole: req.session.rsp_user_role,
     paymentCode,
@@ -522,18 +525,19 @@ export const reverseGroupPayment = async (req, res) => {
     paymentMethod: PaymentMethod,
   };
 
-  logInfo('ReverseGroupPayment', logMesssage);
+  logInfo('ReverseGroupPayment', logMessage);
 
   try {
     if (PaymentMethod === 'CARD' || PaymentMethod === 'CNP') {
       await cpmsService.reverseCardPayment(PaymentRef, penaltyType, paymentCode);
+      logInfo('ReverseGroupPaymentCPMSSuccess', logMessage);
     } else if (PaymentMethod === 'CHEQUE') {
       await cpmsService.reverseChequePayment(PaymentRef, penaltyType, paymentCode);
+      logInfo('ReverseGroupPaymentCPMSSuccess', logMessage);
     }
-    logInfo('ReverseGroupPaymentCPMSSuccess', logMesssage);
   } catch (cpmsError) {
     logError('ReverseGroupPaymentCPMSError', {
-      ...logMesssage,
+      ...logMessage,
       error: cpmsError.message,
     });
     return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}?reverse=failed`);
@@ -541,11 +545,11 @@ export const reverseGroupPayment = async (req, res) => {
 
   try {
     await paymentService.reverseGroupPayment(paymentCode, penaltyType);
-    logInfo('ReverseGroupPaymentSuccess', logMesssage);
+    logInfo('ReverseGroupPaymentSuccess', logMessage);
     return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
   } catch (error) {
     logError('ReverseGroupPaymentPaymentServiceError', {
-      ...logMesssage,
+      ...logMessage,
       error: error.message,
     });
     return res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}?reverse=failed`);
