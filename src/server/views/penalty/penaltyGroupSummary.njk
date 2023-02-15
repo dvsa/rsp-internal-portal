@@ -184,7 +184,10 @@
           </div>
         {% endif %}
       {% endfor %}
+      <br>
+      {{ components.button(text='Pay another penalty', url='/') }}
     {%- endcall %}
+
 
     {% if isCancellable %}
       {% call components.columnOneThird() %}
