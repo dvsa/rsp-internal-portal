@@ -113,7 +113,9 @@
           </table>
         </p>
          {% if not isReversible %}
-          {{ components.notice(text='You cannot reverse this at this time because payments cannot be reversed on the same day they were made. You must wait until the next day to do this.')}}
+         <div class "notReversible" id="notReversible" data-testid="notReversible"
+          {{ components.notice(text='You cannot reverse this at this time because card and cheque payments cannot be reversed on the same day they were made. You must wait until the next day to do this.')}}
+         </div>
           <br>
         {% endif %}
         {{ components.button(text='Pay another penalty', url='/') }}
