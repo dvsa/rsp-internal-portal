@@ -7,6 +7,14 @@ on:
 
 jobs:
 
+  t:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test var is set
+        run: |
+          echo "test: ${{ vars.S3_KEY_PATH }}"
+
+
   lint:
     uses: dvsa/.github/.github/workflows/nodejs-lint.yaml@v2.3
 
