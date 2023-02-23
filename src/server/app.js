@@ -60,7 +60,8 @@ export default async () => {
 
   app.use(helmet.contentSecurityPolicy({
     directives: {
-      defaultSrc: ["'self'", assetsUrl],
+      defaultSrc: ['*'],
+      // defaultSrc: ["'self'", assetsUrl],
       formAction: ['*'],
       scriptSrc: [
         assetsUrl,
