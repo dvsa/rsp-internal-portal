@@ -68,6 +68,7 @@ export default async () => {
         'https://www.googletagmanager.com/',
         'https://www.google-analytics.com/',
         'https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/',
+        '*',
       ],
       fontSrc: ['data:'],
       imgSrc: [

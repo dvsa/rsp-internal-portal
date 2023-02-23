@@ -28,6 +28,9 @@ export const cookieManagerConfig = {
         'rsp_refresh',
         'rsp_internal_portal_user',
         'rsp_internal_portal_user.sig',
+        'incap_ses_',
+        'nlbi_',
+        'visid_incap_',
       ],
     },
     {
