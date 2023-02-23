@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.1](https://github.com/dvsa/rsp-internal-portal/compare/v3.1.0...v3.1.1) (2023-02-23)
+
+
+### Bug Fixes
+
+* Allow all on CSP to fix prod issue ([#154](https://github.com/dvsa/rsp-internal-portal/issues/154)) ([163d539](https://github.com/dvsa/rsp-internal-portal/commit/163d5393c6a996d9cdaae47348d292aeaa128aa8))
+
 ## [3.1.0](https://github.com/dvsa/rsp-internal-portal/compare/v3.0.0...v3.1.0) (2023-02-22)
 
 
