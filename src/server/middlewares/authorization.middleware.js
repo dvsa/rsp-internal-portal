@@ -69,7 +69,7 @@ export default (req, res, next) => {
               if (matchedRoles.length) return next();
             }
             // User doesn't have an authorized role, forbid access
-            logInfo('CognitoExpress.Validate', 'Forbidden. User does not have a valid role.');
+            logInfo('CognitoExpress.Validate', `Forbidden. User with role ${userRole} is not a valid role.`);
             return res.render('main/forbidden', req.session);
           }
           logInfo('MissingUserRole', {
