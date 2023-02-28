@@ -28,6 +28,7 @@ const configMetadata = {
   urlRoot: 'URL_ROOT',
   views: 'VIEWS',
   paymentLimitDays: 'PAYMENT_LIMIT_DAYS',
+  featureBypassExpiryDate: 'FEATURE_BYPASS_EXPIRY_DATE',
 };
 
 let configuration = {};
@@ -159,11 +160,15 @@ function views() {
 
 function paymentLimitDays() {
   const defaultDays = 42;
-  const days = configuration[configMetadata.paymentLimitDays];
+  const days = process.env[configMetadata.paymentLimitDays];
   if (days) {
     return Number.isNaN(Number(days)) ? defaultDays : Number(days);
   }
   return defaultDays;
+}
+
+function featureBypassExpiryDate() {
+  return process.env[configMetadata.featureBypassExpiryDate] === 'true';
 }
 
 const config = {
@@ -191,6 +196,7 @@ const config = {
   urlRoot,
   views,
   paymentLimitDays,
+  featureBypassExpiryDate,
 };
 
 export default config;

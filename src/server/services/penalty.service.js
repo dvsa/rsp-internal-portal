@@ -54,7 +54,7 @@ export default class PenaltyService {
       paymentCodeIssueDateTime: rawPenalty.paymentCodeDateTime
         ? moment.unix(rawPenalty.paymentCodeDateTime).format(MOMENT_DATE_TIME_FORMAT)
         : undefined,
-      isPaymentOverdue: isPaymentOverdue(rawPenalty.paymentCodeDateTime, config.paymentLimitDays()),
+      isPaymentOverdue: isPaymentOverdue(rawPenalty.paymentCodeDateTime, config.paymentLimitDays(), config.featureBypassExpiryDate()),
       paymentStartTime: rawPenalty.paymentStartTime,
       isCancellable: isCancellable(rawPenalty.paymentStatus, data.Enabled, rawPenalty.paymentStartTime),
       isReversible: isReversible(rawPenalty.paymentStatus, rawPenalty.paymentDate, rawPenalty.paymentMethod),
