@@ -51,7 +51,7 @@ export default class PenaltyGroupService {
         registrationNumber: VehicleRegistration,
         location: Location,
         dateTime: moment.unix(Timestamp).format(MOMENT_DATE_TIME_FORMAT),
-        isPaymentOverdue: isPaymentOverdue(Timestamp, config.paymentLimitDays()),
+        isPaymentOverdue: isPaymentOverdue(Timestamp, config.paymentLimitDays(), config.featureBypassExpiryDate()),
         amount: TotalAmount,
         enabled: Enabled,
         splitAmounts,
@@ -102,7 +102,7 @@ export default class PenaltyGroupService {
       penaltyType: type,
       totalAmount: pensOfType.reduce((total, pen) => total + pen.Value.penaltyAmount, 0),
       paymentStatus: parsedPenalties.every((p) => p.status === 'PAID') ? 'PAID' : 'UNPAID',
-      isPaymentOverdue: isPaymentOverdue(Timestamp, config.paymentLimitDays()),
+      isPaymentOverdue: isPaymentOverdue(Timestamp, config.paymentLimitDays(), config.featureBypassExpiryDate()),
     };
   }
 

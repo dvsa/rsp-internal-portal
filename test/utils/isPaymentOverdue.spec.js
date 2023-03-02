@@ -57,4 +57,24 @@ describe('isPaymentOverdue', () => {
       expect(isOverdue).to.be.true;
     });
   });
+
+  context('Bypass expiry date feature toggle is enabled', () => {
+    it('returns false for an overdue payment', () => {
+      const dateOfPenalty = '1656667800'; // unix second time stamp 1st July 2022
+      setToday('2022-08-19 10:30'); // 19th August 2022
+      const daysToPayLimit = 42;
+      const isOverdue = isPaymentOverdue(dateOfPenalty, daysToPayLimit, true);
+      expect(isOverdue).to.be.false;
+    });
+  });
+
+  context('Bypass expiry date feature toggle is disabled', () => {
+    it('returns true for an overdue payment', () => {
+      const dateOfPenalty = '1656667800'; // unix second time stamp 1st July 2022
+      setToday('2022-08-19 10:30'); // 19th August 2022
+      const daysToPayLimit = 42;
+      const isOverdue = isPaymentOverdue(dateOfPenalty, daysToPayLimit, false);
+      expect(isOverdue).to.be.true;
+    });
+  });
 });
