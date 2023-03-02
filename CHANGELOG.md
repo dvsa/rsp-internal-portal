@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.2.0](https://github.com/dvsa/rsp-internal-portal/compare/v3.1.1...v3.2.0) (2023-03-02)
+
+
+### Features
+
+* New env var to allow payment for overdue payments ([#157](https://github.com/dvsa/rsp-internal-portal/issues/157)) ([b231744](https://github.com/dvsa/rsp-internal-portal/commit/b231744911fb248eee5de88652147b84896faf4d))
+* Restrict CSP for self and assets urls only ([#160](https://github.com/dvsa/rsp-internal-portal/issues/160)) ([f430694](https://github.com/dvsa/rsp-internal-portal/commit/f43069465deed93ba2bb39cbd7cd0d627e2738cf))
+
+
+### Bug Fixes
+
+* Add user role to error log for debugging ([#156](https://github.com/dvsa/rsp-internal-portal/issues/156)) ([46fd53d](https://github.com/dvsa/rsp-internal-portal/commit/46fd53d77d72c3b82c501a20fec1d80cdccc2082))
+* Updated group payment logging ([#159](https://github.com/dvsa/rsp-internal-portal/issues/159)) ([e0bc1d1](https://github.com/dvsa/rsp-internal-portal/commit/e0bc1d1a9ae3dd99354133560d9ee8165b4517ac))
+
 ## [3.1.1](https://github.com/dvsa/rsp-internal-portal/compare/v3.1.0...v3.1.1) (2023-02-23)
 
 
