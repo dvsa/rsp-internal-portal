@@ -45,14 +45,15 @@ export const cancelPenalty = async (req, res) => {
   const penaltyId = req.params.penalty_id;
   const logMessage = {
     userEmail: req.session.rsp_user.email,
+    userRole: req.session.rsp_user_role,
     penaltyId,
   };
   try {
     await penaltyService.cancel(penaltyId);
-    logInfo('CancelPenaltySuccess', logMessage);
+    logInfo('cancelPenaltySuccess', logMessage);
     res.redirect(`${config.urlRoot()}/penalty/${penaltyId}`);
   } catch (error) {
-    logError('CancelPenaltyError', {
+    logError('cancelPenaltyError', {
       ...logMessage,
       error: error.message,
     });

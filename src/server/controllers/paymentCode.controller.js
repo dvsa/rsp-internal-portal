@@ -92,17 +92,20 @@ export const getPenaltyGroupBreakdownForType = [
 
 export const cancelPaymentCode = async (req, res) => {
   const paymentCode = req.params.payment_code;
-  logInfo('CancelPaymentCode', {
+  const logMessage = {
     userEmail: req.session.rsp_user.email,
     userRole: req.session.rsp_user_role,
     paymentCode,
-  });
+  };
   try {
     await penaltyGroupService.cancel(paymentCode);
-    logInfo('cancelPaymentCodeSuccess', { paymentCode });
+    logInfo('cancelPenaltyGroupSuccess', logMessage);
     res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}`);
   } catch (error) {
-    logError('cancelPaymentCodeError', { paymentCode, error });
+    logError('cancelPenaltyGroupError', {
+      ...logMessage,
+      error: error.message,
+    });
     res.redirect(`${config.urlRoot()}/payment-code/${paymentCode}?cancellation=failed`);
   }
 };
