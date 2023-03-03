@@ -47,7 +47,7 @@ jobs:
       - name: Do something
         run: |
           echo "Hello, World!"
-          echo ${{ github.ref_name }}
+          echo github.ref_name
 
   build:
     if: startsWith( github.ref, 'refs/heads/feature/') || startsWith( github.ref, 'refs/heads/fix/') || ${{ github.ref_name == 'master' }}
