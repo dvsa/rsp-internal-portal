@@ -40,14 +40,13 @@ jobs:
           echo "THIS IS THE GITHUB.REF: ${{ github.ref }}"
 
   something:
-    if: startsWith('${{ github.ref_name }}', 'hello/')
+    if: startsWith('${{ github.ref }}', 'hello')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - name: Do something
         run: |
           echo "Hello, World!"
-          echo github.ref_name
 
   build:
     if: startsWith( github.ref, 'refs/heads/feature/') || startsWith( github.ref, 'refs/heads/fix/') || ${{ github.ref_name == 'master' }}
