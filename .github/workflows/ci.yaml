@@ -40,7 +40,7 @@ jobs:
           echo "THIS IS THE GITHUB.REF: ${{ github.ref }}"
 
   build:
-    if: startsWith( github.ref, 'refs/heads/feature/') || startsWith( github.ref, 'refs/heads/fix/') || ${{ github.ref_name == 'master' }}
+    if: startsWith( ${{ github.ref }}, 'refs/heads/feature/') || startsWith( ${{ github.ref }}, 'refs/heads/fix/') || ${{ github.ref_name == 'master' }}
     uses: dvsa/.github/.github/workflows/nodejs-build.yaml@v2.3
     with:
       upload_artifact: true
