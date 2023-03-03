@@ -47,7 +47,6 @@ jobs:
       - name: Do something
         run: |
           echo "Hello, World!"
-          echo startsWith(${{ github.ref_name }}, 'massive-SUIIIII')
           echo ${{ github.ref_name }}
 
   build:
