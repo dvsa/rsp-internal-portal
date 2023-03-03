@@ -55,7 +55,7 @@ jobs:
       upload_artifact: true
 
   upload-s3:
-    if: startsWith( github.ref, 'refs/heads/feature/') || startsWith( github.ref, 'refs/heads/fix/') || ${{ github.ref_name == 'master' }}
+    if: startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/fix/') || ${{ github.ref_name == 'master' }}
     uses: dvsa/.github/.github/workflows/upload-to-s3.yaml@v2.3
     needs: [ build-names, build ]
     with:
