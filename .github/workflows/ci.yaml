@@ -40,7 +40,7 @@ jobs:
           echo "THIS IS THE GITHUB.REF: ${{ github.ref }}"
 
   something:
-    if: contains(github.ref, 'hello')
+    if: startsWith(github.ref, 'hello')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
