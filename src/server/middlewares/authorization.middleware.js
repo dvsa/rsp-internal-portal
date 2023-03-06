@@ -1,87 +1,84 @@
-import CognitoExpress from 'cognito-express';
-import jwtDecode from 'jwt-decode';
 import { intersection } from 'lodash';
 import config from '../config';
-import AuthService from '../services/auth.service';
 import formatUserRole from '../utils/formatUserRole';
 import { logError, logInfo } from '../utils/logger';
+import { userToken, verifyToken } from './verifyToken';
+import { AuthorizationError, AuthorizationErrorCode } from '../utils/authorisationError';
+import AuthService from '../services/auth.service';
 
-const authService = new AuthService(config.cognitoUrl());
 const authorizedRoles = ['ContactCentre', 'BankingFinance', 'FrontLine'];
-const cognitoExpress = new CognitoExpress({
-  region: config.region(),
-  cognitoUserPoolId: config.cognitoUserPoolId(),
-  tokenUse: 'access',
-  tokenExpiration: 3600000,
-});
+const redirectErrors = [AuthorizationErrorCode.EXPIRED_TOKEN, AuthorizationErrorCode.VERIFY_TOKEN_ERROR, AuthorizationErrorCode.REFRESH_TOKEN_ERROR];
 
-export default (req, res, next) => {
-  if (!req.cookies.rsp_access) {
-    // If there's a refresh token on the cookies try to use that to get a new access token
-    if (req.cookies.rsp_refresh) {
-      authService.refreshAccessToken(req.cookies.rsp_refresh.refreshToken).then((token) => {
-        res.cookie('rsp_access', { accessToken: token.access_token, idToken: token.id_token }, { maxAge: token.expires_in * 1000, httpOnly: true, secure: !config.isDevelopment() });
-        res.redirect(`${config.urlRoot()}/`);
-      }).catch(() => {
-        // Failed to retrieve new access token with refresh token
-        // Clear up the cookies and enforce new login
-        res.clearCookie('rsp_access');
-        res.clearCookie('rsp_refresh');
-        res.redirect(`${config.urlRoot()}/login`);
-      });
-    } else {
-      res.redirect(`${config.urlRoot()}/login`);
+const roleCheck = (userRole) => {
+  if (!userRole) {
+    throw new AuthorizationError('User role not found', AuthorizationErrorCode.MISSING_ROLE);
+  }
+  if (typeof userRole === 'string') {
+    if (!authorizedRoles.includes(userRole)) {
+      throw new AuthorizationError(`Role ${userRole} not authorized`, AuthorizationErrorCode.INVALID_ROLE);
     }
   } else {
-    cognitoExpress.validate(req.cookies.rsp_access.accessToken, (err) => {
-      if (err) {
-        logError('CognitoExpress.Validate.Error', `Error validating cognito session cookies. ${err}`);
-        if (req.cookies.rsp_refresh) {
-          authService.refreshAccessToken(req.cookies.rsp_refresh.refreshToken).then((token) => {
-            res.cookie('rsp_access', { accessToken: token.access_token, idToken: token.id_token }, { maxAge: token.expires_in * 1000, httpOnly: true, secure: !config.isDevelopment() });
-            res.redirect(`${config.urlRoot()}/`);
-          }).catch(() => {
-            // Invalid refresh token, enforce new login
-            res.redirect(`${config.urlRoot()}/logout`);
-          });
-        } else {
-          logError('CognitoExpress.Validate.Error', 'Clearing cookies and redirecting to login.');
-          res.clearCookie('rsp_access');
-          return res.redirect(`${config.urlRoot()}/login`);
-        }
-      } else {
-        logInfo('CognitoExpress.Validate', 'Validated cognito session cookies. Attempting to set user session.');
-        // Get user information from the ID token
-        const userInfo = jwtDecode(req.cookies.rsp_access.idToken);
-        // Extract and clean up roles
-        const userRole = formatUserRole(userInfo['custom:Role']);
-        // Ensure that user information is available through the application (including views)
-        req.session.rsp_user = userInfo;
-        if (config.doRoleChecks()) {
-          req.session.rsp_user_role = userRole;
-          if (userRole) {
-            // Allow for userRole to be a single string
-            if (typeof userRole === 'string') {
-              if (authorizedRoles.includes(userRole)) return next();
-            // Otherwise, treat as an array of strings
-            } else {
-              const matchedRoles = intersection(authorizedRoles, userRole);
-              if (matchedRoles.length) return next();
-            }
-            // User doesn't have an authorized role, forbid access
-            logInfo('CognitoExpress.Validate', `Forbidden. User with role ${userRole} is not a valid role.`);
-            return res.render('main/forbidden', req.session);
-          }
-          logInfo('MissingUserRole', {
-            req,
-            res,
-          });
-        } else {
-          logInfo('CognitoExpress.doRoleChecks', 'Role checking disabled in config.');
-          return next();
-        }
-      }
-      return res.render('main/forbidden', req.session);
-    });
+    // Otherwise, treat as an array of strings
+    const matchedRoles = intersection(authorizedRoles, userRole);
+    if (matchedRoles.length === 0) {
+      throw new AuthorizationError(`Role ${userRole} not authorized`, AuthorizationErrorCode.INVALID_ROLE);
+    }
   }
 };
+
+const refresh = async (refreshToken) => {
+  try {
+    const authService = new AuthService(config.cognitoUrl());
+    const token = await authService.refreshAccessToken(refreshToken);
+    return token;
+  } catch (err) {
+    logError('Authorization.middleware', { message: 'Failed to refresh token', error: err.message });
+    return null;
+  }
+};
+
+const authorization = async (req, res, next) => {
+  if (!req.cookies.rsp_access) {
+    return res.redirect(`${config.urlRoot()}/login`);
+  }
+
+  try {
+    await verifyToken(req.cookies.rsp_access.accessToken);
+
+    req.session.rsp_user = userToken(req.cookies.rsp_access.idToken);
+
+    const userRole = formatUserRole(req.session.rsp_user['custom:Role']);
+
+    if (config.doRoleChecks()) {
+      roleCheck(userRole);
+    } else {
+      logInfo('doRoleCheck', 'Role checking disabled in config.');
+    }
+
+    req.session.rsp_user_role = userRole;
+
+    logInfo('User', { userRole: req.session.rsp_user_role, userEmail: req.session.rsp_user.email });
+
+    return next();
+  } catch (err) {
+    if (err.code === AuthorizationErrorCode.EXPIRED_TOKEN) {
+      logError('Authorization.middleware', err.message);
+      const token = await refresh(req.cookies.rsp_refresh.refreshToken);
+      if (token) {
+        res.cookie('rsp_access', { accessToken: token.access_token, idToken: token.id_token }, { maxAge: token.expires_in * 1000, httpOnly: true, secure: !config.isDevelopment() });
+        return authorization(req, res, next);
+      }
+      err.code = AuthorizationErrorCode.REFRESH_TOKEN_ERROR;
+    }
+    if (redirectErrors.includes(err.code)) {
+      res.clearCookie('rsp_access');
+      res.clearCookie('rsp_refresh');
+      logError('Authorization.middleware', err.message);
+      return res.redirect(`${config.urlRoot()}/login`);
+    }
+    logError(`Error: ${err.message}`);
+    return res.render('main/forbidden', req.session);
+  }
+};
+
+export default authorization;
