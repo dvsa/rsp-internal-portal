@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.0](https://github.com/dvsa/rsp-internal-portal/compare/v3.2.0...v3.3.0) (2023-03-13)
+
+
+### Features
+
+* Refactor and fix auth errors ([#161](https://github.com/dvsa/rsp-internal-portal/issues/161)) ([5f428ff](https://github.com/dvsa/rsp-internal-portal/commit/5f428ffcaefa5506fa0c1d9c886ed1c2f7987128))
+
 ## [3.2.0](https://github.com/dvsa/rsp-internal-portal/compare/v3.1.1...v3.2.0) (2023-03-02)
 
 
