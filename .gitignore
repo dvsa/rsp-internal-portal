@@ -69,3 +69,5 @@ build/
 
 # Mac files
 .DS_Store
+
+.idea/

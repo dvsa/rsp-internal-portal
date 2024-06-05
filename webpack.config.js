@@ -14,7 +14,6 @@ module.exports = {
   resolve: {
     extensions: ['.js'],
   },
-  target: 'node16.16',
   node: {
     __dirname: false,
     __filename: false,
@@ -29,7 +28,7 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: [
-              ['@babel/preset-env', { targets: { node: '16.16.0' }, useBuiltIns: 'entry', corejs: '3' }],
+              ['@babel/preset-env'],
             ],
           },
         },

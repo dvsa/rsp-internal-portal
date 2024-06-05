@@ -2,7 +2,7 @@ service: dvsa-rsp-internal-portal
 
 provider:
   name: aws
-  runtime: nodejs16.x
+  runtime: nodejs20.x
   stage: dev
   region: eu-west-1
 
