@@ -13,6 +13,9 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js'],
+    fallback: {
+      path: false,
+    },
   },
   node: {
     __dirname: false,
