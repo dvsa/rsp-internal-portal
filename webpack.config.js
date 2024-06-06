@@ -7,9 +7,9 @@ module.exports = {
     app: './src/server/app.js',
   },
   output: {
-    filename: '[name].js',
-    libraryTarget: 'commonjs2',
-    path: path.resolve(__dirname, 'dist'),
+    library: {
+      type: 'commonjs2',
+    },
   },
   resolve: {
     extensions: ['.js'],
@@ -18,6 +18,7 @@ module.exports = {
       crypto: false,
       os: false,
       stream: false,
+      fs: false,
     },
   },
   node: {
