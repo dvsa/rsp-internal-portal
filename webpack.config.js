@@ -17,6 +17,7 @@ module.exports = {
       path: false,
       crypto: false,
       os: false,
+      stream: false,
     },
   },
   node: {
