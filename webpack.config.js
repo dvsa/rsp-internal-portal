@@ -19,6 +19,10 @@ module.exports = {
       os: false,
       stream: false,
       fs: false,
+      net: false,
+      http: false,
+      https: false,
+      zlib: false,
     },
   },
   node: {
