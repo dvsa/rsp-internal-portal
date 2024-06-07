@@ -12,17 +12,6 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js'],
-    fallback: {
-      path: false,
-      crypto: false,
-      os: false,
-      stream: false,
-      fs: false,
-      net: false,
-      http: false,
-      https: false,
-      zlib: false,
-    },
   },
   node: {
     __dirname: false,
@@ -45,6 +34,7 @@ module.exports = {
       },
     ],
   },
+  target: 'node',
   plugins: [
     new CopyWebpackPlugin({
       patterns: [
