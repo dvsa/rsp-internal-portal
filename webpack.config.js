@@ -1,4 +1,3 @@
-const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
@@ -7,14 +6,13 @@ module.exports = {
     app: './src/server/app.js',
   },
   output: {
-    filename: '[name].js',
-    libraryTarget: 'commonjs2',
-    path: path.resolve(__dirname, 'dist'),
+    library: {
+      type: 'commonjs2',
+    },
   },
   resolve: {
     extensions: ['.js'],
   },
-  target: 'node16.16',
   node: {
     __dirname: false,
     __filename: false,
@@ -29,13 +27,14 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: [
-              ['@babel/preset-env', { targets: { node: '16.16.0' }, useBuiltIns: 'entry', corejs: '3' }],
+              ['@babel/preset-env'],
             ],
           },
         },
       },
     ],
   },
+  target: 'node',
   plugins: [
     new CopyWebpackPlugin({
       patterns: [

@@ -5,7 +5,7 @@
             "name": "Debug Main Controller",
             "type": "node",
             "request": "launch",
-            "runtimeVersion": "16.16",
+            "runtimeVersion": "20.x",
             "runtimeArgs": [
               "--inspect-brk",
               "${workspaceRoot}/node_modules/mocha/bin/mocha",
@@ -22,7 +22,7 @@
             "name": "Debug Payment Code Controller",
             "type": "node",
             "request": "launch",
-            "runtimeVersion": "16.16",
+            "runtimeVersion": "20.x",
             "runtimeArgs": [
               "--inspect-brk",
               "${workspaceRoot}/node_modules/mocha/bin/mocha",
@@ -39,7 +39,7 @@
             "name": "Debug Http Client",
             "type": "node",
             "request": "launch",
-            "runtimeVersion": "16.16",
+            "runtimeVersion": "20.x",
             "runtimeArgs": [
               "--inspect-brk",
               "${workspaceRoot}/node_modules/mocha/bin/mocha",

@@ -4,7 +4,7 @@ services:
   rsp_internal_portal:
     ports:
       - 3000:3000
-    image: node:16.16
+    image: node:20
     working_dir: /app
     command: /bin/bash -c 'npm i --no-optional && npm rebuild node-sass && npm run build && npm run start-dev-server'
     volumes:
