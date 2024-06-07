@@ -34,12 +34,12 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set short sha output
         id: sha
-        run: echo "::set-output name=short_sha::$(git rev-parse --short=11 HEAD)"
+        run: echo "short_sha=$(git rev-parse --short=11 HEAD)" >> $GITHUB_OUTPUT
       - name: Set archive name output
         id: archive
         run: |
           export PRETTY_BRANCH_NAME=$(tr '/' '-' <<< ${{ github.ref_name }})
-          echo "::set-output name=archive_name::${PRETTY_BRANCH_NAME}"
+          echo "archive_name=${PRETTY_BRANCH_NAME}" >> $GITHUB_OUTPUT
 
   build:
     uses: dvsa/.github/.github/workflows/nodejs-build.yaml@v4.0.1
