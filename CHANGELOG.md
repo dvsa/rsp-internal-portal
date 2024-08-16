@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.2](https://github.com/dvsa/rsp-internal-portal/compare/v3.3.1...v3.3.2) (2024-08-16)
+
+
+### Bug Fixes
+
+* release prompt to prep ([a569e1a](https://github.com/dvsa/rsp-internal-portal/commit/a569e1a1389ea6049e78d9b80afe40a6cddb36af))
+
 ## [3.3.1](https://github.com/dvsa/rsp-internal-portal/compare/v3.3.0...v3.3.1) (2024-08-16)
 
 
