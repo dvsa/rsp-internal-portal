@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.0](https://github.com/dvsa/rsp-internal-portal/compare/v3.3.2...v4.0.0) (2024-08-16)
+
+
+### Miscellaneous Chores
+
+* release 4.0.0 ([e62227f](https://github.com/dvsa/rsp-internal-portal/commit/e62227fc808db9312ba72483e260f0c7d56499bf))
+
 ## [3.3.2](https://github.com/dvsa/rsp-internal-portal/compare/v3.3.1...v3.3.2) (2024-08-16)
 
 
