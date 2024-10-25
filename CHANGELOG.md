@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.1](https://github.com/dvsa/rsp-internal-portal/compare/v4.0.0...v4.0.1) (2024-08-30)
+
+
+### Bug Fixes
+
+* amend input length on vehiclereg input ([#177](https://github.com/dvsa/rsp-internal-portal/issues/177)) ([56432e4](https://github.com/dvsa/rsp-internal-portal/commit/56432e4b97012ef8c206e574edcbaf7867ff3b43))
+
 ## [4.0.0](https://github.com/dvsa/rsp-internal-portal/compare/v3.3.2...v4.0.0) (2024-08-16)
 
 

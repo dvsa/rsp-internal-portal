@@ -1,6 +1,6 @@
 {
   "name": "rsp-internal-portal",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "DVSA Internal Payment Portal For RSP",
   "engines": {
     "node": "20.x"
