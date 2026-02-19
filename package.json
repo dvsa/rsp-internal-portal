@@ -107,6 +107,6 @@
     "querystring": "^0.2.0",
     "resolve-path": "^1.4.0",
     "url-parse": "^1.5.10",
-    "walk-sync": "^3.0.0"
+    "walk-sync": "^4.0.0"
   }
 }
