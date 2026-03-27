@@ -92,7 +92,7 @@
     "cookie-session": "^2.0.0",
     "dotenv": "^16.0.1",
     "errorhandler": "^1.5.1",
-    "express": "^4.18.1",
+    "express": "^4.22.0",
     "express-validator": "^6.14.2",
     "fs": "0.0.1-security",
     "helmet": "^5.1.1",
@@ -107,6 +107,6 @@
     "querystring": "^0.2.0",
     "resolve-path": "^1.4.0",
     "url-parse": "^1.5.10",
-    "walk-sync": "^3.0.0"
+    "walk-sync": "^4.0.0"
   }
 }
