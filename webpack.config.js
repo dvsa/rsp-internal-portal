@@ -39,7 +39,7 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         { from: 'build/server/views', to: 'views/' },
-        { from: 'build/public', to: 'public/' },
+        { from: 'build/public', to: 'public/', globOptions: { ignore: ['**/images/**'] } },
       ],
     }),
   ],
