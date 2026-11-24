@@ -5,7 +5,7 @@ const gulpIf = require('gulp-if');
 const CONFIG = require('./../constants').CONFIG;
 
 function copyGovUk() {
-  return gulp.src(`${CONFIG.sourcePaths.govUk}/**`)
+  return gulp.src(`${CONFIG.sourcePaths.govUk}/**`, { encoding: false })
     .pipe(gulp.dest(CONFIG.distPaths.govUk));
 }
 

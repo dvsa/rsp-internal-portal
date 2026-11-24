@@ -31,7 +31,7 @@ function compressImages() {
 }
 
 function copyImages() {
-  const images = gulp.src(path.join(CONFIG.sourcePaths.images, CONFIG.patterns.image));
+  const images = gulp.src(path.join(CONFIG.sourcePaths.images, CONFIG.patterns.image), { encoding: false });
   const output = gulp.dest(CONFIG.distPaths.images);
   return CONFIG.isProduction ? images.pipe(compressImages()).pipe(output) : images.pipe(output);
 }

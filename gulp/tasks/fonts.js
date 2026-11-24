@@ -4,7 +4,7 @@ const path = require('path');
 const CONFIG = require('./../constants').CONFIG;
 
 function copyFonts() {
-  return gulp.src(path.join(CONFIG.sourcePaths.fonts, CONFIG.patterns.font))
+  return gulp.src(path.join(CONFIG.sourcePaths.fonts, CONFIG.patterns.font), { encoding: false })
     // Outputs file to the distribution folder
     .pipe(gulp.dest(CONFIG.distPaths.fonts));
 }
