@@ -1,4 +1,4 @@
-import { SecretsManager } from 'aws-sdk';
+import { GetSecretValueCommand, SecretsManagerClient } from '@aws-sdk/client-secrets-manager';
 import dotenv from 'dotenv';
 import path from 'path';
 import { logError, logInfo } from './utils/logger';
@@ -33,27 +33,29 @@ const configMetadata = {
 
 let configuration = {};
 async function bootstrap() {
-  return new Promise((resolve, reject) => {
-    if (process.env.USE_SECRETS_MANAGER === 'true') {
-      const SecretId = process.env.SECRETS_MANAGER_SECRET_NAME;
-      logInfo('InternalPortalSecretsManagerId', { secretId: SecretId });
-      const secretsManagerClient = new SecretsManager({ region: process.env.REGION });
-      secretsManagerClient.getSecretValue({ SecretId }, (err, secretsManagerResponse) => {
-        if (err) {
-          logError('InternalPortalSecretsManagerError', err.message);
-          reject(err);
-          return;
-        }
-        configuration = JSON.parse(secretsManagerResponse.SecretString);
-        resolve(configuration);
-      });
-    } else {
-      logInfo('InternalPortalEnvVars', 'Using envvars for config');
-      configuration = Object.values(configMetadata)
-        .reduce((config, envkey) => ({ [envkey]: process.env[envkey], ...config }), configuration);
-      resolve(configuration);
+  if (process.env.USE_SECRETS_MANAGER === 'true') {
+    const SecretId = process.env.SECRETS_MANAGER_SECRET_NAME;
+    logInfo('InternalPortalSecretsManagerId', { secretId: SecretId });
+    const secretsManagerClient = new SecretsManagerClient({ region: process.env.REGION });
+    let response;
+    try {
+      response = await secretsManagerClient.send(new GetSecretValueCommand({ SecretId }));
+    } catch (err) {
+      logError('InternalPortalSecretsManagerError', err.message);
+      throw err;
     }
-  });
+    try {
+      configuration = JSON.parse(response.SecretString);
+    } catch (err) {
+      logError('InternalPortalSecretsManagerError', 'Invalid or missing secret JSON');
+      throw new Error('Secrets Manager returned invalid or missing secret JSON');
+    }
+  } else {
+    logInfo('InternalPortalEnvVars', 'Using envvars for config');
+    configuration = Object.values(configMetadata)
+      .reduce((config, envkey) => ({ [envkey]: process.env[envkey], ...config }), configuration);
+  }
+  return configuration;
 }
 
 function ensureRelativeUrl(url) {

@@ -1,10 +1,7 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const webpack = require('webpack');
 
-module.exports = {
-  entry: {
-    handler: './src/handler.js',
-    app: './src/server/app.js',
-  },
+const config = {
   output: {
     library: {
       type: 'commonjs2',
@@ -23,6 +20,7 @@ module.exports = {
       {
         test: /\.m?js$/,
         exclude: /node_modules/,
+        type: 'javascript/auto',
         use: {
           loader: 'babel-loader',
           options: {
@@ -36,15 +34,27 @@ module.exports = {
   },
   target: 'node',
   plugins: [
-    new CopyWebpackPlugin({
-      patterns: [
-        { from: 'build/server/views', to: 'views/' },
-        { from: 'build/public', to: 'public/', globOptions: { ignore: ['**/images/**'] } },
-      ],
-    }),
+    new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 }),
   ],
   stats: {
     colors: true,
   },
   mode: 'production',
 };
+
+module.exports = [
+  {
+    ...config,
+    entry: { handler: './src/handler.js' },
+    plugins: [
+      ...config.plugins,
+      new CopyWebpackPlugin({
+        patterns: [
+          { from: 'build/server/views', to: 'views/' },
+          { from: 'build/public', to: 'public/', globOptions: { ignore: ['**/images/**'] } },
+        ],
+      }),
+    ],
+  },
+  { ...config, entry: { app: './src/server/app.js' } },
+];

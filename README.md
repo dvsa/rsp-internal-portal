@@ -14,6 +14,7 @@ More information about this available on [github](https://github.com/dvsa/front-
 
 To run this project locally, clone the repository and the instructions below:
 
+Use Node.js 24 (see `.nvmrc`).
 1. `npm install` 
 Installs all project dependencies
 

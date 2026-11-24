@@ -1,6 +1,5 @@
-import { isEmpty, has } from 'lodash';
+import { isEmpty, has, isObjectLike } from 'lodash';
 import moment from 'moment';
-import { isObject } from 'util';
 import isPaymentOverdue from '../utils/isPaymentOverdue';
 import config from '../config';
 import SignedHttpClient from '../utils/httpclient';
@@ -95,7 +94,7 @@ export default class PenaltyService {
 
   async cancel(penaltyId) {
     const penaltyDocumentResp = await this.httpClient.get(`documents/${penaltyId}`, 'GetDocument');
-    if (!has(penaltyDocumentResp, 'data') || !isObject(penaltyDocumentResp.data)) {
+    if (!has(penaltyDocumentResp, 'data') || !isObjectLike(penaltyDocumentResp.data)) {
       throw new Error('Unexpected penalty response prevented cancellation');
     }
     const penaltyDocument = penaltyDocumentResp.data;

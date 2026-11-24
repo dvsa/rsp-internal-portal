@@ -1,9 +1,8 @@
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 import aws4 from 'aws4';
-import { isNumber } from 'lodash';
+import { isNumber, isObjectLike } from 'lodash';
 import URL from 'url-parse';
-import { isObject } from 'util';
 import { logAxiosError } from './logger';
 
 import config from '../config';
@@ -85,7 +84,7 @@ export default class SignedHttpClient {
       ...(config.doSignedRequests() ? this.signingOptions : {}),
     };
 
-    if (isObject(body)) {
+    if (isObjectLike(body)) {
       const jsonBody = JSON.stringify(body);
       // Both required in order for AWS request signing to work
       request.data = jsonBody;

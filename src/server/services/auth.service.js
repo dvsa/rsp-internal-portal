@@ -1,5 +1,5 @@
 import { encode } from 'base-64';
-import queryString from 'querystring';
+import queryString from 'node:querystring';
 import { createUnsignedHttpClient } from '../utils/httpclient';
 import config from '../config';
 
