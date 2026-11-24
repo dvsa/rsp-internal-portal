@@ -75,7 +75,7 @@ export const downloadReport = async (req, res) => {
     res.set('Content-Type', 'application/force-download');
     res.end(file);
   } catch (error) {
-    req.status(500).send();
+    res.status(500).send();
   }
 };
 

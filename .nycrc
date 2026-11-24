@@ -1,0 +1,12 @@
+{
+  "extends": "@istanbuljs/nyc-config-babel",
+  "all": true,
+  "include": [
+    "src/server/**/*.js",
+    "src/lambdas/**/*.js",
+    "src/handler.js"
+  ],
+  "reporter": ["text", "html", "lcov"],
+  "check-coverage": true,
+  "lines": 95
+}

@@ -42,6 +42,43 @@ or
 `test:watch`
 to re-run the tests automatically whenever source code changes
 
+#### Coverage
+
+`npm run test:coverage` uses nyc to run the unit tests and report coverage for
+`src/server/**/*.js`, `src/lambdas/**/*.js` and `src/handler.js`, including
+unloaded files. It writes an HTML report to `coverage/index.html` and fails
+below 95% line coverage. The report does not include
+integration tests, browser assets outside `src/server`, or build scripts.
+Coverage measures executed lines, not correctness or route completeness.
+
+The existing unit tests import the application configuration, which calls
+`dotenv.config()`. Run them in an isolated checkout without a real `.env` or
+AWS credentials if those files must not be accessed.
+
+#### Manual HTTP integration baseline
+
+Run `npm run test:integration` manually, outside CI. This starts the Express
+application on an ephemeral loopback port using the source views, a temporary
+working directory and synthetic configuration. It uses synthetic JWTs and a
+mock JWKS, and Nock interceptors for the identity, penalty, payment and CPMS
+services. External and unregistered connections are blocked; no real
+transactions or shared data are used. The runner closes the listener and removes
+its temporary directory.
+
+The suite covers login and logout, authentication and role denials, search,
+group and individual cancellation, cash payment recording, and selected report
+requests and downloads, plus synthetic REST API Gateway adapter events. It
+checks status codes, redirects, rendered content and selected outbound requests.
+The following remain outside this baseline:
+token refresh and expired-token paths, other payment methods and grouped
+payments, confirmations and receipts, authorised reversals, grouped details,
+report failure and timeout paths, and static assets. Passing it does not verify
+deployed behaviour, AWS permissions,
+real Cognito authentication, payment outcomes or data persistence.
+
+Unit tests also cover failed token exchanges and report downloads. These do not
+replace HTTP integration coverage of those error paths.
+
 ### Distribution
 
 Run the following command to build, bundle and package the required artifacts.

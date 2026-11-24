@@ -25,11 +25,12 @@ export default class AuthService {
       code,
     };
 
-    const promise = new Promise((resolve) => {
+    const promise = new Promise((resolve, reject) => {
       this.httpClient.post('/oauth2/token', queryString.stringify(payload)).then((result) => {
         resolve(result.data);
-      });
+      }).catch((error) => reject(error));
     });
+
     return promise;
   }
 

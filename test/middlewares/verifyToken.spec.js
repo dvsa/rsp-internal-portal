@@ -1,9 +1,12 @@
 import createJWKSMock from 'mock-jwks';
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import config from '../../src/server/config';
 import { userToken, verifyToken } from '../../src/server/middlewares/verifyToken';
 import { AuthorizationError, AuthorizationErrorCode } from '../../src/server/utils/authorisationError';
+
+chai.use(chaiAsPromised);
 
 describe('VerifyToken', () => {
   const region = 'region';
@@ -54,6 +57,22 @@ describe('VerifyToken', () => {
         .rejectedWith('Token failed to verify. jwt expired')
         .and.be.an.instanceOf(AuthorizationError)
         .and.have.property('code', AuthorizationErrorCode.EXPIRED_TOKEN);
+    });
+
+    it('rejects a token that cannot be decoded', async () => {
+      await expect(verifyToken('not-a-jwt'))
+        .to.be.rejectedWith('Token failed to decode.');
+    });
+
+    it('rejects a token with a tampered payload', async () => {
+      const token = jwksMock.token({ sub: 'synthetic-user' });
+      const [header, , signature] = token.split('.');
+      const payload = Buffer.from(JSON.stringify({ sub: 'other-user' })).toString('base64url');
+
+      await expect(verifyToken(`${header}.${payload}.${signature}`))
+        .to.eventually.be.rejectedWith('Token failed to verify. invalid signature')
+        .and.be.an.instanceOf(AuthorizationError)
+        .and.have.property('code', AuthorizationErrorCode.VERIFY_TOKEN_ERROR);
     });
   });
 
