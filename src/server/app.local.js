@@ -3,7 +3,7 @@ import express from 'express';
 import appCreation from './app';
 import config from './config';
 
-appCreation()
+appCreation({ local: true })
   .then((app) => {
     const port = config.port();
     const assets = config.publicAssets();

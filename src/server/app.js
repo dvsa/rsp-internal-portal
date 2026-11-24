@@ -18,8 +18,8 @@ import config from './config';
 
 const SIXTY_DAYS_IN_SECONDS = 5184000;
 
-export default async () => {
-  await config.bootstrap();
+export default async (options) => {
+  await config.bootstrap(options);
 
   // Create nunjucks fileloader instance for the views folder
   const nunjucksFileLoader = new nunjucks.FileSystemLoader(config.views(), {

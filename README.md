@@ -25,6 +25,12 @@ This will create a `build/` directory with the transpiled code and required asse
 3. `npm run start-server`
 Runs the server from the `build/` directory. Note that this will use the Views and Assets that sit within the `build/` directory. There is no automatic reloading (on source code change) so for development purposes please use the next command instead.
 
+> [!NOTE]
+> When `USE_SECRETS_MANAGER=true`, the local server loads the configured AWS secret
+> but overrides `URL_ROOT` and `REDIRECT_URI` with local environment variables.
+> Set `URL_ROOT` to an empty string and `REDIRECT_URI` to the registered local
+> Cognito callback.
+
 4. `npm run start-dev-server`
 Runs the application in development mode, meaning that source code changes will trigger a rebuild and server reload. 
 

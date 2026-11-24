@@ -32,7 +32,7 @@ const configMetadata = {
 };
 
 let configuration = {};
-async function bootstrap() {
+async function bootstrap({ local = false } = {}) {
   if (process.env.USE_SECRETS_MANAGER === 'true') {
     const SecretId = process.env.SECRETS_MANAGER_SECRET_NAME;
     logInfo('InternalPortalSecretsManagerId', { secretId: SecretId });
@@ -49,6 +49,11 @@ async function bootstrap() {
     } catch (err) {
       logError('InternalPortalSecretsManagerError', 'Invalid or missing secret JSON');
       throw new Error('Secrets Manager returned invalid or missing secret JSON');
+    }
+    if (local) {
+      // Use local environment variables to override the Secrets Manager values for local development.
+      // This is needed because the secrets manager values are for the deployed environment, and local development needs different values for URL_ROOT and REDIRECT_URI.
+      configuration = { ...configuration, URL_ROOT: process.env.URL_ROOT, REDIRECT_URI: process.env.REDIRECT_URI };
     }
   } else {
     logInfo('InternalPortalEnvVars', 'Using envvars for config');
