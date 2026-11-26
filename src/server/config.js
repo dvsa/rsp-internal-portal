@@ -8,8 +8,8 @@ dotenv.config();
 const configMetadata = {
   clientId: 'CLIENT_ID',
   clientSecret: 'CLIENT_SECRET',
-  cognitoUrl: 'COGNITO_URL',
-  cognitoUserPoolId: 'COGNITO_USERPOOL_ID',
+  entraUrl: 'ENTRA_URL',
+  tenantId: 'TENANT_ID',
   cpmsServiceUrl: 'CPMS_SERVICE_URL',
   doSignedRequests: 'DO_SIGNED_REQUESTS',
   doRoleChecks: 'DO_ROLE_CHECKS',
@@ -83,12 +83,12 @@ function clientSecret() {
   return configuration[configMetadata.clientSecret] || 'secret';
 }
 
-function cognitoUserPoolId() {
-  return configuration[configMetadata.cognitoUserPoolId];
+function tenantId() {
+  return configuration[configMetadata.tenantId] || 'tenant';
 }
 
-function cognitoUrl() {
-  return configuration[configMetadata.cognitoUrl];
+function entraUrl() {
+  return configuration[configMetadata.entraUrl];
 }
 
 function cpmsServiceUrl() {
@@ -182,8 +182,8 @@ const config = {
   bootstrap,
   clientId,
   clientSecret,
-  cognitoUrl,
-  cognitoUserPoolId,
+  tenantId,
+  entraUrl,
   cpmsServiceUrl,
   doSignedRequests,
   doRoleChecks,

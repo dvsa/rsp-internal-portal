@@ -4,13 +4,12 @@ import {
 } from 'lodash';
 import moment from 'moment-timezone';
 
-import AuthService from '../services/auth.service';
+import { authService } from '../services/auth.service';
 import config from '../config';
 import PenaltyService from '../services/penalty.service';
 import { MOMENT_DATE_TIME_FORMAT, MOMENT_TIMEZONE } from '../utils/dateTimeFormat';
 import { logError } from '../utils/logger';
 
-const authService = new AuthService(config.cognitoUrl());
 const penaltyService = new PenaltyService(config.penaltyServiceUrl());
 
 // Robots
@@ -182,35 +181,38 @@ export const normaliseRegistration = (req, res, next) => {
   next();
 };
 
-export const authenticate = (req, res) => {
-  const identityProvider = config.identityProvider();
-  const redirectUri = config.redirectUri();
-  const clientId = config.clientId();
-  const clientSecret = config.clientSecret();
-
-  const responseType = 'code';
-
-  res.redirect(`${config.cognitoUrl()}/oauth2/authorize?identity_provider=${identityProvider}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=${responseType}&client_id=${clientId}&client_secret=${clientSecret}`);
+export const authenticate = async (req, res, next) => {
+  try {
+    const url = await authService.login();
+    return res.redirect(url);
+  } catch (error) {
+    return next(error);
+  }
 };
 
-export const login = (req, res) => {
-  if (req.query.code) {
-    authService.requestAccessToken(req.query.code).then((token) => {
-      res.cookie('rsp_access', { accessToken: token.access_token, idToken: token.id_token }, { maxAge: token.expires_in * 1000, httpOnly: true, secure: !config.isDevelopment() });
-      res.cookie('rsp_refresh', { refreshToken: token.refresh_token }, { maxAge: 14400000, httpOnly: true, secure: !config.isDevelopment() });
-      res.redirect(`${config.urlRoot()}/`);
-    }).catch(() => {
-      // Failed to get an access token - Get a new authorization code and try again
-      authenticate(req, res);
-    });
-  } else {
-    authenticate(req, res);
+export const login = async (req, res, next) => {
+  if (req.query.error) {
+    return next(new Error('Entra sign-in failed'));
+  }
+  if (!req.query.code) {
+    return authenticate(req, res, next);
+  }
+  try {
+    const token = await authService.requestAccessToken(req.query.code);
+    console.log('Token received:', token);
+    const claims = await authService.verifyToken(token.idToken);
+    console.log('Claims received:', claims);
+    req.session.rsp_subject = claims.sub;
+    req.session.rsp_account_id = token.account?.homeAccountId;
+    res.cookie('rsp_access', { idToken: token.idToken }, { httpOnly: true, secure: !config.isDevelopment(), sameSite: 'lax' });
+    return res.redirect(`${config.urlRoot()}/`);
+  } catch (err) {
+    return next(err);
   }
 };
 
 export const logout = (req, res) => {
   req.session = null;
   res.clearCookie('rsp_access');
-  res.clearCookie('rsp_refresh');
-  res.redirect(`${config.cognitoUrl()}/logout?client_id=${config.clientId()}&logout_uri=${encodeURIComponent(config.redirectUri())}`);
+  return res.redirect(authService.logout());
 };

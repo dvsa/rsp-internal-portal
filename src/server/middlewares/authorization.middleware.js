@@ -2,9 +2,8 @@ import { intersection } from 'lodash';
 import config from '../config';
 import formatUserRole from '../utils/formatUserRole';
 import { logError, logInfo } from '../utils/logger';
-import { userToken, verifyToken } from './verifyToken';
 import { AuthorizationError, AuthorizationErrorCode } from '../utils/authorisationError';
-import AuthService from '../services/auth.service';
+import { authService } from '../services/auth.service';
 
 const authorizedRoles = ['ContactCentre', 'BankingFinance', 'FrontLine'];
 const redirectErrors = [AuthorizationErrorCode.EXPIRED_TOKEN, AuthorizationErrorCode.VERIFY_TOKEN_ERROR, AuthorizationErrorCode.REFRESH_TOKEN_ERROR];
@@ -26,11 +25,9 @@ const roleCheck = (userRole) => {
   }
 };
 
-const refresh = async (refreshToken) => {
+const refresh = async (accountId) => {
   try {
-    const authService = new AuthService(config.cognitoUrl());
-    const token = await authService.refreshAccessToken(refreshToken);
-    return token;
+    return await authService.refreshAccessToken(accountId);
   } catch (err) {
     logError('Authorization.middleware', { message: 'Failed to refresh token', error: err.message });
     return null;
@@ -43,11 +40,24 @@ const authorization = async (req, res, next) => {
   }
 
   try {
-    await verifyToken(req.cookies.rsp_access.accessToken);
+    let claims;
+    let refreshedToken;
+    try {
+      claims = await authService.verifyToken(req.cookies.rsp_access.idToken);
+    } catch (err) {
+      if (err.code !== AuthorizationErrorCode.EXPIRED_TOKEN) throw err;
+      refreshedToken = await refresh(req.session.rsp_account_id);
+      if (!refreshedToken) {
+        throw new AuthorizationError('Failed to refresh token', AuthorizationErrorCode.REFRESH_TOKEN_ERROR);
+      }
+      claims = await authService.verifyToken(refreshedToken.idToken);
+    }
 
-    req.session.rsp_user = userToken(req.cookies.rsp_access.idToken);
+    if (!req.session.rsp_subject || claims.sub !== req.session.rsp_subject) {
+      throw new AuthorizationError('Token does not match the session', AuthorizationErrorCode.VERIFY_TOKEN_ERROR);
+    }
 
-    const userRole = formatUserRole(req.session.rsp_user['custom:Role']);
+    const userRole = formatUserRole(claims.roles);
 
     if (config.doRoleChecks()) {
       roleCheck(userRole);
@@ -55,24 +65,18 @@ const authorization = async (req, res, next) => {
       logInfo('doRoleCheck', 'Role checking disabled in config.');
     }
 
+    if (refreshedToken) {
+      res.cookie('rsp_access', { idToken: refreshedToken.idToken }, { httpOnly: true, secure: !config.isDevelopment(), sameSite: 'lax' });
+    }
+    req.session.rsp_user = claims;
     req.session.rsp_user_role = userRole;
 
     logInfo('User', { userRole: req.session.rsp_user_role, userEmail: req.session.rsp_user.email });
 
     return next();
   } catch (err) {
-    if (err.code === AuthorizationErrorCode.EXPIRED_TOKEN) {
-      logError('Authorization.middleware', err.message);
-      const token = await refresh(req.cookies.rsp_refresh.refreshToken);
-      if (token) {
-        res.cookie('rsp_access', { accessToken: token.access_token, idToken: token.id_token }, { maxAge: token.expires_in * 1000, httpOnly: true, secure: !config.isDevelopment() });
-        return authorization(req, res, next);
-      }
-      err.code = AuthorizationErrorCode.REFRESH_TOKEN_ERROR;
-    }
     if (redirectErrors.includes(err.code)) {
       res.clearCookie('rsp_access');
-      res.clearCookie('rsp_refresh');
       logError('Authorization.middleware', err.message);
       return res.redirect(`${config.urlRoot()}/login`);
     }
